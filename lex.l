@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include "y.tab.h"
 %}
-
+digit [0-9]
+alpha [A-Za-z_]
 %%
 #.*\n  /*ignoring one line comments*/
 #\*(.|\n)*\*# /*ignoring multiline comments*/
@@ -18,6 +19,7 @@ else {return ELSE;}
 return {return RETURN;}
 break {return BREAK;}
 continue {return CONT;}
+alpha+(digit|alpha)* {return ID;}
 \(	{/*printf("%s",yytext);*/  return OBRAC;}
 \)	{/*printf("%s",yytext);*/  return CBRAC;}
 \.	{/*printf("%s",yytext);*/  return DOT;}
