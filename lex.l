@@ -23,8 +23,12 @@ return {return RETURN;}
 break {return BREAK;}
 continue {return CONT;}
 alpha+(digit|alpha)* {return ID;}
-\(	{/*printf("%s",yytext);*/  return OBRAC;}
-\)	{/*printf("%s",yytext);*/  return CBRAC;}
+\(	{/*printf("%s",yytext);*/  return OBRACK;}
+\)	{/*printf("%s",yytext);*/  return CBRACK;}
+\[  {/*printf("%s",yytext);*/  return OSQA;}
+\]  {/*printf("%s",yytext);*/  return CSQA;}
+\{  {/*printf("%s",yytext);*/  return OBRACE;}
+\}  {/*printf("%s",yytext);*/  return CBRACE;}
 \.	{/*printf("%s",yytext);*/  return DOT;}
 !	{/*printf("%s",yytext);*/  return NEG;}
 ":" {return COLON;}
