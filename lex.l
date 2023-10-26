@@ -6,14 +6,22 @@
 %}
 
 %%
-\(	{/*printf("%s",yytext);*/  return OBRAC;}
-\)	{/*printf("%s",yytext);*/  return CBRAC;}
-\.	{/*printf("%s",yytext);*/  return DOT;}
-!	{/*printf("%s",yytext);*/  return NEG;}
+#.*\n  /*ignoring one line comments*/
+#\*(.|\n)*\*# /*ignoring multiline comments*/
 int|char|float|string|void   { //printf("Datatype: %s\n", yytext);
                                 return DATATYPE; }
 matrix                          {return MATRIX;}
 dataframe                       {return DF;}
+if {return IF;}
+elif {return ELIF;}
+else {return ELSE;}
+return {return RETURN;}
+break {return BREAK;}
+continue {return CONT;}
+\(	{/*printf("%s",yytext);*/  return OBRAC;}
+\)	{/*printf("%s",yytext);*/  return CBRAC;}
+\.	{/*printf("%s",yytext);*/  return DOT;}
+!	{/*printf("%s",yytext);*/  return NEG;}
 ";" {return COLON;}
 (\")([^\"]|\\.)*(\")   {
                         yylval.str = strdup(yytext); 
