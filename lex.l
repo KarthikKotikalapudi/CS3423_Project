@@ -1,5 +1,8 @@
 %{
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "y.tab.h"
 %}
 
 %%
@@ -7,6 +10,19 @@
 \)	{/*printf("%s",yytext);*/  return CLOSEBRAC;}
 \.	{/*printf("%s",yytext);*/  return DOT;}
 !	{/*printf("%s",yytext);*/  return NEG;}
+int|char|float|string|void   { //printf("Datatype: %s\n", yytext);
+                                return DATATYPE; }
+matrix                          {return MATRIX;}
+dataframe                       {return DF;}
+";" {return COLON;}
+(\")([^\"]|\\.)*(\")   {
+                        yylval.str = strdup(yytext); 
+                        return STRING_CONSTANT;
+                       }
+'[^'\n]?' {
+    yylval.character = yytext[1]; 
+    return CHAR_CONSTANT;
+}
 "++"|"--"	{/*printf("%s",yytext);*/  return POST;}
 "<<"|">>"	{/*printf("%s",yytext);*/  return SHIFT;}
 "**"|"%"|"*"|"/"|"+"|"-"	{/*printf("%s",yytext);*/  return ARTH;}
