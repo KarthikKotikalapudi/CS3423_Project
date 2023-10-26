@@ -6,8 +6,8 @@
 %}
 
 %%
-\(	{/*printf("%s",yytext);*/  return OPENBRAC;}
-\)	{/*printf("%s",yytext);*/  return CLOSEBRAC;}
+\(	{/*printf("%s",yytext);*/  return OBRAC;}
+\)	{/*printf("%s",yytext);*/  return CBRAC;}
 \.	{/*printf("%s",yytext);*/  return DOT;}
 !	{/*printf("%s",yytext);*/  return NEG;}
 int|char|float|string|void   { //printf("Datatype: %s\n", yytext);
@@ -17,11 +17,11 @@ dataframe                       {return DF;}
 ";" {return COLON;}
 (\")([^\"]|\\.)*(\")   {
                         yylval.str = strdup(yytext); 
-                        return STRING_CONSTANT;
+                        return STRING;
                        }
 '[^'\n]?' {
     yylval.character = yytext[1]; 
-    return CHAR_CONSTANT;
+    return CHAR;
 }
 "++"|"--"	{/*printf("%s",yytext);*/  return POST;}
 "<<"|">>"	{/*printf("%s",yytext);*/  return SHIFT;}
