@@ -7,8 +7,8 @@
 digit [0-9]
 alpha [A-Za-z_]
 %%
-[-]?[0-9]+ {return  INTEGER;} 
-[-]?([0-9]*[.])?[0-9]+ {return FLOAT;}
+[-]?alpha+ {return  INTEGER;} 
+[-]?(alpha*[.])?alpha+ {return FLOAT;}
 
 #.*\n  /*ignoring one line comments*/
 #\*(.|\n)*\*# /*ignoring multiline comments*/
@@ -36,8 +36,14 @@ alpha+(digit|alpha)* {return ID;}
 
 \.	{/*printf("%s",yytext);*/  return DOT;}
 !	{/*printf("%s",yytext);*/  return NEG;}
+
+
 ":" {return COLON;}
 ";" {return SEMICOLON;}
+"," {return COMMA;}
+
+
+
 (\")([^\"]|\\.)*(\")   {
                         yylval.str = strdup(yytext); 
                         return STRING;
