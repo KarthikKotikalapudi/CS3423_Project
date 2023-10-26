@@ -4,27 +4,31 @@
 #include <stdlib.h>
 #include "y.tab.h"
 %}
-
+digit [0-9]
+alpha [A-Za-z_]
 %%
-\(	{/*printf("%s",yytext);*/  return OBRAC;}
-\)	{/*printf("%s",yytext);*/  return CBRAC;}
-\.	{/*printf("%s",yytext);*/  return DOT;}
-!	{/*printf("%s",yytext);*/  return NEG;}
+[-]?[0-9]+ {return  INTEGER;} 
+[-]?([0-9]*[.])?[0-9]+ {return FLOAT;}
+
+#.*\n  /*ignoring one line comments*/
+#\*(.|\n)*\*# /*ignoring multiline comments*/
 int|char|float|string|void|bool   { //printf("Datatype: %s\n", yytext);
                                 return DATATYPE; }
 matrix                          {return MATRIX;}
 dataframe                       {return DF;}
+if {return IF;}
+elif {return ELIF;}
+else {return ELSE;}
+return {return RETURN;}
+break {return BREAK;}
+continue {return CONT;}
+alpha+(digit|alpha)* {return ID;}
+\(	{/*printf("%s",yytext);*/  return OBRAC;}
+\)	{/*printf("%s",yytext);*/  return CBRAC;}
+\.	{/*printf("%s",yytext);*/  return DOT;}
+!	{/*printf("%s",yytext);*/  return NEG;}
 ":" {return COLON;}
 ";" {return SEMICOLON;}
-
-
-
-[-]?[0-9]+ {return  INTEGER;} 
-[-]?([0-9]*[.])?[0-9]+ {return FLOAT;}
-
-
-
-
 (\")([^\"]|\\.)*(\")   {
                         yylval.str = strdup(yytext); 
                         return STRING;
@@ -43,18 +47,6 @@ dataframe                       {return DF;}
 
 "<int>"|"<float>" {/*printf("%s",yytext);*/  return MATRIX_TYPE;}
 "^"|"&"|"|"|  {/*printf("%s",yytext);*/  return BIT_OP;}
-
-"break" {return BREAK;}
-"continue" {return CONTINUE;}
-"if" {return IF;}
-"elif" {return ELIF;}
-"ELSE" {return ELSE;}
-"for" {return FOR;}
-"while" {return WHILE;}
-"return" {return RETURN;}
-
-#.*|#\*.*\*# {return COMMENTS;}
-
 
 
 [ \t]  { /*Ignore whitespace and tabs*/ }
