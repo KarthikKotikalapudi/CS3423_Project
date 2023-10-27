@@ -20,6 +20,8 @@ D : D D {}   // the declarations can be of methods or classes
   | FD {} // a function declaration
   |
   ;
+GD : declstmt {}
+   ;
 FD : sign LBR stmt RBR {
     if(retcnt==0)
     {   // if there are no return statements inside the function, raise error and exit
