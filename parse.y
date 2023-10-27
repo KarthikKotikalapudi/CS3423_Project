@@ -8,8 +8,8 @@
     extern FILE* yyin;
     extern FILE* out;
 %}
-%token NUM FLOAT Datatype MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
-%token COMMA STRING CHAR SHIFT ARTH COMP LOG ASSGN MATRIX_TYPE BIT_OP FOR WHILE 
+%token NUM FLOAT DATATYPE MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
+%token COMMA STRING CHAR SHIFT ARTH COMP LSTHAN GRTHAN LOG ASSGN ARTHASSGN MATRIX_TYPE BIT_OP FOR WHILE 
 %left NEG  LOG
 %%
 S : D Main D {}  // a valid program is sequence of declarations with a main function
@@ -27,11 +27,11 @@ GD : declstmt {}
    ;
 
      ; 
-argL : Datatype ID COMMA argL {}
-     | Datatype ID {} 
+argL : DATATYPE ID COMMA argL {}
+     | DATATYPE ID {} 
      ;
 // stmt rule produces all possible sequence of statements with scopes in between 
-stmt : stmtL OBRAK stmt CBRAK stmt {} // modify this if needed
+stmt : stmtL OBRACE stmt CBRACE stmt {} // modify this if needed
      | stmtL {}
      ;
 stmtL : stmtD stmtL {}
@@ -45,10 +45,60 @@ stmtD : declstmt
 
 
 //declaration statment      
-declstmt : Datatype IDL SEMICOL {fprintf(fp," : declaration statement ");}
+declstmt : DATATYPE IDL SEMICOL {fprintf(fp," : declaration statement ");}
+        | DATATYPE ARRL SEMICOL {fprintf(fp," : declaration statement ");}
+        | DATATYPE ID ASSGN rhs SEMICOL {fprintf(fp," : declaration statement ");}
+        | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE SEMICOL  {fprintf(fp," : declaration statement ");}\
+        | MatrixDecl
         ;
+        
 IDL : ID COMMA IDL {}
     | ID {}
+    ;
+
+ARRL : ID OSQA NUM CSQA COMMA ARRL {}
+    | ID OSQA NUM CSQA {}
+    | ID OSQA ID CSQA COMMA ARRL {}
+    | ID OSQA ID CSQA {}
+    ;
+
+constL : NUM COMMA constL {}
+    | FLOAT COMMA constL {}
+    | STRING COMMA constL {}
+    | CHAR COMMA constL {}
+    ;
+
+MatrixDecl : MATRIX ID LSTHAN DATATYPE GRTHAN SEMICOL {}
+    | MATRIX ID LSTHAN DATATYPE GRTHAN ASSGN ID SEMICOL {}
+    | MATRIX ID LSTHAN DATATYPE GRTHAN OBRAK numL CBRAK SEMICOL {}
+    | MATRIX ID LSTHAN DATATYPE GRTHAN ASSGN OBRACE MatrixL CBRACE SEMICOL {}
+    ;
+
+numL : NUM COMMA numL
+    | NUM
+    ;
+
+MatrixL : OBRACE constL CBRACE MatrixL
+    | OBRACE constL CBRACE
+    ;
+
+//function declaration
+FuncDecl : FuncHead OBRAK params CBRAK OBRACE FuncBody CBRACE
+    ;
+
+FuncHead : DATATYPE ID
+    ;
+
+params : parameter COMMA params
+    | parameter
+    ;
+
+parameter : DATATYPE ID
+    | MATRIX LSTHAN DATATYPE GRTHAN ID
+    | DATATYPE ID OSQA NUM CSQA
+    ;
+
+FuncBody : stmt
     ;
 
 //call statement
@@ -70,19 +120,30 @@ pred : pred LOG pred { }
 // pred produces the basic elements of a general predicate
 predD : arg { } 
       | arg COMP arg { }
+      | arg LSTHAN arg { }
+      | arg GRTHAN arg { }
+      ;
 
 arg : ID {} 
     | bin {} 
     | uni {}
-    | callstmt {}
+    | call_expression {}
     | NUM 
     | FLOAT
     ;
 
 uni : ID POST
+    ;
+
 bin : arg ARTH arg 
+    ;
+
 expr : ID ASSGN rhs {}
+    | ID ARTHASSGN rhs {}
+    ;
+
 exprstmt: expr SEMICOL
+    ;
 
 //conditional statement
 cond_stmt: IF OBRAK pred CBRAK OBRACE stmt CBRACE 
@@ -97,9 +158,6 @@ loop: FOR OBRAK declstmt  pred SEMICOL expr CBRAK OBRACE stmt CBRACE
     | FOR OBRAK   SEMICOL pred SEMICOL expr CBRAK  OBRACE stmt CBRACE
     | FOR OBRAK   SEMICOL pred SEMICOL  CBRAK  OBRACE stmt CBRACE
     | WHILE OBRAK pred CBRAK  OBRACE stmt CBRACE
-
-//function declaration
-
 
 
 %%

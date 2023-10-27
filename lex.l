@@ -8,13 +8,13 @@ FILE * out; //output file
 digit [0-9]
 alpha [A-Za-z_]
 %%
-[-]?alpha+ {return  NUM;} 
-[-]?(alpha*[.])?alpha+ {return FLOAT;}
+[-]?digit+ {return  NUM;} 
+[-]?(digit*[.])?digit+ {return FLOAT;}
 
 #.*\n  /*ignoring one line comments*/
 #\*(.|\n)*\*# /*ignoring multiline comments*/
 int|char|float|string|void|bool   { //printf("Datatype: %s\n", yytext);
-                                return DTP; }
+                                return DATATYPE; }
 matrix                          {return MATRIX;}
 dataframe                       {return DF;}
 
@@ -58,9 +58,12 @@ alpha+(digit|alpha)* {return ID;}
 "++"|"--"	{/*printf("%s",yytext);*/  return POST;}
 "<<"|">>"	{/*printf("%s",yytext);*/  return SHIFT;}
 "**"|"%"|"*"|"/"|"+"|"-"	{/*printf("%s",yytext);*/  return ARTH;}
-"<="|">="|"=="|"<"|">"	{/*printf("%s",yytext);*/  return COMP;}
+"<="|">="|"=="	{/*printf("%s",yytext);*/  return COMP;}
+"<" {/*printf("%s",yytext);*/  return LSTHAN;}
+">" {/*printf("%s",yytext);*/  return GRTHAN;}
 "AND"|"OR"	{/*printf("%s",yytext);*/  return LOG;}
-"="|"+="|"*="|"-="|"%="	{/*printf("%s",yytext);*/  return ASSGN;}
+"=" {/*printf("%s",yytext);*/  return ASSGN;}
+"+="|"*="|"-="|"%="	{/*printf("%s",yytext);*/  return ARTHASSGN;}
 
 
 "<int>"|"<float>" {/*printf("%s",yytext);*/  return MATRIX_TYPE;}
