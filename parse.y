@@ -22,19 +22,9 @@ D : D D {}
   ;
 GD : declstmt {}
    ;
-FD : sign LBR stmt RBR {
-    if(retcnt==0)
-    {   // if there are no return statements inside the function, raise error and exit
-     printf("Error: syntax error at line %d\n",yylineno);
-    fprintf(fp,"\ninvalid statement"); fclose(sq); fclose(fp);
-    exit(0);
-    }
-    }
+FD : sign LBR stmt RBR {}
    ;
-sign : DTP  ID LPAR argL RPAR  {
-    fprintf(fp," : function definition "); 
-    retcnt = 0; // start counting number of return statements, as parsed the signature and entered the function body
-    }
+sign : DTP  ID LPAR argL RPAR  {}
      ; 
 argL : DTP ID COMMA argL {}
      | DTP ID {} 
@@ -47,13 +37,7 @@ stmtL : stmtD stmtL {}
       | {}
       ;  
 // these are different types of single statements
-stmtD : declstmt | exprstmt SEMI {fprintf(fp," : expression statement ");} 
-      | loops | condstmt 
-      | CALL ID Z2 POINT Z3 SEMI{fprintf(fp," : call statement with object");}
-      | CALL THIS POINT Z3 SEMI{fprintf(fp," : call statement ");}
-      | CALL Z3 SEMI{fprintf(fp," : call statement ");}
-      | uni SEMI {fprintf(fp," : call statement ");}
-      | retstmt
+stmtD : declstmt // add rest
       ;
 declstmt : DECL DTP IDL SEMI {fprintf(fp," : declaration statement ");}
         ;
