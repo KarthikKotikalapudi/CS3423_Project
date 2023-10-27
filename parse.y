@@ -15,7 +15,7 @@
 S : D Main D {}  // a valid program is sequence of declarations with a main function
   |
   ;
-D : D D {}   // the declarations can be of methods or classes
+D : D D {}   
   | GD {} // a global variable declaration
   | FD {} // a function declaration
   |
@@ -156,24 +156,16 @@ int main(int argc,char** argv)
             argv[1][i] = '\0'; break;
          }
     }
-    char tokf[50], pars[50];
-    snprintf(tokf,sizeof(tokf), "./TPP/TPPO/seq_tokens_%s.txt", argv[1]);
-    snprintf(pars,sizeof(pars), "./TPP/TPPO/parser_%s.parsed", argv[1]);
-    fp = fopen(pars,"w");  //opening the output parsed file
-    if(!fp)
-    {
-        printf("There was an error opening the output file\n");
-        return 0;
-    }
-    sq = fopen(tokf,"w");   //opeing the output seq tokens file
+    char tokf[50];
+    snprintf(tokf,sizeof(tokf), "out_%s.txt", argv[1]);
+    out = fopen(tokf,"w");   //opeing the output seq tokens file
     if(!sq)
     {
         printf("There was an error opening the output token file\n");
         return 0;
     }
-    fprintf(sq,"Name: Chittepu Rutheesh Reddy\nID: CS21BTECH11014\n");
    yyparse();
-   fclose(sq); fclose(fp);
+   fclose(out); 
    return 1;
 }
 
