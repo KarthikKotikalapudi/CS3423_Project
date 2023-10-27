@@ -86,10 +86,11 @@ exprstmt: expr SEMICOL
 
 //conditional statement
 cond_stmt: IF OBRAK pred CBRAK OBRACE stmt CBRACE 
-         | ELIF  OBRAK pred CBRAK OBRACE stmt CBRACE
-         | ELSE OBRACE stmt CBRACE
+         | IF OBRAK pred CBRAK OBRACE stmt CBRACE  elif_list
+         | IF OBRAK pred CBRAK OBRACE stmt CBRACE elif_list  ELSE OBRACE stmt CBRACE
 
-
+elif_list: | elif_list ELIF  OBRAK pred CBRAK OBRACE stmt CBRACE 
+            
 //loop statements
 loop: FOR OBRAK declstmt  pred SEMICOL expr CBRAK OBRACE stmt CBRACE
     | FOR OBRAK declstmt  pred SEMICOL  CBRAK  OBRACE stmt CBRACE
