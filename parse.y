@@ -8,7 +8,7 @@
     extern FILE* yyin;
     extern FILE* out;
 %}
-%token NUM FLOAT DTP MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL 
+%token NUM FLOAT DTP MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR SHIFT ARTH COMP LOG ASSGN MATRIX_TYPE BIT_OP   
 %left NEG  LOG
 %%
@@ -50,8 +50,13 @@ IDL : ID COMMA IDL {}
     | ID {}
     ;
 
+//call statement
+varL: arg 
+    | varL COMMA
+call_expression: ID OBRAK varL CBRAK
+callstmt: call_expression SEMICOL
+
 //expression statments    
-exprstmt : ID ASSGN rhs {}
 rhs : pred {} // pred variable covers predicates and all types of other valid rhs elements
     ;
 // pred rules produces all valid predicates
@@ -69,11 +74,17 @@ arg : ID {}
     | uni {}
     | callstmt {}
     | NUM 
-    | TF 
-    | CNST 
+    | FLOAT
     ;
 
-   ;
+uni : ID POST
+bin : arg ARTH arg 
+exprstmt : ID ASSGN rhs {}
+
+
+
+
+
 %%
 
 int main(int argc,char** argv)
