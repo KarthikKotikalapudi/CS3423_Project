@@ -3,11 +3,12 @@
 #include <string.h>
 #include <stdlib.h>
 #include "y.tab.h"
+FILE * out; //output file
 %}
 digit [0-9]
 alpha [A-Za-z_]
 %%
-[-]?alpha+ {return  INTEGER;} 
+[-]?alpha+ {return  NUM;} 
 [-]?(alpha*[.])?alpha+ {return FLOAT;}
 
 #.*\n  /*ignoring one line comments*/
@@ -27,8 +28,8 @@ continue {return CONT;}
 alpha+(digit|alpha)* {return ID;}
 
 
-\(	{/*printf("%s",yytext);*/  return OBRACK;}
-\)	{/*printf("%s",yytext);*/  return CBRACK;}
+\(	{/*printf("%s",yytext);*/  return OBRAK;}
+\)	{/*printf("%s",yytext);*/  return CBRAK;}
 \[  {/*printf("%s",yytext);*/  return OSQA;}
 \]  {/*printf("%s",yytext);*/  return CSQA;}
 \{  {/*printf("%s",yytext);*/  return OBRACE;}
@@ -38,8 +39,8 @@ alpha+(digit|alpha)* {return ID;}
 !	{/*printf("%s",yytext);*/  return NEG;}
 
 
-":" {return COLON;}
-";" {return SEMICOLON;}
+":" {return COL;}
+";" {return SEMICOL;}
 "," {return COMMA;}
 
 
@@ -72,7 +73,8 @@ alpha+(digit|alpha)* {return ID;}
     exit(1);
 }
 %%
-int main(){
-    yylex();
-    return 0;
+
+int yywrap()
+{
+    return 1;
 }
