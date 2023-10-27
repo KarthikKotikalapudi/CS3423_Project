@@ -30,91 +30,49 @@ argL : DTP ID COMMA argL {}
      | DTP ID {} 
      ;
 // stmt rule produces all possible sequence of statements with scopes in between 
-stmt : stmtL LBR stmt RBR stmt {} // modify this if needed
+stmt : stmtL OBRAK stmt CBRAK stmt {} // modify this if needed
      | stmtL {}
      ;
 stmtL : stmtD stmtL {}
       | {}
       ;  
 // these are different types of single statements
-stmtD : declstmt // add rest
+stmtD : declstmt 
+      | exprstmt
       ;
-declstmt : DECL DTP IDL SEMI {fprintf(fp," : declaration statement ");}
+
+
+
+//declaration statment      
+declstmt : DTP IDL SEMICOL {fprintf(fp," : declaration statement ");}
         ;
 IDL : ID COMMA IDL {}
     | ID {}
     ;
-exprstmt : EXPR ID EQL rhs {}
+
+//expression statments    
+exprstmt : ID ASSGN rhs {}
 rhs : pred {} // pred variable covers predicates and all types of other valid rhs elements
     ;
-arg : ID {} 
-    | bin {} 
-    | uni {}
-    | callstmt {}
-    | NUM | TF | CNST 
-    ;
-bin : BOPR LPAR pred COMMA pred RPAR {} // binary operaters
-    ;
-uni : UOPR LPAR pred RPAR {} // unary operaters
-    ;
-condstmt :  condhead DO LBR stmt RBR opt {}
-         ;
-condhead : ICT LPAR pred RPAR  {fprintf(fp," : conditional statement ");}
-   ;
-opt :  Z1 LBR stmt RBR {}
-    | {}
-    ;
-Z1 : OTH {fprintf(fp," : conditional statement ");}
-   ;
 // pred rules produces all valid predicates
 pred : pred LOG pred { } 
-     | LPAR pred RPAR { }
+     | OBRAK pred CBRAK { }
      | NEG pred
      | predD { }
      ;
 // pred produces the basic elements of a general predicate
 predD : arg { } 
-      | arg COPR arg { }
-      ; 
+      | arg COMP arg { }
 
-loops : whilehead DO LBR stmt RBR {}
-     | forhead  LBR stmt RBR {}
-     ;
-whilehead :  LOOP WHILE LPAR pred RPAR {fprintf(fp," : loop");}
-   ;
-forhead : FOR LPAR FD RPAR {fprintf(fp," : loop");} 
-   ;
-// produces the valid statements inside the paranthesises of for loop
-FD : exprstmt SEMI pred SEMI uni {}
-   | exprstmt SEMI pred SEMI {}
-   ;
-// produces all types of call statements
-callstmt : CALL ID Z2 POINT Z3 {}
-         | CALL THIS POINT Z3 {}
-         | CALL Z3{}
-         ;
-Z2 : LSQ NUM RSQ {}
-   | {}
-   ;
-// to cover different types of functions that can be called 
-Z3 : ID LSQ NUM RSQ  LPAR arglist RPAR {}
-   | ID LPAR arglist RPAR {}
-   ; 
-arglist : pred COMMA arglist | pred;
-// for return statements
-retstmt : RET pred SEMI {fprintf(fp," : return statement");retcnt++;} 
-        | RET VOID SEMI {fprintf(fp," : return statement");retcnt++;} 
-// for producing class definitions
-CD : sign2 LBR classbody RBR {}
-   ;
-sign2 : CLASS ID LSQ NUM RSQ {fprintf(fp," : class definition");}
-      | CLASS ID {}
-      ;
-classbody : classbody Z8 {}
-          | {}
-          ;
-Z8 : declstmt {}
-   | MD {}
+arg : ID {} 
+    | bin {} 
+    | uni {}
+    | callstmt {}
+    | NUM 
+    | TF 
+    | CNST 
+    ;
+
    ;
 %%
 
