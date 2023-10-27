@@ -14,7 +14,7 @@ alpha [A-Za-z_]
 #.*\n  /*ignoring one line comments*/
 #\*(.|\n)*\*# /*ignoring multiline comments*/
 int|char|float|string|void|bool   { //printf("Datatype: %s\n", yytext);
-                                return DATATYPE; }
+                                return DTP; }
 matrix                          {return MATRIX;}
 dataframe                       {return DF;}
 

@@ -8,17 +8,19 @@
     extern FILE* yyin;
     extern FILE* out;
 %}
-%token NUM FLOAT DATATYPE MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL 
+%token NUM FLOAT DTP MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL 
 %token COMMA STRING CHAR SHIFT ARTH COMP LOG ASSGN MATRIX_TYPE BIT_OP   
 %left NEG  LOG
 %%
-S : S D {}  // a valid program is sequence of declarations
+S : D Main D {}  // a valid program is sequence of declarations with a main function
   |
   ;
-D : MD {}   // the declarations can be of methods or classes
-  | CD {}
+D : D D {}   // the declarations can be of methods or classes
+  | GD {} // a global variable declaration
+  | FD {} // a function declaration
+  |
   ;
-MD : sign LBR stmt RBR {
+FD : sign LBR stmt RBR {
     if(retcnt==0)
     {   // if there are no return statements inside the function, raise error and exit
      printf("Error: syntax error at line %d\n",yylineno);
@@ -27,25 +29,16 @@ MD : sign LBR stmt RBR {
     }
     }
    ;
-sign : SCOPE DT ID Z {
+sign : DTP  ID LPAR argL RPAR  {
     fprintf(fp," : function definition "); 
     retcnt = 0; // start counting number of return statements, as parsed the signature and entered the function body
     }
-     ;
-DT : DTP 
-   | ID // to cover the user defined datatypes 
-   ;
-Z : argC LPAR argL RPAR {} // covers the two possible cases of function declaration
-  | argC LPAR RPAR {}
-  ;
-argC :  LSQ NUM RSQ {}
-     | {}
      ; 
 argL : DTP ID COMMA argL {}
      | DTP ID {} 
      ;
 // stmt rule produces all possible sequence of statements with scopes in between 
-stmt : stmtL LBR stmt RBR stmt {}
+stmt : stmtL LBR stmt RBR stmt {} // modify this if needed
      | stmtL {}
      ;
 stmtL : stmtD stmtL {}
