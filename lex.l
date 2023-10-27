@@ -25,6 +25,8 @@ else {return ELSE;}
 return {return RETURN;}
 break {return BREAK;}
 continue {return CONT;}
+for {return FOR;}
+while {return WHILE;}
 alpha+(digit|alpha)* {return ID;}
 
 

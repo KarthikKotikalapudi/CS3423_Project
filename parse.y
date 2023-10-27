@@ -8,8 +8,8 @@
     extern FILE* yyin;
     extern FILE* out;
 %}
-%token NUM FLOAT DTP MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
-%token COMMA STRING CHAR SHIFT ARTH COMP LOG ASSGN MATRIX_TYPE BIT_OP   
+%token NUM FLOAT Datatype MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
+%token COMMA STRING CHAR SHIFT ARTH COMP LOG ASSGN MATRIX_TYPE BIT_OP FOR WHILE 
 %left NEG  LOG
 %%
 S : D Main D {}  // a valid program is sequence of declarations with a main function
@@ -27,8 +27,8 @@ GD : declstmt {}
    ;
 
      ; 
-argL : DTP ID COMMA argL {}
-     | DTP ID {} 
+argL : Datatype ID COMMA argL {}
+     | Datatype ID {} 
      ;
 // stmt rule produces all possible sequence of statements with scopes in between 
 stmt : stmtL OBRAK stmt CBRAK stmt {} // modify this if needed
@@ -45,7 +45,7 @@ stmtD : declstmt
 
 
 //declaration statment      
-declstmt : DTP IDL SEMICOL {fprintf(fp," : declaration statement ");}
+declstmt : Datatype IDL SEMICOL {fprintf(fp," : declaration statement ");}
         ;
 IDL : ID COMMA IDL {}
     | ID {}
@@ -54,6 +54,7 @@ IDL : ID COMMA IDL {}
 //call statement
 varL: arg 
     | varL COMMA
+
 call_expression: ID OBRAK varL CBRAK
 callstmt: call_expression SEMICOL
 
@@ -80,9 +81,23 @@ arg : ID {}
 
 uni : ID POST
 bin : arg ARTH arg 
-exprstmt : ID ASSGN rhs {}
+expr : ID ASSGN rhs {}
+exprstmt: expr SEMICOL
+
+//conditional statement
+cond_stmt: IF OBRAK pred CBRAK OBRACE stmt CBRACE 
+         | ELIF  OBRAK pred CBRAK OBRACE stmt CBRACE
+         | ELSE OBRACE stmt CBRACE
 
 
+//loop statements
+loop: FOR OBRAK declstmt  pred SEMICOL expr CBRAK OBRACE stmt CBRACE
+    | FOR OBRAK declstmt  pred SEMICOL  CBRAK  OBRACE stmt CBRACE
+    | FOR OBRAK   SEMICOL pred SEMICOL expr CBRAK  OBRACE stmt CBRACE
+    | FOR OBRAK   SEMICOL pred SEMICOL  CBRAK  OBRACE stmt CBRACE
+    | WHILE OBRAK pred CBRAK  OBRACE stmt CBRACE
+
+//function declaration
 
 
 
