@@ -17,14 +17,15 @@ S : D Main D {}  // a valid program is sequence of declarations with a main func
   ;
 D : D D {}   
   | GD {} // a global variable declaration
-  | FD {} // a function declaration
   |
   ;
+
+Main: stmt
+
+
 GD : declstmt {}
    ;
-FD : sign LBR stmt RBR {}
-   ;
-sign : DTP  ID LPAR argL RPAR  {}
+
      ; 
 argL : DTP ID COMMA argL {}
      | DTP ID {} 
@@ -39,8 +40,8 @@ stmtL : stmtD stmtL {}
 // these are different types of single statements
 stmtD : declstmt 
       | exprstmt
+      | callstmt
       ;
-
 
 
 //declaration statment      
