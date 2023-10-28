@@ -65,8 +65,8 @@ print {return PRINT}
 "<="|">="|"=="|"<"|">"	{/*printf("%s",yytext);*/  return COMP;}
 "AND"|"OR"	{/*printf("%s",yytext);*/  return LOG;}
 "=" {/*printf("%s",yytext);*/  return ASSGN;}
-"+="|"*="|"-="|"%="	{/*printf("%s",yytext);*/  return ARTHASSGN;}
-"^"|"&"|"|"|  {/*printf("%s",yytext);*/  return BIT_OP;}
+"+="|"*="|"-="|"/="|"%="	{/*printf("%s",yytext);*/  return ARTHASSGN;}
+"^"|"&"|"|"|"~"  {/*printf("%s",yytext);*/  return BIT_OP;}
 
 
 [ \t]  { /*Ignore whitespace and tabs*/ }

@@ -38,6 +38,8 @@ stmtL : stmtD stmtL {}
 stmtD : declstmt 
     | exprstmt
     | callstmt
+    | condstmt
+    | loop
     | returnstmt
     | printstmt
     ;
@@ -48,6 +50,7 @@ declstmt : DATATYPE IDL SEMICOL {fprintf(fp," : declaration statement ");}
     | DATATYPE ARRL SEMICOL {fprintf(fp," : declaration statement ");}
     | DATATYPE ID ASSGN rhs SEMICOL {fprintf(fp," : declaration statement ");}
     | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE SEMICOL  {fprintf(fp," : declaration statement ");}
+    | DATATYPE ID OSQA CSQA ASSGN OBRACE CBRACE SEMICOL  {fprintf(fp," : declaration statement ");}
     | MatrixDecl
     ;
         
@@ -63,6 +66,10 @@ constL : NUM COMMA constL {}
     | FLOAT COMMA constL {}
     | STRING COMMA constL {}
     | CHAR COMMA constL {}
+    | NUM
+    | FLOAT
+    | STRING
+    | CHAR
     ;
 
 MatrixDecl : MATRIX ID MATRIX_TYPE SEMICOL {}
@@ -152,7 +159,7 @@ exprstmt : expr SEMICOL
     ;
 
 // conditional statement
-cond_stmt : IF OBRAK pred CBRAK OBRACE stmt CBRACE 
+condstmt : IF OBRAK pred CBRAK OBRACE stmt CBRACE 
     | IF OBRAK pred CBRAK OBRACE stmt CBRACE  elif_list
     | IF OBRAK pred CBRAK OBRACE stmt CBRACE elif_list  ELSE OBRACE stmt CBRACE
     ;
