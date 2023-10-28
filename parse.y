@@ -84,6 +84,7 @@ MatrixL : OBRACE constL CBRACE MatrixL
 
 //function declaration
 FuncDecl : FuncHead OBRAK params CBRAK OBRACE FuncBody CBRACE
+         | FuncHead OBRAK CBRAK OBRACE FuncBody CBRACE
     ;
 
 FuncHead : DATATYPE ID
