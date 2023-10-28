@@ -14,6 +14,7 @@
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
   ;
+
 Decl : Decl Decl {}   
   | GlobalDecl {} // a global variable declaration
   | FuncDecl // function declaration
@@ -24,35 +25,31 @@ Main: stmt
 GlobalDecl : declstmt {}
    ;
 
-     ; 
-argL : DATATYPE ID COMMA argL {}
-     | DATATYPE ID {} 
-     ;
-
 // stmt rule produces all possible sequence of statements with scopes in between 
 stmt : stmtL OBRACE stmt CBRACE stmt {} // modify this if needed
-     | stmtL {}
-     ;
+    | stmtL {}
+    ;
+
 stmtL : stmtD stmtL {}
-      | {}
-      ;  
+    | {}
+    ;  
 
 // these are different types of single statements
 stmtD : declstmt 
-      | exprstmt
-      | callstmt
-      | returnstmt
-      | printstmt
-      ;
+    | exprstmt
+    | callstmt
+    | returnstmt
+    | printstmt
+    ;
 
 
 // declaration statment      
 declstmt : DATATYPE IDL SEMICOL {fprintf(fp," : declaration statement ");}
-        | DATATYPE ARRL SEMICOL {fprintf(fp," : declaration statement ");}
-        | DATATYPE ID ASSGN rhs SEMICOL {fprintf(fp," : declaration statement ");}
-        | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE SEMICOL  {fprintf(fp," : declaration statement ");}
-        | MatrixDecl
-        ;
+    | DATATYPE ARRL SEMICOL {fprintf(fp," : declaration statement ");}
+    | DATATYPE ID ASSGN rhs SEMICOL {fprintf(fp," : declaration statement ");}
+    | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE SEMICOL  {fprintf(fp," : declaration statement ");}
+    | MatrixDecl
+    ;
         
 IDL : ID COMMA IDL {}
     | ID {}
@@ -84,7 +81,7 @@ MatrixL : OBRACE constL CBRACE MatrixL
 
 //function declaration
 FuncDecl : FuncHead OBRAK params CBRAK OBRACE FuncBody CBRACE
-         | FuncHead OBRAK CBRAK OBRACE FuncBody CBRACE
+    | FuncHead OBRAK CBRAK OBRACE FuncBody CBRACE
     ;
 
 FuncHead : DATATYPE ID
@@ -103,10 +100,11 @@ FuncBody : stmt
     ;
 
 varL: arg 
-    | varL COMMA
+    | varL COMMA arg
     ;
 
 call_expression: ID OBRAK varL CBRAK
+    | ID OBRAK CBRAK
     ;
 
 callstmt: call_expression SEMICOL
@@ -118,10 +116,10 @@ rhs : pred {}
 
 // pred rules produces all valid predicates
 pred : pred LOG pred { } 
-     | OBRAK pred CBRAK { }
-     | NEG pred
-     | predD { }
-     ;
+    | OBRAK pred CBRAK { }
+    | NEG pred
+    | predD { }
+    ;
 
 // pred produces the basic elements of a general predicate
 predD : arg { } 
@@ -155,10 +153,12 @@ exprstmt : expr SEMICOL
 
 // conditional statement
 cond_stmt : IF OBRAK pred CBRAK OBRACE stmt CBRACE 
-         | IF OBRAK pred CBRAK OBRACE stmt CBRACE  elif_list
-         | IF OBRAK pred CBRAK OBRACE stmt CBRACE elif_list  ELSE OBRACE stmt CBRACE
+    | IF OBRAK pred CBRAK OBRACE stmt CBRACE  elif_list
+    | IF OBRAK pred CBRAK OBRACE stmt CBRACE elif_list  ELSE OBRACE stmt CBRACE
+    ;
 
-elif_list : | elif_list ELIF  OBRAK pred CBRAK OBRACE stmt CBRACE 
+elif_list : | elif_list ELIF OBRAK pred CBRAK OBRACE stmt CBRACE
+    ;
             
 // loop statements
 loop : FOR OBRAK declstmt  pred SEMICOL expr CBRAK OBRACE stmt CBRACE
@@ -166,13 +166,16 @@ loop : FOR OBRAK declstmt  pred SEMICOL expr CBRAK OBRACE stmt CBRACE
     | FOR OBRAK   SEMICOL pred SEMICOL expr CBRAK  OBRACE stmt CBRACE
     | FOR OBRAK   SEMICOL pred SEMICOL  CBRAK  OBRACE stmt CBRACE
     | WHILE OBRAK pred CBRAK  OBRACE stmt CBRACE
+    ;
 
 
 // return statement
 returnstmt : RETURN pred SEMICOL
+    ;
 
 // print statement
 printstmt : PRINT OBRAK STRING CBRAK SEMICOL
+    ;
 
 %%
 
