@@ -48,7 +48,7 @@ stmtD : declstmt
 declstmt : DATATYPE IDL SEMICOL {fprintf(fp," : declaration statement ");}
         | DATATYPE ARRL SEMICOL {fprintf(fp," : declaration statement ");}
         | DATATYPE ID ASSGN rhs SEMICOL {fprintf(fp," : declaration statement ");}
-        | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE SEMICOL  {fprintf(fp," : declaration statement ");}\
+        | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE SEMICOL  {fprintf(fp," : declaration statement ");}
         | MatrixDecl
         ;
         
@@ -68,10 +68,10 @@ constL : NUM COMMA constL {}
     | CHAR COMMA constL {}
     ;
 
-MatrixDecl : MATRIX ID LSTHAN DATATYPE GRTHAN SEMICOL {}
-    | MATRIX ID LSTHAN DATATYPE GRTHAN ASSGN ID SEMICOL {}
-    | MATRIX ID LSTHAN DATATYPE GRTHAN OBRAK numL CBRAK SEMICOL {}
-    | MATRIX ID LSTHAN DATATYPE GRTHAN ASSGN OBRACE MatrixL CBRACE SEMICOL {}
+MatrixDecl : MATRIX ID MATRIX_TYPE SEMICOL {}
+    | MATRIX ID MATRIX_TYPE ASSGN ID SEMICOL {}
+    | MATRIX ID MATRIX_TYPE OBRAK numL CBRAK SEMICOL {}
+    | MATRIX ID MATRIX_TYPE ASSGN OBRACE MatrixL CBRACE SEMICOL {}
     ;
 
 numL : NUM COMMA numL
@@ -95,7 +95,7 @@ params : parameter COMMA params
     ;
 
 parameter : DATATYPE ID
-    | MATRIX LSTHAN DATATYPE GRTHAN ID
+    | MATRIX MATRIX_TYPE ID
     | DATATYPE ID OSQA NUM CSQA
     ;
 
@@ -123,6 +123,8 @@ predD : arg { }
       | arg COMP arg { }
       | arg LSTHAN arg { }
       | arg GRTHAN arg { }
+      | arg SHIFT arg
+      | arg BIT_OP arg 
       ;
 
 arg : ID {} 
@@ -160,6 +162,9 @@ loop: FOR OBRAK declstmt  pred SEMICOL expr CBRAK OBRACE stmt CBRACE
     | FOR OBRAK   SEMICOL pred SEMICOL  CBRAK  OBRACE stmt CBRACE
     | WHILE OBRAK pred CBRAK  OBRACE stmt CBRACE
 
+
+// return statement
+return_statment: RETURN pred 
 
 %%
 
