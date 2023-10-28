@@ -48,7 +48,7 @@ stmtD : declstmt
 declstmt : DATATYPE IDL SEMICOL {fprintf(fp," : declaration statement ");}
         | DATATYPE ARRL SEMICOL {fprintf(fp," : declaration statement ");}
         | DATATYPE ID ASSGN rhs SEMICOL {fprintf(fp," : declaration statement ");}
-        | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE SEMICOL  {fprintf(fp," : declaration statement ");}
+        | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE SEMICOL  {fprintf(fp," : declaration statement ");}\
         | MatrixDecl
         ;
         
@@ -68,10 +68,10 @@ constL : NUM COMMA constL {}
     | CHAR COMMA constL {}
     ;
 
-MatrixDecl : MATRIX ID MATRIX_TYPE SEMICOL {}
-    | MATRIX ID MATRIX_TYPE ASSGN ID SEMICOL {}
-    | MATRIX ID MATRIX_TYPE OBRAK numL CBRAK SEMICOL {}
-    | MATRIX ID MATRIX_TYPE ASSGN OBRACE MatrixL CBRACE SEMICOL {}
+MatrixDecl : MATRIX ID LSTHAN DATATYPE GRTHAN SEMICOL {}
+    | MATRIX ID LSTHAN DATATYPE GRTHAN ASSGN ID SEMICOL {}
+    | MATRIX ID LSTHAN DATATYPE GRTHAN OBRAK numL CBRAK SEMICOL {}
+    | MATRIX ID LSTHAN DATATYPE GRTHAN ASSGN OBRACE MatrixL CBRACE SEMICOL {}
     ;
 
 numL : NUM COMMA numL
@@ -84,7 +84,7 @@ MatrixL : OBRACE constL CBRACE MatrixL
 
 //function declaration
 FuncDecl : FuncHead OBRAK params CBRAK OBRACE FuncBody CBRACE
-         | FuncHead OBRAK CBRAK OBRACE FuncBody CBRACE
+         | 
     ;
 
 FuncHead : DATATYPE ID
@@ -95,7 +95,7 @@ params : parameter COMMA params
     ;
 
 parameter : DATATYPE ID
-    | MATRIX MATRIX_TYPE ID
+    | MATRIX LSTHAN DATATYPE GRTHAN ID
     | DATATYPE ID OSQA NUM CSQA
     ;
 
@@ -123,8 +123,6 @@ predD : arg { }
       | arg COMP arg { }
       | arg LSTHAN arg { }
       | arg GRTHAN arg { }
-      | arg SHIFT arg
-      | arg BIT_OP arg 
       ;
 
 arg : ID {} 
@@ -163,11 +161,57 @@ loop: FOR OBRAK declstmt  pred SEMICOL expr CBRAK OBRACE stmt CBRACE
     | WHILE OBRAK pred CBRAK  OBRACE stmt CBRACE
 
 
-// return statement
-return_statment: RETURN pred 
-
 %%
+//inbuilt functions
+//create a dataframe
+DF_DECL: DF ID ASSGN DF OBRAK CBRAK SEMICOL
+        ;
 
+//read a dataframe
+DF_READ: ID DOT ID OBRAK ID COMMA ID CBRAK SEMICOL
+       | ID DOT ID OBRAK ID COMMA ID COMMA STRING CBRAK SEMICOL
+       ;
+//assign a dataframe 
+DF_ASSIGN : ID ASSGN ID DOT ID OBRAK ID CBRAK SEMICOL
+          | ID ASSGN ID SEMICOL
+          :
+//GET COLUMN NAMES OF A DF
+DF_GETCOL : ID ASSGN ID DOT ID OBRAK CBRAK SEMICOL
+          ;
+
+//ADD AND DROP COLUMNS
+DF_ADDCOL : ID DOT ID OBRAK ID COMMA ID CBRAK SEMICOL
+DF_DROPCOL: ID DOT ID OBRAK ID CBRAK SEMICOL
+
+//ADD AND DELETE ROWS
+DF_ADDROW : ID DOT ID OBRAK LIST CBRAK SEMICOL
+          ;
+LIST : LIST_ID COMMA LIST
+     | LIST_ID
+     ;
+    
+LIST_ID : ID
+        | NULL
+        | CONST
+        ;
+
+CONST   : NUM
+        | CHAR
+        | BOOL
+        | STRING
+        ;
+
+DF_DELETEROW : 
+
+//DESCRIBE DATAFRAME
+
+DF_DESCRIBE : ID DOT ID OBRAK CBRAK SEMICOL
+
+//WRITE A DATAFRAME 
+df.write(file_name ,headers ,df);
+DF_WRITE : ID DOT ID OBRAK ID COMMA ID COMMA ID CBRAK SEMICOL
+         | ID DOT ID OBRAK ID COMMA ID CBRAK SEMICOL
+         ;
 int main(int argc,char** argv)
 {
     
