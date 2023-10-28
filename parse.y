@@ -9,18 +9,18 @@
     extern FILE* out;
 %}
 %token NUM FLOAT DATATYPE MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
-%token COMMA STRING CHAR SHIFT ARTH COMP LOG ASSGN ARTHASSGN MATRIX_TYPE BIT_OP FOR WHILE PRINT
-%left NEG  LOG
+%token COMMA STRING CHAR SHIFT COMP LOG ASSGN ARTHASSGN MATRIX_TYPE BIT_OP FOR WHILE PRINT MAIN
+%left NEG LOG ARTH
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
   ;
 
-Decl : Decl Decl {}   
-  | GlobalDecl {} // a global variable declaration
-  | FuncDecl // function declaration
+Decl : /* empty */
+  | GlobalDecl Decl{} // a global variable declaration
+  | FuncDecl Decl // function declaration
   ;
 
-Main: stmt
+Main: MAIN OBRACE stmt CBRACE
 
 GlobalDecl : declstmt {}
    ;
@@ -46,11 +46,11 @@ stmtD : declstmt
 
 
 // declaration statment      
-declstmt : DATATYPE IDL SEMICOL {fprintf(fp," : declaration statement ");}
-    | DATATYPE ARRL SEMICOL {fprintf(fp," : declaration statement ");}
-    | DATATYPE ID ASSGN rhs SEMICOL {fprintf(fp," : declaration statement ");}
-    | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE SEMICOL  {fprintf(fp," : declaration statement ");}
-    | DATATYPE ID OSQA CSQA ASSGN OBRACE CBRACE SEMICOL  {fprintf(fp," : declaration statement ");}
+declstmt : DATATYPE IDL SEMICOL {}
+    | DATATYPE ARRL SEMICOL {}
+    | DATATYPE ID ASSGN rhs SEMICOL {}
+    | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE SEMICOL  {}
+    | DATATYPE ID OSQA CSQA ASSGN OBRACE CBRACE SEMICOL  {}
     | MatrixDecl
     ;
         
@@ -141,9 +141,11 @@ arg : ID {}
     | call_expression {}
     | NUM 
     | FLOAT
+    | ID OSQA arg CSQA
     ;
 
 uni : ID POST
+    | ID OSQA arg CSQA POST
     ;
 
 bin : arg ARTH arg 
@@ -159,12 +161,12 @@ exprstmt : expr SEMICOL
     ;
 
 // conditional statement
-condstmt : IF OBRAK pred CBRAK OBRACE stmt CBRACE 
-    | IF OBRAK pred CBRAK OBRACE stmt CBRACE  elif_list
+condstmt : IF OBRAK pred CBRAK OBRACE stmt CBRACE  elif_list
     | IF OBRAK pred CBRAK OBRACE stmt CBRACE elif_list  ELSE OBRACE stmt CBRACE
     ;
 
-elif_list : | elif_list ELIF OBRAK pred CBRAK OBRACE stmt CBRACE
+elif_list : /* empty */
+    | elif_list ELIF OBRAK pred CBRAK OBRACE stmt CBRACE
     ;
             
 // loop statements
@@ -211,11 +213,11 @@ int main(int argc,char** argv)
     char tokf[50];
     snprintf(tokf,sizeof(tokf), "out_%s.txt", argv[1]);
     out = fopen(tokf,"w");   //opeing the output seq tokens file
-    if(!sq)
-    {
-        printf("There was an error opening the output token file\n");
-        return 0;
-    }
+    // if(!sq)
+    // {
+    //     printf("There was an error opening the output token file\n");
+    //     return 0;
+    // }
    yyparse();
    fclose(out); 
    return 1;
@@ -224,5 +226,5 @@ int main(int argc,char** argv)
 void yyerror(const char* s)
 {
     printf("Error: %s at line %d\n",s,yylineno);
-    fprintf(fp," : invalid statement");
+    //fprintf(fp," : invalid statement");
 }

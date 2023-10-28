@@ -28,7 +28,8 @@ continue {return CONT;}
 for {return FOR;}
 while {return WHILE;}
 alpha+(digit|alpha)* {return ID;}
-print {return PRINT}
+print {return PRINT;}
+main {return MAIN;}
 
 
 \(	{/*printf("%s",yytext);*/  return OBRAK;}
@@ -49,11 +50,11 @@ print {return PRINT}
 
 
 (\")([^\"]|\\.)*(\")   {
-                        yylval.str = strdup(yytext); 
+                        // yylval.str = strdup(yytext); 
                         return STRING;
                        }
 '[^'\n]?' {
-    yylval.character = yytext[1]; 
+    // yylval.character = yytext[1]; 
     return CHAR;
 }
 
