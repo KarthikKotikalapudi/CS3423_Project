@@ -9,63 +9,67 @@
     extern FILE* out;
 %}
 %token NUM FLOAT DATATYPE MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
-%token COMMA STRING CHAR SHIFT ARTH COMP LSTHAN GRTHAN LOG ASSGN ARTHASSGN MATRIX_TYPE BIT_OP FOR WHILE 
-%left NEG  LOG
+%token COMMA STRING CHAR SHIFT COMP LOG ASSGN ARTHASSGN MATRIX_TYPE BIT_OP FOR WHILE PRINT MAIN
+%left NEG LOG ARTH
 %%
-S : D Main D {}  // a valid program is sequence of declarations with a main function
-  |
-  ;
-D : D D {}   
-  | GD {} // a global variable declaration
-  |
+S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
   ;
 
-Main: stmt
+Decl : /* empty */
+  | GlobalDecl Decl{} // a global variable declaration
+  | FuncDecl Decl // function declaration
+  ;
 
+Main: MAIN OBRACE stmt CBRACE
 
-GD : declstmt {}
+GlobalDecl : declstmt {}
    ;
 
-     ; 
-argL : DATATYPE ID COMMA argL {}
-     | DATATYPE ID {} 
-     ;
 // stmt rule produces all possible sequence of statements with scopes in between 
 stmt : stmtL OBRACE stmt CBRACE stmt {} // modify this if needed
-     | stmtL {}
-     ;
+    | stmtL {}
+    ;
+
 stmtL : stmtD stmtL {}
-      | {}
-      ;  
+    | {}
+    ;  
+
 // these are different types of single statements
 stmtD : declstmt 
-      | exprstmt
-      | callstmt
-      ;
+    | exprstmt
+    | callstmt
+    | condstmt
+    | loop
+    | returnstmt
+    | printstmt
+    ;
 
 
-//declaration statment      
-declstmt : DATATYPE IDL SEMICOL {fprintf(fp," : declaration statement ");}
-        | DATATYPE ARRL SEMICOL {fprintf(fp," : declaration statement ");}
-        | DATATYPE ID ASSGN rhs SEMICOL {fprintf(fp," : declaration statement ");}
-        | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE SEMICOL  {fprintf(fp," : declaration statement ");}
-        | MatrixDecl
-        ;
+// declaration statment      
+declstmt : DATATYPE IDL SEMICOL {}
+    | DATATYPE ARRL SEMICOL {}
+    | DATATYPE ID ASSGN rhs SEMICOL {}
+    | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE SEMICOL  {}
+    | DATATYPE ID OSQA CSQA ASSGN OBRACE CBRACE SEMICOL  {}
+    | MatrixDecl
+    ;
         
 IDL : ID COMMA IDL {}
     | ID {}
     ;
 
-ARRL : ID OSQA NUM CSQA COMMA ARRL {}
-    | ID OSQA NUM CSQA {}
-    | ID OSQA ID CSQA COMMA ARRL {}
-    | ID OSQA ID CSQA {}
+ARRL : ID OSQA arg CSQA COMMA ARRL {}
+    | ID OSQA arg CSQA {}
     ;
 
 constL : NUM COMMA constL {}
     | FLOAT COMMA constL {}
     | STRING COMMA constL {}
     | CHAR COMMA constL {}
+    | NUM
+    | FLOAT
+    | STRING
+    | CHAR
     ;
 
 MatrixDecl : MATRIX ID LSTHAN DATATYPE GRTHAN SEMICOL {}
@@ -84,7 +88,7 @@ MatrixL : OBRACE constL CBRACE MatrixL
 
 //function declaration
 FuncDecl : FuncHead OBRAK params CBRAK OBRACE FuncBody CBRACE
-         | 
+    | 
     ;
 
 FuncHead : DATATYPE ID
@@ -102,27 +106,33 @@ parameter : DATATYPE ID
 FuncBody : stmt
     ;
 
-//call statement
 varL: arg 
-    | varL COMMA
+    | varL COMMA arg
+    ;
 
 call_expression: ID OBRAK varL CBRAK
-callstmt: call_expression SEMICOL
-
-//expression statments    
-rhs : pred {} // pred variable covers predicates and all types of other valid rhs elements
+    | ID OBRAK CBRAK
     ;
+
+callstmt: call_expression SEMICOL
+    ;
+
+// expression statments    
+rhs : pred {}
+    ;
+
 // pred rules produces all valid predicates
 pred : pred LOG pred { } 
-     | OBRAK pred CBRAK { }
-     | NEG pred
-     | predD { }
-     ;
+    | OBRAK pred CBRAK { }
+    | NEG pred
+    | predD { }
+    ;
+
 // pred produces the basic elements of a general predicate
 predD : arg { } 
       | arg COMP arg { }
-      | arg LSTHAN arg { }
-      | arg GRTHAN arg { }
+      | arg SHIFT arg
+      | arg BIT_OP arg 
       ;
 
 arg : ID {} 
@@ -131,9 +141,11 @@ arg : ID {}
     | call_expression {}
     | NUM 
     | FLOAT
+    | ID OSQA arg CSQA
     ;
 
 uni : ID POST
+    | ID OSQA arg CSQA POST
     ;
 
 bin : arg ARTH arg 
@@ -141,24 +153,29 @@ bin : arg ARTH arg
 
 expr : ID ASSGN rhs {}
     | ID ARTHASSGN rhs {}
+    | ID OSQA arg CSQA ASSGN rhs {}
+    | ID OSQA arg CSQA ARTHASSGN rhs {}
     ;
 
-exprstmt: expr SEMICOL
+exprstmt : expr SEMICOL
     ;
 
-//conditional statement
-cond_stmt: IF OBRAK pred CBRAK OBRACE stmt CBRACE 
-         | IF OBRAK pred CBRAK OBRACE stmt CBRACE  elif_list
-         | IF OBRAK pred CBRAK OBRACE stmt CBRACE elif_list  ELSE OBRACE stmt CBRACE
+// conditional statement
+condstmt : IF OBRAK pred CBRAK OBRACE stmt CBRACE  elif_list
+    | IF OBRAK pred CBRAK OBRACE stmt CBRACE elif_list  ELSE OBRACE stmt CBRACE
+    ;
 
-elif_list: | elif_list ELIF  OBRAK pred CBRAK OBRACE stmt CBRACE 
+elif_list : /* empty */
+    | elif_list ELIF OBRAK pred CBRAK OBRACE stmt CBRACE
+    ;
             
-//loop statements
-loop: FOR OBRAK declstmt  pred SEMICOL expr CBRAK OBRACE stmt CBRACE
+// loop statements
+loop : FOR OBRAK declstmt  pred SEMICOL expr CBRAK OBRACE stmt CBRACE
     | FOR OBRAK declstmt  pred SEMICOL  CBRAK  OBRACE stmt CBRACE
     | FOR OBRAK   SEMICOL pred SEMICOL expr CBRAK  OBRACE stmt CBRACE
     | FOR OBRAK   SEMICOL pred SEMICOL  CBRAK  OBRACE stmt CBRACE
     | WHILE OBRAK pred CBRAK  OBRACE stmt CBRACE
+    ;
 
 
 %%
@@ -236,11 +253,11 @@ int main(int argc,char** argv)
     char tokf[50];
     snprintf(tokf,sizeof(tokf), "out_%s.txt", argv[1]);
     out = fopen(tokf,"w");   //opeing the output seq tokens file
-    if(!sq)
-    {
-        printf("There was an error opening the output token file\n");
-        return 0;
-    }
+    // if(!sq)
+    // {
+    //     printf("There was an error opening the output token file\n");
+    //     return 0;
+    // }
    yyparse();
    fclose(out); 
    return 1;
@@ -249,5 +266,5 @@ int main(int argc,char** argv)
 void yyerror(const char* s)
 {
     printf("Error: %s at line %d\n",s,yylineno);
-    fprintf(fp," : invalid statement");
+    //fprintf(fp," : invalid statement");
 }
