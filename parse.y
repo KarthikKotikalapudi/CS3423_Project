@@ -285,8 +285,11 @@ MATRIX_FUN0 : rhs DOT ID OBRAK CBRAK SEMICOL
 MATRIX_POW  : rhs DOT ID OBRAK rhs CBRAK SEMICOL
             ;
 //SORT FUNC
-SORT_FUN    : SORT OBRAK rhs COMMA rhs CBRAK SEMICOL
-            | SORT OBRAK rhs COMMA rhs COMMA NUM CBRAK SEMICOL
+SORT_FUN    : ID OBRAK rhs COMMA rhs CBRAK SEMICOL
+            | ID OBRAK rhs COMMA rhs COMMA NUM CBRAK SEMICOL
+            ;
+
+%%
 int main(int argc,char** argv)
 {
     
