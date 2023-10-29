@@ -1,5 +1,5 @@
 add BOOL constants, NULL in lex
-
+sort ni ela teeskovali parser ki?
 changes in 7.1 
 in add or drop columns one can add an array or list of columns or one column at a time
 one can drop column by passing its id(index) instead of name and also using combination of both of them. ie [1,"col2",3,4]
