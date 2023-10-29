@@ -211,6 +211,23 @@ DF_DESCRIBE : ID DOT ID OBRAK CBRAK SEMICOL
 DF_WRITE : ID DOT ID OBRAK ID COMMA ID COMMA ID CBRAK SEMICOL
          | ID DOT ID OBRAK ID COMMA ID CBRAK SEMICOL
          ;
+
+//matrix functions
+//Transpose, determinent, inverse
+MATRIX_TRANS: MATRIX_FUN0
+            ;
+MATRIX_INV  : MATRIX_FUN0
+            ;
+MATRIX_DET  : MATRIX_FUN0
+            ;
+MATRIX_FUN0 : rhs DOT ID OBRAK CBRAK SEMICOL
+            ;
+//POWER FUNC
+MATRIX_POW  : rhs DOT ID OBRAK rhs CBRAK SEMICOL
+            ;
+//SORT FUNC
+SORT_FUN    : SORT OBRAK rhs COMMA rhs CBRAK SEMICOL
+            | SORT OBRAK rhs COMMA rhs COMMA NUM CBRAK SEMICOL
 int main(int argc,char** argv)
 {
     
