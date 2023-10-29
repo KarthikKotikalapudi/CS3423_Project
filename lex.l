@@ -28,6 +28,8 @@ continue {return CONT;}
 for {return FOR;}
 while {return WHILE;}
 alpha+(digit|alpha)* {return ID;}
+print {return PRINT;}
+main {return MAIN;}
 
 
 \(	{/*printf("%s",yytext);*/  return OBRAK;}
@@ -48,26 +50,24 @@ alpha+(digit|alpha)* {return ID;}
 
 
 (\")([^\"]|\\.)*(\")   {
-                        yylval.str = strdup(yytext); 
+                        // yylval.str = strdup(yytext); 
                         return STRING;
                        }
 '[^'\n]?' {
-    yylval.character = yytext[1]; 
+    // yylval.character = yytext[1]; 
     return CHAR;
 }
-"++"|"--"	{/*printf("%s",yytext);*/  return POST;}
-"<<"|">>"	{/*printf("%s",yytext);*/  return SHIFT;}
-"**"|"%"|"*"|"/"|"+"|"-"	{/*printf("%s",yytext);*/  return ARTH;}
-"<="|">="|"=="	{/*printf("%s",yytext);*/  return COMP;}
-"<" {/*printf("%s",yytext);*/  return LSTHAN;}
-">" {/*printf("%s",yytext);*/  return GRTHAN;}
-"AND"|"OR"	{/*printf("%s",yytext);*/  return LOG;}
-"=" {/*printf("%s",yytext);*/  return ASSGN;}
-"+="|"*="|"-="|"%="	{/*printf("%s",yytext);*/  return ARTHASSGN;}
 
 
 "<int>"|"<float>" {/*printf("%s",yytext);*/  return MATRIX_TYPE;}
-"^"|"&"|"|"|  {/*printf("%s",yytext);*/  return BIT_OP;}
+"++"|"--"	{/*printf("%s",yytext);*/  return POST;}
+"<<"|">>"	{/*printf("%s",yytext);*/  return SHIFT;}
+"**"|"%"|"*"|"/"|"+"|"-"	{/*printf("%s",yytext);*/  return ARTH;}
+"<="|">="|"=="|"<"|">"	{/*printf("%s",yytext);*/  return COMP;}
+"AND"|"OR"	{/*printf("%s",yytext);*/  return LOG;}
+"=" {/*printf("%s",yytext);*/  return ASSGN;}
+"+="|"*="|"-="|"/="|"%="	{/*printf("%s",yytext);*/  return ARTHASSGN;}
+"^"|"&"|"|"|"~"  {/*printf("%s",yytext);*/  return BIT_OP;}
 
 
 [ \t]  { /*Ignore whitespace and tabs*/ }
