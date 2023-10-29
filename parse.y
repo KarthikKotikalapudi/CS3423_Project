@@ -9,7 +9,7 @@
     extern FILE* out;
 %}
 %token NUM FLOAT DATATYPE MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
-%token COMMA STRING CHAR SHIFT COMP LOG ASSGN ARTHASSGN MATRIX_TYPE BIT_OP FOR WHILE PRINT MAIN
+%token COMMA STRING CHAR SHIFT COMP LOG ASSGN ARTHASSGN MATRIX_TYPE BIT_OP FOR WHILE PRINT MAIN NULL BOOL SORT
 %left NEG LOG ARTH
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
@@ -50,7 +50,7 @@ stmtD : declstmt
 // declaration statment      
 declstmt : DATATYPE IDL SEMICOL {}
     | DATATYPE ARRL SEMICOL {}
-    | DATATYPE ID ASSGN rhs SEMICOL {}
+    | DATATYPE IDLAssgn SEMICOL {}
     | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE SEMICOL  {}
     | DATATYPE ID OSQA CSQA ASSGN OBRACE CBRACE SEMICOL  {}
     | MatrixDecl
@@ -59,6 +59,10 @@ declstmt : DATATYPE IDL SEMICOL {}
 IDL : ID COMMA IDL {}
     | ID {}
     ;
+
+IDLAssgn : ID ASSGN rhs COMMA IDLAssgn {}
+         | ID ASSGN rhs {}
+         ;
 
 ARRL : ID OSQA arg CSQA COMMA ARRL {}
     | ID OSQA arg CSQA {}
@@ -116,6 +120,7 @@ call_expression: ID OBRAK varL CBRAK
     ;
 
 callstmt: call_expression SEMICOL
+        | MATRIX_FUN0 | MATRIX_POW
     ;
 
 // expression statments    
@@ -142,8 +147,12 @@ arg : ID {}
     | call_expression {}
     | NUM 
     | FLOAT
-    | ID OSQA arg CSQA
+    | ID access
     ;
+
+access : OSQA arg CSQA access {}
+       | OSQA arg CSQA {}
+       ;
 
 uni : ID POST
     | ID OSQA arg CSQA POST
@@ -154,8 +163,8 @@ bin : arg ARTH arg
 
 expr : ID ASSGN rhs {}
     | ID ARTHASSGN rhs {}
-    | ID OSQA arg CSQA ASSGN rhs {}
-    | ID OSQA arg CSQA ARTHASSGN rhs {}
+    | ID access ASSGN rhs {}
+    | ID access ARTHASSGN rhs {}
     ;
 
 exprstmt : expr SEMICOL
@@ -192,10 +201,10 @@ returnstmt : RETURN pred SEMICOL
 
 // print statement
 printstmt : PRINT OBRAK STRING CBRAK SEMICOL
+          ;
 
-%%
-//inbuilt functions
-//create a dataframe
+// inbuilt functions
+// create a dataframe
 DF_DECL: DF ID ASSGN DF OBRAK CBRAK SEMICOL
         ;
 
@@ -204,9 +213,9 @@ DF_READ: ID DOT ID OBRAK ID COMMA ID CBRAK SEMICOL
        | ID DOT ID OBRAK ID COMMA ID COMMA STRING CBRAK SEMICOL
        ;
 //assign a dataframe 
-DF_ASSIGN : ID DOT ID OBRAK ID CBRAK SEMICOL
-          | ID SEMICOL
-          :
+DF_ASSIGN : ID ASSGN ID DOT ID OBRAK ID CBRAK SEMICOL
+          | ID ASSGN ID SEMICOL
+          ;
 //GET COLUMN NAMES OF A DF
 DF_GETCOL : ID DOT ID OBRAK CBRAK SEMICOL
           ;
@@ -260,6 +269,7 @@ MATRIX_POW  : rhs DOT ID OBRAK rhs CBRAK SEMICOL
 //SORT FUNC
 SORT_FUN    : SORT OBRAK rhs COMMA rhs CBRAK SEMICOL
             | SORT OBRAK rhs COMMA rhs COMMA NUM CBRAK SEMICOL
+%%
 int main(int argc,char** argv)
 {
     
