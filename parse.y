@@ -48,7 +48,7 @@ stmtD : declstmt
 declstmt : DATATYPE IDL SEMICOL {fprintf(fp," : declaration statement ");}
         | DATATYPE ARRL SEMICOL {fprintf(fp," : declaration statement ");}
         | DATATYPE ID ASSGN rhs SEMICOL {fprintf(fp," : declaration statement ");}
-        | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE SEMICOL  {fprintf(fp," : declaration statement ");}\
+        | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE SEMICOL  {fprintf(fp," : declaration statement ");}
         | MatrixDecl
         ;
         
