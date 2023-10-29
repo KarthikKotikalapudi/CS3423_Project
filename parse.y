@@ -223,7 +223,7 @@ section_body: declstmt
 
 access_specifier: PRIVATE COL 
               | PUBLIC COL 
-              | PROTECTED 
+              | PROTECTED COL
 
 class_body:| class_body access_specifier section_body
              
