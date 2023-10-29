@@ -8,8 +8,8 @@ FILE * out; //output file
 digit [0-9]
 alpha [A-Za-z_]
 %%
-[-]?digit+ {return  NUM;} 
-[-]?(digit*[.])?digit+ {return FLOAT;}
+[-]?{digit}+ {return  NUM;} 
+[-]?({digit}*[.])?{digit}+ {return FLOAT;}
 
 #.*\n  /*ignoring one line comments*/
 #\*(.|\n)*\*# /*ignoring multiline comments*/
@@ -27,7 +27,7 @@ break {return BREAK;}
 continue {return CONT;}
 for {return FOR;}
 while {return WHILE;}
-alpha+(digit|alpha)* {return ID;}
+{alpha}+({digit}|{alpha})* {return ID;}
 print {return PRINT;}
 main {return MAIN;}
 

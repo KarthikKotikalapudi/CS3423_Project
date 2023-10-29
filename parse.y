@@ -42,6 +42,8 @@ stmtD : declstmt
     | loop
     | returnstmt
     | printstmt
+    | break
+    | continue
     ;
 
 
@@ -177,7 +179,20 @@ loop : FOR OBRAK declstmt  pred SEMICOL expr CBRAK OBRACE stmt CBRACE
     | WHILE OBRAK pred CBRAK  OBRACE stmt CBRACE
     ;
 
-//
+break:
+  BREAK SEMICOL
+  ;
+
+continue:
+  CONT SEMICOL
+  ;  
+
+// return statement
+returnstmt : RETURN pred SEMICOL
+    ;
+
+// print statement
+printstmt : PRINT OBRAK STRING CBRAK SEMICOL
 
 %%
 //inbuilt functions
