@@ -141,6 +141,14 @@ predD : arg { }
       | arg BIT_OP arg 
       ;
 
+class_arg:
+     ID DOT ID
+    | ID ARROW ID
+    | ID ARROW ID  
+    | ID DOT function_call
+    | ID ARROW function_call 
+    
+
 arg : ID {} 
     | bin {} 
     | uni {}
@@ -148,8 +156,10 @@ arg : ID {}
     | NUM 
     | FLOAT
     | ID OSQA arg CSQA
-    | ID DOT ID
-    | ID ARROW ID
+    | class_arg
+
+
+
     ;
 
 uni : ID POST
