@@ -312,12 +312,11 @@ int main(int argc,char** argv)
     char tokf[50];
     snprintf(tokf,sizeof(tokf), "out_%s.txt", argv[1]);
     out = fopen(tokf,"w");   //opeing the output seq tokens file
-    // if(!sq)
-    // {
-    //     printf("There was an error opening the output token file\n");
-    //     return 0;
-    // }
-   yyparse();
+
+   if(!yyparse())
+   {
+     printf("The parsing was successful\n");
+   }
    fclose(out); 
    return 1;
 }
