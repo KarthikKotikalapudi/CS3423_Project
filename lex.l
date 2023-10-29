@@ -71,6 +71,11 @@ main {return MAIN;}
 "+="|"*="|"-="|"/="|"%="	{/*printf("%s",yytext);*/  return ARTHASSGN;}
 "^"|"&"|"|"|"~"  {/*printf("%s",yytext);*/  return BIT_OP;}
 
+PRIVATE {return PRIVATE;}
+PUBLIC {return PUBLIC;}
+PROTECTED { return PROTECTED;}
+"->" {return ARROW;}
+CLASS {return CLASS;}
 {alpha}+({beta})* {return ID;}
 
 

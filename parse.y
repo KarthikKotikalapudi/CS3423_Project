@@ -9,7 +9,7 @@
     extern FILE* out;
 %}
 %token NUM FLOAT DATATYPE MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
-%token COMMA STRING CHAR SHIFT COMP LOG ASSGN ARTHASSGN MATRIX_TYPE BIT_OP FOR WHILE PRINT MAIN
+%token COMMA STRING CHAR SHIFT COMP LOG ASSGN ARTHASSGN MATRIX_TYPE BIT_OP FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC ARROW
 %left NEG LOG ARTH
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
@@ -54,6 +54,7 @@ declstmt : DATATYPE IDL SEMICOL {}
     | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE SEMICOL  {}
     | DATATYPE ID OSQA CSQA ASSGN OBRACE CBRACE SEMICOL  {}
     | MatrixDecl
+    | class_decl
     ;
         
 IDL : ID COMMA IDL {}
@@ -111,8 +112,12 @@ varL: arg
     | varL COMMA arg
     ;
 
-call_expression: ID OBRAK varL CBRAK
+function_call:ID OBRAK varL CBRAK
     | ID OBRAK CBRAK
+
+call_expression: function_call
+    | ID DOT function_call
+    | ID ARROW function_call
     ;
 
 callstmt: call_expression SEMICOL
@@ -143,6 +148,8 @@ arg : ID {}
     | NUM 
     | FLOAT
     | ID OSQA arg CSQA
+    | ID DOT ID
+    | ID ARROW ID
     ;
 
 uni : ID POST
@@ -156,6 +163,10 @@ expr : ID ASSGN rhs {}
     | ID ARTHASSGN rhs {}
     | ID OSQA arg CSQA ASSGN rhs {}
     | ID OSQA arg CSQA ARTHASSGN rhs {}
+    | ID DOT ID ASSGN  rhs
+    | ID ARROW ID ASSGN rhs
+    | ID DOT ID ARTHASSGN rhs
+    | ID ARROW ID ARTHASSGN rhs
     ;
 
 exprstmt : expr SEMICOL
@@ -192,6 +203,28 @@ returnstmt : RETURN pred SEMICOL
 
 // print statement
 printstmt : PRINT OBRAK STRING CBRAK SEMICOL
+
+
+
+//class related syntax
+section_body: declstmt
+            | FuncDecl
+            | class   
+
+access_specifier: PRIVATE COL 
+              | PUBLIC COL 
+              | PROTECTED 
+
+class_body:| class_body access_specifier section_body
+             
+
+class:  CLASS ID OBRACE class_body CBRACE SEMICOL
+
+class_decl: ID ID SEMICOL
+          | ID ID ASSGN function_call
+
+      
+
 
 %%
 //inbuilt functions
