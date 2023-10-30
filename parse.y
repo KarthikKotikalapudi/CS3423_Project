@@ -57,6 +57,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL {}
     | DATATYPE ID OSQA CSQA ASSGN OBRACE CBRACE Multideclstmt SEMICOL  {}
     | MatrixDecl MultiMatrixDecl SEMICOL {}
     | object_decl
+    |DF_DECL
     ;
 
 Multideclstmt : ID COMMA Multideclstmt {}
