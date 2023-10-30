@@ -10,7 +10,7 @@
 %}
 %token NUM FLOAT DATATYPE MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR SHIFT COMP LOG ASSGN ARTHASSGN MATRIX_TYPE BIT_OP FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC
-%token BOOL NUL SORT
+%token BOOL NULL SORT 
 %left NEG LOG ARTH
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
@@ -57,7 +57,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL {}
     | DATATYPE ID OSQA CSQA ASSGN OBRACE CBRACE Multideclstmt SEMICOL  {}
     | MatrixDecl MultiMatrixDecl SEMICOL {}
     | object_decl
-    |DF_DECL
+
     ;
 
 Multideclstmt : ID COMMA Multideclstmt {}
@@ -186,7 +186,6 @@ expr : ID ASSGN rhs {}
     | ID ARTHASSGN rhs {}
     | ID access ASSGN rhs {}
     | ID access ARTHASSGN rhs {}
-    | DF_ASSIGN {}
     ;
 
 exprstmt : expr SEMICOL
@@ -255,7 +254,7 @@ Multiobj : /* empty */
          ;
 
 
-// inbuilt functions
+/* // inbuilt functions
 // create a dataframe
 DF_DECL: DF ID ASSGN DF OBRAK CBRAK SEMICOL
         ;
@@ -327,7 +326,7 @@ DF_DESCRIBE : ID DOT ID OBRAK CBRAK
 
 //WRITE A DATAFRAME 
 DF_WRITE : ID DOT ID OBRAK ID COMMA ID COMMA ID CBRAK
-         | ID DOT ID OBRAK ID COMMA ID CBRAK
+         | ID DOT ID OBRAK ID COMMA ID CBRAK */
          ;
 
 //matrix functions
@@ -341,7 +340,7 @@ MATRIX_POW  : ID DOT ID OBRAK rhs CBRAK SEMICOL
             
 //SORT FUNC
 SORT_FUN    : SORT OBRAK ID COMMA ID ARTH NUM CBRAK SEMICOL
-            | ID OBRAK ID COMMA ID ARTH NUM COMMA NUM CBRAK SEMICOL
+            | SORT OBRAK ID COMMA ID ARTH NUM COMMA NUM CBRAK SEMICOL
             ;
 
 %%
