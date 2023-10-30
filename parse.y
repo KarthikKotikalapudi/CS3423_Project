@@ -10,7 +10,7 @@
 %}
 %token NUM FLOAT DATATYPE MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR SHIFT COMP LOG ASSGN ARTHASSGN MATRIX_TYPE BIT_OP FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
-%token BOOL NULL SORT 
+%token BOOL NUL SORT 
 %left NEG LOG ARTH
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
@@ -57,14 +57,13 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL {}
     | DATATYPE ID OSQA CSQA ASSGN OBRACE CBRACE Multideclstmt SEMICOL  {}
     | MatrixDecl MultiMatrixDecl SEMICOL {}
     | object_decl
-
     ;
 
-Multideclstmt : ID COMMA Multideclstmt {}
-    | ID OSQA arg CSQA COMMA Multideclstmt {}
-    | ID ASSGN rhs COMMA Multideclstmt {}
-    | ID OSQA CSQA ASSGN OBRACE constL CBRACE COMMA Multideclstmt {}
-    | ID OSQA CSQA ASSGN OBRACE CBRACE COMMA Multideclstmt {}
+Multideclstmt : COMMA ID Multideclstmt {}
+    | COMMA ID OSQA arg CSQA Multideclstmt {}
+    | COMMA ID ASSGN rhs Multideclstmt {}
+    | COMMA ID OSQA CSQA ASSGN OBRACE constL CBRACE Multideclstmt {}
+    | COMMA ID OSQA CSQA ASSGN OBRACE CBRACE Multideclstmt {}
     | /* empty */
     ;
 
@@ -95,7 +94,7 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {}
 numL : NUM COMMA NUM
     ;
 
-MatrixL : OBRACE constL CBRACE MatrixL
+MatrixL : OBRACE constL CBRACE COMMA MatrixL
     | OBRACE constL CBRACE
     ;
 
