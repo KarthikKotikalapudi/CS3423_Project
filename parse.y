@@ -23,7 +23,8 @@ Decl : /* empty */
 
 Main: MAIN OBRACE stmt CBRACE
 
-GlobalDecl : declstmt {}
+GlobalDecl : declstmt
+           |  class_decl {}
    ;
 
 // stmt rule produces all possible sequence of statements with scopes in between 
@@ -55,7 +56,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL {}
     | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE Multideclstmt SEMICOL  {}
     | DATATYPE ID OSQA CSQA ASSGN OBRACE CBRACE Multideclstmt SEMICOL  {}
     | MatrixDecl MultiMatrixDecl SEMICOL {}
-    | class_decl
+    | object_decl
     ;
 
 Multideclstmt : ID COMMA Multideclstmt {}
@@ -219,25 +220,21 @@ printstmt : PRINT OBRAK STRING CBRAK SEMICOL
 
 
 //class related syntax
-section_body: declstmt
-            | FuncDecl
-            | class
-            ;
 
+class_decl:  CLASS ID OBRACE class_body CBRACE SEMICOL
+   ;
+class_body:| class_body access_specifier section_body
+   ;
 access_specifier: PRIVATE COL 
               | PUBLIC COL 
               | PROTECTED COL
               ;
-
-class_body:| class_body access_specifier section_body
-   ;
-             
-
-class:  CLASS ID OBRACE class_body CBRACE SEMICOL
-   ;
-
-class_decl: ID ID SEMICOL
+section_body: declstmt
+            | FuncDecl
+            ;
+object_decl: ID ID SEMICOL
           | ID ID ASSGN function_call
+          | ID ID ASSGN ID
           ;  
 
 
