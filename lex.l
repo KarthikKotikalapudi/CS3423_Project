@@ -31,6 +31,7 @@ for {return FOR;}
 while {return WHILE;}
 print {return PRINT;}
 main {return MAIN;}
+sort {return SORT;}
 
 
 
