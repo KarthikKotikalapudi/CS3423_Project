@@ -184,7 +184,6 @@ expr : ID ASSGN rhs {}
     | ID ARTHASSGN rhs {}
     | ID access ASSGN rhs {}
     | ID access ARTHASSGN rhs {}
-    | DF_ASSIGN {}
     ;
 
 exprstmt : expr SEMICOL
