@@ -50,7 +50,7 @@ stmtD : declstmt
 // declaration statment      
 declstmt : DATATYPE IDL SEMICOL {}
     | DATATYPE ARRL SEMICOL {}
-    | DATATYPE ID ASSGN rhs SEMICOL {}
+    | DATATYPE IDLAssgn SEMICOL {}
     | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE SEMICOL  {}
     | DATATYPE ID OSQA CSQA ASSGN OBRACE CBRACE SEMICOL  {}
     | MatrixDecl
@@ -60,6 +60,10 @@ declstmt : DATATYPE IDL SEMICOL {}
 IDL : ID COMMA IDL {}
     | ID {}
     ;
+
+IDLAssgn : ID ASSGN rhs COMMA IDLAssgn {}
+         | ID ASSGN rhs {}
+         ;
 
 ARRL : ID OSQA arg CSQA COMMA ARRL {}
     | ID OSQA arg CSQA {}
@@ -73,6 +77,7 @@ constL : NUM COMMA constL {}
     | FLOAT
     | STRING
     | CHAR
+    | BOOL
     ;
 
 MatrixDecl : MATRIX ID MATRIX_TYPE SEMICOL {}
@@ -121,6 +126,7 @@ call_expression: function_call
     ;
 
 callstmt: call_expression SEMICOL
+        | MATRIX_FUN0 | MATRIX_POW
     ;
 
 // expression statments    
@@ -155,12 +161,12 @@ arg : ID {}
     | call_expression {}
     | NUM 
     | FLOAT
-    | ID OSQA arg CSQA
-    | class_arg
-
-
-
+    | ID access
     ;
+
+access : OSQA arg CSQA access {}
+       | OSQA arg CSQA {}
+       ;
 
 uni : ID POST
     | ID OSQA arg CSQA POST
@@ -171,11 +177,9 @@ bin : arg ARTH arg
 
 expr : ID ASSGN rhs {}
     | ID ARTHASSGN rhs {}
-    | ID OSQA arg CSQA ASSGN rhs {}
-    | ID OSQA arg CSQA ARTHASSGN rhs {}
-    | ID DOT ID ASSGN  rhs
+    | ID access ASSGN rhs {}
+    | ID access ARTHASSGN rhs {}
     | ID ARROW ID ASSGN rhs
-    | ID DOT ID ARTHASSGN rhs
     | ID ARROW ID ARTHASSGN rhs
     ;
 
@@ -236,9 +240,8 @@ class_decl: ID ID SEMICOL
       
 
 
-%%
-//inbuilt functions
-//create a dataframe
+// inbuilt functions
+// create a dataframe
 DF_DECL: DF ID ASSGN DF OBRAK CBRAK SEMICOL
         ;
 
@@ -249,14 +252,16 @@ DF_READ: ID DOT ID OBRAK ID COMMA ID CBRAK SEMICOL
 //assign a dataframe 
 DF_ASSIGN : ID ASSGN ID DOT ID OBRAK ID CBRAK SEMICOL
           | ID ASSGN ID SEMICOL
-          :
+          ;
 //GET COLUMN NAMES OF A DF
-DF_GETCOL : ID ASSGN ID DOT ID OBRAK CBRAK SEMICOL
+DF_GETCOL : ID DOT ID OBRAK CBRAK SEMICOL
           ;
 
 //ADD AND DROP COLUMNS
 DF_ADDCOL : ID DOT ID OBRAK ID COMMA ID CBRAK SEMICOL
+          ;
 DF_DROPCOL: ID DOT ID OBRAK ID CBRAK SEMICOL
+          ;
 
 //ADD AND DELETE ROWS
 DF_ADDROW : ID DOT ID OBRAK LIST CBRAK SEMICOL
@@ -266,7 +271,7 @@ LIST : LIST_ID COMMA LIST
      ;
     
 LIST_ID : ID
-        | NULL
+        | NUL
         | CONST
         ;
 
@@ -276,11 +281,27 @@ CONST   : NUM
         | STRING
         ;
 
-DF_DELETEROW : 
+//DELETE A DF ENTRIES BASED ON pred EX: delete(df,col[i][j]==3);
+DF_DELETEROW : ID OBRAK ID COMMA pred CBRAK SEMICOL
+             ;
+
+//SELECT A SUBSET OF DF 
+DF_SELECT   : ID OBRAK ID COMMA ID COMMA pred CBRAK SEMICOL
+            ;
+
+//SET NULLS TO DEFAULT
+DF_SETNULL  : ID DOT ID OBRAK ID COMMA rhs CBRAK SEMICOL
+            ;
+
+//
+//UPDATE DF ENTRIES
+DF_UPDATECOL : ID OBRAK ID COMMA ID COMMA pred COMMA rhs CBRAK SEMICOL
+             | ID OBRAK ID COMMA ID COMMA NUL COMMA rhs CBRAK SEMICOL
+             ;
 
 //DESCRIBE DATAFRAME
-
 DF_DESCRIBE : ID DOT ID OBRAK CBRAK SEMICOL
+            ;
 
 //WRITE A DATAFRAME 
 DF_WRITE : ID DOT ID OBRAK ID COMMA ID COMMA ID CBRAK SEMICOL
@@ -301,8 +322,11 @@ MATRIX_FUN0 : rhs DOT ID OBRAK CBRAK SEMICOL
 MATRIX_POW  : rhs DOT ID OBRAK rhs CBRAK SEMICOL
             ;
 //SORT FUNC
-SORT_FUN    : SORT OBRAK rhs COMMA rhs CBRAK SEMICOL
-            | SORT OBRAK rhs COMMA rhs COMMA NUM CBRAK SEMICOL
+SORT_FUN    : ID OBRAK rhs COMMA rhs CBRAK SEMICOL
+            | ID OBRAK rhs COMMA rhs COMMA NUM CBRAK SEMICOL
+            ;
+
+%%
 int main(int argc,char** argv)
 {
     
@@ -328,12 +352,11 @@ int main(int argc,char** argv)
     char tokf[50];
     snprintf(tokf,sizeof(tokf), "out_%s.txt", argv[1]);
     out = fopen(tokf,"w");   //opeing the output seq tokens file
-    // if(!sq)
-    // {
-    //     printf("There was an error opening the output token file\n");
-    //     return 0;
-    // }
-   yyparse();
+
+   if(!yyparse())
+   {
+     printf("The parsing was successful\n");
+   }
    fclose(out); 
    return 1;
 }

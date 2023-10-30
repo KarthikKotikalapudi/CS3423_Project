@@ -1,11 +1,15 @@
 add BOOL constants, NULL in lex
-sort ni ela teeskovali parser ki?
+Comment: Most industrious can add
+sort ni ela teeskovali parser ki? ID
 changes in 7.1 
 in add or drop columns one can add an array or list of columns or one column at a time
-one can drop column by passing its id(index) instead of name and also using combination of both of them. ie [1,"col2",3,4]
+one can drop column by passing its id(index) instead of name and also using combination of both of them. ie [1,"col2",3,4] ; 
+Comment : we don't have list datatype, we can add
 df.write() can be written as 
 df.write(file_name ,headers ,df);
 df.write(file_name , df); where no headers will be printed in csv
 get can also take columns ids or column names or a combination of both.
 will it be better to write a function to get metadata of a df?
+Comment : we need 
 suggest (or let's schedule a meet to get) a valid syntax for predicate logic for df.
+Comment: A new statement for select

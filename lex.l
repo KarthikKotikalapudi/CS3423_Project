@@ -62,6 +62,8 @@ main {return MAIN;}
 
 
 "<int>"|"<float>" {/*printf("%s",yytext);*/  return MATRIX_TYPE;}
+"true"|"false"  {/*printf("%s",yytext);*/  return BOOL;}
+"NULL"  {/*printf("%s",yytext);*/  return NUL;}
 "++"|"--"	{/*printf("%s",yytext);*/  return POST;}
 "<<"|">>"	{/*printf("%s",yytext);*/  return SHIFT;}
 "**"|"%"|"*"|"/"|"+"|"-"	{/*printf("%s",yytext);*/  return ARTH;}
