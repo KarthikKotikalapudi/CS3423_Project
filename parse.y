@@ -103,6 +103,7 @@ FuncDecl :FuncHead OBRAK params CBRAK OBRACE FuncBody CBRACE
     ;
 
 FuncHead : DATATYPE ID
+    | ID ID
     ;
 
 params : parameter COMMA params
@@ -110,21 +111,21 @@ params : parameter COMMA params
     ;
 
 parameter : DATATYPE ID
-    | MATRIX MATRIX_TYPE ID
+    | MATRIX ID MATRIX_TYPE
     | DATATYPE ID OSQA NUM CSQA
+    | ID ID
+    | ID ID OSQA NUM CSQA
     ;
 
 FuncBody : stmt
     ;
 
-varL: arg 
-    | varL COMMA arg
+varL: rhs 
+    | varL COMMA rhs
     ;
 
 function_call:ID OBRAK varL CBRAK
     | ID OBRAK CBRAK
-
-
     ;
 
 call_expression: function_call
@@ -165,6 +166,9 @@ arg : ID {}
     | call_expression {}
     | NUM 
     | FLOAT
+    | BOOL
+    | CHAR
+    | STRING
     | ID access
     | class_arg
     ;
@@ -174,7 +178,7 @@ access : OSQA arg CSQA OSQA arg CSQA {}
        ;
 
 uni : ID POST
-    | ID OSQA arg CSQA POST
+    | ID access POST
     ;
 
 bin : arg ARTH arg 
@@ -237,6 +241,7 @@ class_body:| class_body access_specifier section_body
 access_specifier: PRIVATE COL                                                                                                       
               | PUBLIC COL 
               | PROTECTED COL
+              |
               ;
 
 
@@ -266,8 +271,10 @@ PARENT_LIST:  access_specifier ID
 //SORT FUNC
 SORT_FUN    : SORT OBRAK ID COMMA ID ARTH NUM CBRAK SEMICOL
             | SORT OBRAK ID COMMA ID ARTH NUM COMMA NUM CBRAK SEMICOL
+            | SORT OBRAK ID COMMA ID ARTH ID COMMA NUM CBRAK SEMICOL
+            | SORT OBRAK ID COMMA ID ARTH ID CBRAK SEMICOL
             ;
-
+            
 %%
 int main(int argc,char** argv)
 {

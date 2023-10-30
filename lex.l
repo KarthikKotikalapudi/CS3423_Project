@@ -61,6 +61,7 @@ sort {return SORT;}
                        }
 '[^'\n]?' {
     // yylval.character = yytext[1]; 
+    //printf("%s",yytext);
     return CHAR;
 }
 
@@ -77,10 +78,10 @@ sort {return SORT;}
 "+="|"*="|"-="|"/="|"%="	{/*printf("%s",yytext);*/  return ARTHASSGN;}
 "^"|"&"|"|"|"~"  {/*printf("%s",yytext);*/  return BIT_OP;}
 
-PRIVATE {return PRIVATE;}
-PUBLIC {return PUBLIC;}
-PROTECTED { return PROTECTED;}
-CLASS {return CLASS;}
+Private {return PRIVATE;}
+Public {return PUBLIC;}
+Protected { return PROTECTED;}
+Class {return CLASS;}
 Inherits {return INHERITS;}
 {alpha}+({beta})* {return ID;}
 
