@@ -9,7 +9,7 @@
     extern FILE* out;
 %}
 %token NUM FLOAT DATATYPE MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
-%token COMMA STRING CHAR SHIFT COMP LOG ASSGN ARTHASSGN MATRIX_TYPE BIT_OP FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC ARROW
+%token COMMA STRING CHAR SHIFT COMP LOG ASSGN ARTHASSGN MATRIX_TYPE BIT_OP FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC
 %token BOOL NUL
 %left NEG LOG ARTH
 %%
@@ -49,25 +49,21 @@ stmtD : declstmt
 
 
 // declaration statment      
-declstmt : DATATYPE IDL SEMICOL {}
-    | DATATYPE ARRL SEMICOL {}
-    | DATATYPE IDLAssgn SEMICOL {}
-    | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE SEMICOL  {}
-    | DATATYPE ID OSQA CSQA ASSGN OBRACE CBRACE SEMICOL  {}
-    | MatrixDecl
+declstmt : DATATYPE ID Multideclstmt SEMICOL {}
+    | DATATYPE ID OSQA arg CSQA Multideclstmt SEMICOL {}
+    | DATATYPE ID ASSGN rhs Multideclstmt SEMICOL {}
+    | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE Multideclstmt SEMICOL  {}
+    | DATATYPE ID OSQA CSQA ASSGN OBRACE CBRACE Multideclstmt SEMICOL  {}
+    | MatrixDecl MultiMatrixDecl SEMICOL {}
     | class_decl
     ;
-        
-IDL : ID COMMA IDL {}
-    | ID {}
-    ;
 
-IDLAssgn : ID ASSGN rhs COMMA IDLAssgn {}
-         | ID ASSGN rhs {}
-         ;
-
-ARRL : ID OSQA arg CSQA COMMA ARRL {}
-    | ID OSQA arg CSQA {}
+Multideclstmt : ID COMMA Multideclstmt {}
+    | ID OSQA arg CSQA COMMA Multideclstmt {}
+    | ID ASSGN rhs COMMA Multideclstmt {}
+    | ID OSQA CSQA ASSGN OBRACE constL CBRACE COMMA Multideclstmt {}
+    | ID OSQA CSQA ASSGN OBRACE CBRACE COMMA Multideclstmt {}
+    | /* empty */
     ;
 
 constL : NUM COMMA constL {}
@@ -81,14 +77,20 @@ constL : NUM COMMA constL {}
     | BOOL
     ;
 
-MatrixDecl : MATRIX ID MATRIX_TYPE SEMICOL {}
-    | MATRIX ID MATRIX_TYPE ASSGN ID SEMICOL {}
-    | MATRIX ID MATRIX_TYPE OBRAK numL CBRAK SEMICOL {}
-    | MATRIX ID MATRIX_TYPE ASSGN OBRACE MatrixL CBRACE SEMICOL {}
+MatrixDecl : MATRIX ID MATRIX_TYPE {}
+    | MATRIX ID MATRIX_TYPE ASSGN ID{}
+    | MATRIX ID MATRIX_TYPE OBRAK numL CBRAK{}
+    | MATRIX ID MATRIX_TYPE ASSGN OBRACE MatrixL CBRACE{}
     ;
 
-numL : NUM COMMA numL
-    | NUM
+MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {}
+    | COMMA ID MATRIX_TYPE ASSGN ID MultiMatrixDecl {}
+    | COMMA ID MATRIX_TYPE OBRAK numL CBRAK MultiMatrixDecl {}
+    | COMMA ID MATRIX_TYPE ASSGN OBRACE MatrixL CBRACE MultiMatrixDecl {}
+    | /* empty */
+    ;
+
+numL : NUM COMMA NUM
     ;
 
 MatrixL : OBRACE constL CBRACE MatrixL
@@ -123,7 +125,6 @@ function_call:ID OBRAK varL CBRAK
 
 call_expression: function_call
     | ID DOT function_call
-    | ID ARROW function_call
     ;
 
 callstmt: call_expression SEMICOL
@@ -150,10 +151,7 @@ predD : arg { }
 
 class_arg:
      ID DOT ID
-    | ID ARROW ID
-    | ID ARROW ID  
     | ID DOT function_call
-    | ID ARROW function_call 
     ;
     
 
@@ -181,8 +179,6 @@ expr : ID ASSGN rhs {}
     | ID ARTHASSGN rhs {}
     | ID access ASSGN rhs {}
     | ID access ARTHASSGN rhs {}
-    | ID ARROW ID ASSGN rhs
-    | ID ARROW ID ARTHASSGN rhs
     ;
 
 exprstmt : expr SEMICOL
@@ -234,9 +230,11 @@ access_specifier: PRIVATE COL
               ;
 
 class_body:| class_body access_specifier section_body
+   ;
              
 
 class:  CLASS ID OBRACE class_body CBRACE SEMICOL
+   ;
 
 class_decl: ID ID SEMICOL
           | ID ID ASSGN function_call

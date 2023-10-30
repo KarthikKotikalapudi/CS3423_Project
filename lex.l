@@ -76,7 +76,6 @@ main {return MAIN;}
 PRIVATE {return PRIVATE;}
 PUBLIC {return PUBLIC;}
 PROTECTED { return PROTECTED;}
-"->" {return ARROW;}
 CLASS {return CLASS;}
 {alpha}+({beta})* {return ID;}
 
