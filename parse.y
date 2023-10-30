@@ -136,6 +136,11 @@ callstmt: call_expression SEMICOL
         | SORT_FUN
     ;
 
+class_arg:
+     ID DOT ID
+    | ID DOT function_call
+    ;
+
 // expression statments    
 rhs : pred {}
     ;
@@ -153,11 +158,6 @@ predD : arg { }
       | arg SHIFT arg
       | arg BIT_OP arg 
       ;
-
-class_arg:
-     ID DOT ID
-    | ID DOT function_call
-    ;
     
 
 arg : ID {} 
@@ -188,6 +188,9 @@ expr : ID ASSGN rhs {}
     | ID ARTHASSGN rhs {}
     | ID access ASSGN rhs {}
     | ID access ARTHASSGN rhs {}
+    | uni {}
+    | ID DOT ID ASSGN rhs {}
+    | ID DOT ID ARTHASSGN rhs {}
     ;
 
 exprstmt : expr SEMICOL
