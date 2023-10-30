@@ -181,6 +181,7 @@ expr : ID ASSGN rhs {}
     | ID ARTHASSGN rhs {}
     | ID access ASSGN rhs {}
     | ID access ARTHASSGN rhs {}
+    | DF_ASSIGN {}
     ;
 
 exprstmt : expr SEMICOL
@@ -254,13 +255,13 @@ Multiobj : /* empty */
 DF_DECL: DF ID ASSGN DF OBRAK CBRAK SEMICOL
         ;
 
-//read a dataframe
+//read a dataframe, add this 
 DF_READ: ID DOT ID OBRAK ID COMMA ID CBRAK SEMICOL
        | ID DOT ID OBRAK ID COMMA ID COMMA STRING CBRAK SEMICOL
        ;
-//assign a dataframe 
+//assign a dataframe , add this to expression
 DF_ASSIGN : ID ASSGN ID DOT ID OBRAK ID CBRAK SEMICOL
-          | ID ASSGN ID SEMICOL
+          | ID ASSGN ID 
           ;
 //GET COLUMN NAMES OF A DF
 DF_GETCOL : ID DOT ID OBRAK CBRAK SEMICOL
