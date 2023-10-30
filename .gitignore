@@ -1,6 +1,6 @@
 .vscode/
 a.out
-out_inp.txt
+*.txt
 lex.yy.c
 y.tab.c
 y.tab.h

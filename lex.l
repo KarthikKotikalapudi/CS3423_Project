@@ -13,8 +13,11 @@ beta  [0-9A-Za-z_]
 [-]?{digit}+ {return  NUM;} 
 [-]?({digit}*[.])?{digit}+ {return FLOAT;}
 
-#.*\n  /*ignoring one line comments*/
-#\*(.|\n)*\*# /*ignoring multiline comments*/
+#.*\n  {yylineno++;}/*ignoring one line comments*/
+#\*(.|\n)*\*# /*ignoring multiline comments*/ {int i = 0; while(yytext[i] != '\0'){
+    if(yytext[i] == '\n')   yylineno++;
+    i++;
+}}
 int|char|float|string|void|bool   { //printf("Datatype: %s\n", yytext);
                                 return DATATYPE; }
 matrix                          {return MATRIX;}
@@ -31,6 +34,7 @@ for {return FOR;}
 while {return WHILE;}
 print {return PRINT;}
 main {return MAIN;}
+sort {return SORT;}
 
 
 
@@ -77,6 +81,7 @@ PRIVATE {return PRIVATE;}
 PUBLIC {return PUBLIC;}
 PROTECTED { return PROTECTED;}
 CLASS {return CLASS;}
+Inherits {return INHERITS;}
 {alpha}+({beta})* {return ID;}
 
 
