@@ -124,6 +124,8 @@ varL: arg
 
 function_call:ID OBRAK varL CBRAK
     | ID OBRAK CBRAK
+
+
     ;
 
 call_expression: function_call
@@ -184,6 +186,7 @@ expr : ID ASSGN rhs {}
     | ID ARTHASSGN rhs {}
     | ID access ASSGN rhs {}
     | ID access ARTHASSGN rhs {}
+    | DF_ASSIGN {}
     ;
 
 exprstmt : expr SEMICOL
@@ -263,6 +266,13 @@ DF_READ: ID DOT ID OBRAK ID COMMA ID CBRAK
        ;
 //assign a dataframe 
 DF_ASSIGN : ID ASSGN DF_GETCOL
+          | ID ASSGN DF_ADDCOL
+          | ID ASSGN DF_ADDROW
+          | ID ASSGN DF_DELETEROW
+          | ID ASSGN DF_DROPCOL
+          | ID ASSGN DF_SETNULL
+          | ID ASSGN DF_SELECT
+          | ID ASSGN DF_UPDATECOL
           | ID ASSGN ID
           ;
 //GET COLUMN NAMES OF A DF
