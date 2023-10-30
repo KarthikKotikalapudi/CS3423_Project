@@ -126,7 +126,6 @@ function_call:ID OBRAK varL CBRAK
     | ID OBRAK CBRAK
 
 call_expression: function_call
-    | ID DOT function_call
     ;
 
 callstmt: call_expression SEMICOL
@@ -164,6 +163,7 @@ arg : ID {}
     | NUM 
     | FLOAT
     | ID access
+    | class_arg
     ;
 
 access : OSQA arg CSQA OSQA arg CSQA {}
@@ -224,19 +224,29 @@ printstmt : PRINT OBRAK STRING CBRAK SEMICOL
 
 class_decl:  CLASS ID OBRACE class_body CBRACE SEMICOL
    ;
+
 class_body:| class_body access_specifier section_body
    ;
+
 access_specifier: PRIVATE COL 
               | PUBLIC COL 
               | PROTECTED COL
               ;
+
 section_body: declstmt
             | FuncDecl
             ;
-object_decl: ID ID SEMICOL
-          | ID ID ASSGN function_call
-          | ID ID ASSGN ID
+
+object_decl : ID ID Multiobj SEMICOL
+          | ID ID ASSGN function_call Multiobj SEMICOL
+          | ID ID ASSGN ID Multiobj SEMICOL
           ;  
+
+Multiobj : /* empty */
+         | COMMA ID ID
+         | COMMA ID ID ASSGN function_call
+         | COMMA ID ID ASSGN ID
+         ;
 
 
 // inbuilt functions
