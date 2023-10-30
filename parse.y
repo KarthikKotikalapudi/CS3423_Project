@@ -153,6 +153,7 @@ class_arg:
     | ID ARROW ID  
     | ID DOT function_call
     | ID ARROW function_call 
+    ;
     
 
 arg : ID {} 
@@ -164,7 +165,7 @@ arg : ID {}
     | ID access
     ;
 
-access : OSQA arg CSQA access {}
+access : OSQA arg CSQA OSQA arg CSQA {}
        | OSQA arg CSQA {}
        ;
 
@@ -223,11 +224,13 @@ printstmt : PRINT OBRAK STRING CBRAK SEMICOL
 //class related syntax
 section_body: declstmt
             | FuncDecl
-            | class   
+            | class
+            ;
 
 access_specifier: PRIVATE COL 
               | PUBLIC COL 
               | PROTECTED COL
+              ;
 
 class_body:| class_body access_specifier section_body
              
@@ -236,8 +239,7 @@ class:  CLASS ID OBRACE class_body CBRACE SEMICOL
 
 class_decl: ID ID SEMICOL
           | ID ID ASSGN function_call
-
-      
+          ;  
 
 
 // inbuilt functions
