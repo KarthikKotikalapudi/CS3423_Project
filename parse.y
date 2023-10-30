@@ -9,7 +9,7 @@
     extern FILE* out;
 %}
 %token NUM FLOAT DATATYPE MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
-%token COMMA STRING CHAR SHIFT COMP LOG ASSGN ARTHASSGN MATRIX_TYPE BIT_OP FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC
+%token COMMA STRING CHAR SHIFT COMP LOG ASSGN ARTHASSGN MATRIX_TYPE BIT_OP FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
 %token BOOL NULL SORT 
 %left NEG LOG ARTH
 %%
@@ -132,8 +132,7 @@ call_expression: function_call
     ;
 
 callstmt: call_expression SEMICOL
-        | MATRIX_FUN0
-        | MATRIX_POW
+        | class_arg SEMICOL
         | SORT_FUN
     ;
 
@@ -228,15 +227,20 @@ printstmt : PRINT OBRAK STRING CBRAK SEMICOL
 //class related syntax
 
 class_decl:  CLASS ID OBRACE class_body CBRACE SEMICOL
+           | Inheritance SEMICOL
    ;
+
+
 
 class_body:| class_body access_specifier section_body
    ;
 
-access_specifier: PRIVATE COL 
+access_specifier: PRIVATE COL                                                                                                       
               | PUBLIC COL 
               | PROTECTED COL
               ;
+
+
 
 section_body: declstmt
             | FuncDecl
@@ -253,91 +257,13 @@ Multiobj : /* empty */
          | COMMA ID ID ASSGN ID
          ;
 
+//Inheritance
+Inheritance: CLASS ID INHERITS PARENT_LIST OBRACE class_body CBRACE 
 
-/* // inbuilt functions
-// create a dataframe
-DF_DECL: DF ID ASSGN DF OBRAK CBRAK SEMICOL
-        ;
+PARENT_LIST:  access_specifier ID 
+           | access_specifier ID COMMA PARENT_LIST
 
-//read a dataframe
-DF_READ: ID DOT ID OBRAK ID COMMA ID CBRAK
-       | ID DOT ID OBRAK ID COMMA ID COMMA STRING CBRAK
-       ;
-//assign a dataframe 
-DF_ASSIGN : ID ASSGN DF_GETCOL
-          | ID ASSGN DF_ADDCOL
-          | ID ASSGN DF_ADDROW
-          | ID ASSGN DF_DELETEROW
-          | ID ASSGN DF_DROPCOL
-          | ID ASSGN DF_SETNULL
-          | ID ASSGN DF_SELECT
-          | ID ASSGN DF_UPDATECOL
-          | ID ASSGN ID
-          ;
-//GET COLUMN NAMES OF A DF
-DF_GETCOL : ID DOT ID OBRAK CBRAK
-          ;
-
-//ADD AND DROP COLUMNS
-DF_ADDCOL : ID DOT ID OBRAK ID COMMA ID CBRAK
-          ;
-DF_DROPCOL: ID DOT ID OBRAK ID CBRAK
-          ;
-
-//ADD AND DELETE ROWS
-DF_ADDROW : ID DOT ID OBRAK LIST CBRAK
-          ;
-LIST : LIST_ID COMMA LIST
-     | LIST_ID
-     ;
-    
-LIST_ID : ID
-        | NUL
-        | CONST
-        ;
-
-CONST   : NUM
-        | CHAR
-        | BOOL
-        | STRING
-        ;
-
-//DELETE A DF ENTRIES BASED ON pred EX: delete(df,col[i][j]==3);
-DF_DELETEROW : ID OBRAK ID COMMA pred CBRAK
-             ;
-
-//SELECT A SUBSET OF DF 
-DF_SELECT   : ID OBRAK ID COMMA ID COMMA pred CBRAK
-            ;
-
-//SET NULLS TO DEFAULT
-DF_SETNULL  : ID DOT ID OBRAK ID COMMA rhs CBRAK
-            ;
-
-//
-//UPDATE DF ENTRIES
-DF_UPDATECOL : ID OBRAK ID COMMA ID COMMA pred COMMA rhs CBRAK
-             | ID OBRAK ID COMMA ID COMMA NUL COMMA rhs CBRAK
-             ;
-
-//DESCRIBE DATAFRAME
-DF_DESCRIBE : ID DOT ID OBRAK CBRAK
-            ;
-
-//WRITE A DATAFRAME 
-DF_WRITE : ID DOT ID OBRAK ID COMMA ID COMMA ID CBRAK
-         | ID DOT ID OBRAK ID COMMA ID CBRAK */
-         ;
-
-//matrix functions
-//Transpose, determinent, inverse
-MATRIX_FUN0 : ID DOT ID OBRAK CBRAK SEMICOL
-            ;
-
-//POWER FUNC
-MATRIX_POW  : ID DOT ID OBRAK rhs CBRAK SEMICOL
-            ;
-            
+           
 //SORT FUNC
 SORT_FUN    : SORT OBRAK ID COMMA ID ARTH NUM CBRAK SEMICOL
             | SORT OBRAK ID COMMA ID ARTH NUM COMMA NUM CBRAK SEMICOL

@@ -78,6 +78,7 @@ PRIVATE {return PRIVATE;}
 PUBLIC {return PUBLIC;}
 PROTECTED { return PROTECTED;}
 CLASS {return CLASS;}
+Inherits {return INHERITS;}
 {alpha}+({beta})* {return ID;}
 
 
