@@ -139,6 +139,9 @@ varL: rhs
 
 function_call:ID OBRAK varL CBRAK
     | ID OBRAK CBRAK
+    | DF_UPDATECOL
+    | DF_SELECT
+    | DF_DELETEROW
     ;
 
 call_expression: function_call
@@ -147,9 +150,6 @@ call_expression: function_call
 callstmt: call_expression SEMICOL
         | class_arg SEMICOL
         | SORT_FUN
-        | DF_UPDATECOL SEMICOL
-        | DF_SELECT SEMICOL
-        | DF_DELETEROW SEMICOL
     ;
 
 class_arg:

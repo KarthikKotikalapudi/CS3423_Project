@@ -10,8 +10,8 @@ alpha [A-Za-z_]
 beta  [0-9A-Za-z_]
 
 %%
-[-]?{digit}+ {return  NUM;} 
-[-]?({digit}*[.])?{digit}+ {return FLOAT;}
+{digit}+ {return  NUM;} 
+({digit}*[.])?{digit}+ {return FLOAT;}
 
 #.*\n  {yylineno++;}/*ignoring one line comments*/
 #\*(.|\n)*\*# /*ignoring multiline comments*/ {int i = 0; while(yytext[i] != '\0'){
