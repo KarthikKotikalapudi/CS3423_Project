@@ -11,7 +11,7 @@
 %token NUM FLOAT DATATYPE MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR ASSGN ARTHASSGN MATRIX_TYPE FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
 %token BOOL NUL SORT SELECT UPDATE DELETE
-%left NEG LOG ARTH BIT_OP SHIFT COMP
+%left NEG LOG ARTH BIT_OP SHIFT COMP COMMA
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
   ;
@@ -51,20 +51,18 @@ stmtD : declstmt
 
 // declaration statment      
 declstmt : DATATYPE ID Multideclstmt SEMICOL {}
-    | DATATYPE ID OSQA pred CSQA Multideclstmt SEMICOL {}
+    | DATATYPE ID access Multideclstmt SEMICOL {}
     | DATATYPE ID ASSGN rhs Multideclstmt SEMICOL {}
-    | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE Multideclstmt SEMICOL  {}
-    | DATATYPE ID OSQA CSQA ASSGN OBRACE CBRACE Multideclstmt SEMICOL  {}
+    | DATATYPE ID access2 ASSGN MultiDimL Multideclstmt SEMICOL  {}
     | MatrixDecl MultiMatrixDecl SEMICOL {}
     | object_decl
     | DF_DECL
     ;
 
 Multideclstmt : COMMA ID Multideclstmt {}
-    | COMMA ID OSQA pred CSQA Multideclstmt {}
+    | COMMA ID access Multideclstmt {}
     | COMMA ID ASSGN rhs Multideclstmt {}
-    | COMMA ID OSQA CSQA ASSGN OBRACE constL CBRACE Multideclstmt {}
-    | COMMA ID OSQA CSQA ASSGN OBRACE CBRACE Multideclstmt {}
+    | COMMA ID access2 ASSGN MultiDimL Multideclstmt {}
     | /* empty */
     ;
 
@@ -77,6 +75,12 @@ constL : NUM COMMA constL {}
     | STRING
     | CHAR
     | BOOL
+    ;
+
+
+MultiDimL : OBRACE MultiDimL CBRACE
+    | MultiDimL COMMA MultiDimL
+    | OBRACE constL CBRACE
     ;
 
 MatrixDecl : MATRIX ID MATRIX_TYPE {}
@@ -105,6 +109,9 @@ FuncDecl :FuncHead OBRAK params CBRAK OBRACE FuncBody CBRACE
 
 FuncHead : DATATYPE ID
     | ID ID
+    | MATRIX MATRIX_TYPE ID
+    | DF ID
+    | DATATYPE access_retn ID
     ;
 
 params : parameter COMMA params
@@ -184,10 +191,23 @@ arg : ID {}
     | class_arg
     ;
 
-access : OSQA pred CSQA OSQA pred CSQA {}
-       | OSQA  CSQA {}
+access : OSQA pred CSQA access
+       | OSQA pred CSQA {}
        ;
 
+access_assgn :
+        OSQA CSQA access
+        | OSQA CSQA {}
+       ;
+
+access2 : access 
+        | access_assgn
+        ;
+
+access_retn : OSQA CSQA access_retn
+        | OSQA CSQA {}
+       ;
+       
 uni : ID POST
     | ID access POST
     ;
