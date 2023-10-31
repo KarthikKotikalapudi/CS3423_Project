@@ -10,7 +10,7 @@
 %}
 %token NUM FLOAT DATATYPE MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR SHIFT COMP LOG ASSGN ARTHASSGN MATRIX_TYPE BIT_OP FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
-%token BOOL NUL SORT 
+%token BOOL NUL SORT SELECT UPDATE DELETE
 %left NEG LOG ARTH
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
@@ -57,6 +57,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL {}
     | DATATYPE ID OSQA CSQA ASSGN OBRACE CBRACE Multideclstmt SEMICOL  {}
     | MatrixDecl MultiMatrixDecl SEMICOL {}
     | object_decl
+    | DF_DECL
     ;
 
 Multideclstmt : COMMA ID Multideclstmt {}
@@ -134,6 +135,9 @@ call_expression: function_call
 callstmt: call_expression SEMICOL
         | class_arg SEMICOL
         | SORT_FUN
+        | DF_UPDATECOL
+        | DF_SELECT
+        | DF_DELETEROW
     ;
 
 class_arg:
@@ -272,12 +276,25 @@ PARENT_LIST:  access_specifier ID
 
            
 //SORT FUNC
-SORT_FUN    : SORT OBRAK ID COMMA ID ARTH NUM CBRAK SEMICOL
-            | SORT OBRAK ID COMMA ID ARTH NUM COMMA NUM CBRAK SEMICOL
-            | SORT OBRAK ID COMMA ID ARTH ID COMMA NUM CBRAK SEMICOL
-            | SORT OBRAK ID COMMA ID ARTH ID CBRAK SEMICOL
+SORT_FUN    : SORT OBRAK rhs COMMA rhs CBRAK SEMICOL
+            | SORT OBRAK rhs COMMA rhs COMMA NUM CBRAK SEMICOL
             ;
+
+//decl, select, update, delete 
+
+DF_DECL: DF ID ASSGN DF OBRAK CBRAK SEMICOL
+        ;
+
+DF_DELETEROW : DELETE OBRAK ID COMMA pred CBRAK
+             ;
             
+DF_UPDATECOL : UPDATE OBRAK ID COMMA ID COMMA pred COMMA rhs CBRAK
+             | UPDATE OBRAK ID COMMA ID COMMA NUL COMMA rhs CBRAK
+             ;
+
+DF_SELECT   : SELECT OBRAK ID COMMA ID COMMA pred CBRAK
+            ;
+
 %%
 int main(int argc,char** argv)
 {

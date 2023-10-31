@@ -23,6 +23,9 @@ int|char|float|string|void|bool   { //printf("Datatype: %s\n", yytext);
 matrix                          {return MATRIX;}
 dataframe                       {return DF;}
 
+select {return SELECT;}
+delete {return DELETE;}
+update {return UPDATE;}
 
 if {return IF;}
 elif {return ELIF;}
