@@ -9,9 +9,9 @@
     extern FILE* out;
 %}
 %token NUM FLOAT DATATYPE MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
-%token COMMA STRING CHAR SHIFT COMP LOG ASSGN ARTHASSGN MATRIX_TYPE BIT_OP FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
+%token COMMA STRING CHAR ASSGN ARTHASSGN MATRIX_TYPE FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
 %token BOOL NUL SORT SELECT UPDATE DELETE
-%left NEG LOG ARTH
+%left NEG LOG ARTH BIT_OP SHIFT COMP
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
   ;
@@ -51,7 +51,7 @@ stmtD : declstmt
 
 // declaration statment      
 declstmt : DATATYPE ID Multideclstmt SEMICOL {}
-    | DATATYPE ID OSQA arg CSQA Multideclstmt SEMICOL {}
+    | DATATYPE ID OSQA pred CSQA Multideclstmt SEMICOL {}
     | DATATYPE ID ASSGN rhs Multideclstmt SEMICOL {}
     | DATATYPE ID OSQA CSQA ASSGN OBRACE constL CBRACE Multideclstmt SEMICOL  {}
     | DATATYPE ID OSQA CSQA ASSGN OBRACE CBRACE Multideclstmt SEMICOL  {}
@@ -61,7 +61,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL {}
     ;
 
 Multideclstmt : COMMA ID Multideclstmt {}
-    | COMMA ID OSQA arg CSQA Multideclstmt {}
+    | COMMA ID OSQA pred CSQA Multideclstmt {}
     | COMMA ID ASSGN rhs Multideclstmt {}
     | COMMA ID OSQA CSQA ASSGN OBRACE constL CBRACE Multideclstmt {}
     | COMMA ID OSQA CSQA ASSGN OBRACE CBRACE Multideclstmt {}
@@ -153,19 +153,26 @@ rhs : pred {}
 pred : pred LOG pred { } 
     | OBRAK pred CBRAK { }
     | NEG pred
-    | predD { }
+    | arg { }
+    | pred COMP pred { }
+    | pred SHIFT pred { }
+    | pred BIT_OP pred { }
+    | pred ARTH pred { }
     ;
 
-// pred produces the basic elements of a general predicate
-predD : arg { } 
-      | arg COMP arg { }
-      | arg SHIFT arg
-      | arg BIT_OP arg 
-      ;
+// OP : LOG
+//    | COMP
+//    | SHIFT
+//    | BIT_OP
+//    | ARTH
+//    ;
+
+// // pred produces the basic elements of a general predicate
+// predD : arg { } 
+//       ;
     
 
-arg : ID {} 
-    | bin {} 
+arg : ID {}
     | uni {}
     | call_expression {}
     | NUM 
@@ -177,16 +184,16 @@ arg : ID {}
     | class_arg
     ;
 
-access : OSQA arg CSQA OSQA arg CSQA {}
-       | OSQA arg CSQA {}
+access : OSQA pred CSQA OSQA pred CSQA {}
+       | OSQA  CSQA {}
        ;
 
 uni : ID POST
     | ID access POST
     ;
 
-bin : arg ARTH arg 
-    ;
+// bin : arg ARTH arg 
+//     ;
 
 expr : ID ASSGN rhs {}
     | ID ARTHASSGN rhs {}
