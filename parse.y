@@ -142,9 +142,9 @@ call_expression: function_call
 callstmt: call_expression SEMICOL
         | class_arg SEMICOL
         | SORT_FUN
-        | DF_UPDATECOL
-        | DF_SELECT
-        | DF_DELETEROW
+        | DF_UPDATECOL SEMICOL
+        | DF_SELECT SEMICOL
+        | DF_DELETEROW SEMICOL
     ;
 
 class_arg:
