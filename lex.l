@@ -74,7 +74,8 @@ sort {return SORT;}
 "NULL"  {/*printf("%s",yytext);*/  return NUL;}
 "++"|"--"	{/*printf("%s",yytext);*/  return POST;}
 "<<"|">>"	{/*printf("%s",yytext);*/  return SHIFT;}
-"**"|"%"|"*"|"/"|"+"|"-"	{/*printf("%s",yytext);*/  return ARTH;}
+"**"|"%"|"*"|"/"|"+"	{/*printf("%s\n",yytext);*/  return ARTH;}
+"-" {/*printf("%s\n",yytext);*/  return MINUS;}
 "<="|">="|"=="|"<"|">"	{/*printf("%s",yytext);*/  return COMP;}
 "AND"|"OR"	{/*printf("%s",yytext);*/  return LOG;}
 "=" {/*printf("%s",yytext);*/  return ASSGN;}

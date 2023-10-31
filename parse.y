@@ -11,7 +11,7 @@
 %token NUM FLOAT DATATYPE MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR ASSGN ARTHASSGN MATRIX_TYPE FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
 %token BOOL NUL SORT SELECT UPDATE DELETE
-%left NEG LOG ARTH BIT_OP SHIFT COMP COMMA
+%left NEG LOG ARTH BIT_OP SHIFT COMP COMMA MINUS
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
   ;
@@ -66,11 +66,15 @@ Multideclstmt : COMMA ID Multideclstmt {}
     | /* empty */
     ;
 
-constL : NUM COMMA constL {}
+numbers : NUM
+     | MINUS NUM
+     ;
+
+constL : numbers COMMA constL {}
     | FLOAT COMMA constL {}
     | STRING COMMA constL {}
     | CHAR COMMA constL {}
-    | NUM
+    | numbers
     | FLOAT
     | STRING
     | CHAR
@@ -96,7 +100,7 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {}
     | /* empty */
     ;
 
-numL : NUM COMMA NUM
+numL : numbers COMMA numbers
     ;
 
 MatrixL : OBRACE constL CBRACE COMMA MatrixL
@@ -112,6 +116,7 @@ FuncHead : DATATYPE ID
     | MATRIX MATRIX_TYPE ID
     | DF ID
     | DATATYPE access_retn ID
+    | ID access_retn ID
     ;
 
 params : parameter COMMA params
@@ -165,6 +170,7 @@ pred : pred LOG pred { }
     | pred SHIFT pred { }
     | pred BIT_OP pred { }
     | pred ARTH pred { }
+    | pred MINUS pred { }
     ;
 
 // OP : LOG
@@ -182,7 +188,7 @@ pred : pred LOG pred { }
 arg : ID {}
     | uni {}
     | call_expression {}
-    | NUM 
+    | numbers
     | FLOAT
     | BOOL
     | CHAR
@@ -304,7 +310,7 @@ PARENT_LIST:  access_specifier ID
            
 //SORT FUNC
 SORT_FUN    : SORT OBRAK rhs COMMA rhs CBRAK SEMICOL
-            | SORT OBRAK rhs COMMA rhs COMMA NUM CBRAK SEMICOL
+            | SORT OBRAK rhs COMMA rhs COMMA MINUS NUM CBRAK SEMICOL
             ;
 
 //decl, select, update, delete 
