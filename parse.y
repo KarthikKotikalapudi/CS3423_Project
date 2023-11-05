@@ -1,16 +1,13 @@
 %{
-    #include<stdlib.h>
-    #include<stdio.h>
-    #include<string.h>
-    #include <bits/stc++.h>
-    using namespace std;
+    #include"global.hpp"
+    #include<bits/stdc++.h>
     #include "helper_functions.hpp"
     void yyerror(const char* s);
     extern int yylex(void);
     extern int yylineno;
     extern FILE* yyin;
     extern FILE* out;
-#global variables
+//global variables
 int scope = 0;
 vector<unordered_map<string,x*>> sym_table_list;
 %}
