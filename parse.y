@@ -14,7 +14,7 @@
 int scope = 0;
 vector<unordered_map<string,x*>> sym_table_list;
 %}
-%token NUM FLOAT DATATYPE MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
+%token NUM FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR ASSGN ARTHASSGN MATRIX_TYPE FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
 %token BOOL NUL SORT SELECT UPDATE DELETE
 %left NEG LOG ARTH BIT_OP SHIFT COMP COMMA MINUS
@@ -27,7 +27,7 @@ vector<unordered_map<string,x*>> sym_table_list;
     } datatype;
 }
 
-%token <datatype> ID
+%token <datatype> ID DATATYPE
 %type <datatype> Multideclstmt rhs pred call_expression uni arg 
 
 %%
@@ -69,20 +69,29 @@ stmtD : declstmt
 
 // declaration statment      
 declstmt : DATATYPE ID Multideclstmt SEMICOL { 
-                               $2.type = 
-                               $3.type = $2.type;
-                                                  
+                               $2.type = $1.type;
+                               $3.type = $2.type;           
                                              }
-    | DATATYPE ID access Multideclstmt SEMICOL {}
-    | DATATYPE ID ASSGN rhs Multideclstmt SEMICOL {}
+    | DATATYPE ID access Multideclstmt SEMICOL {
+              $2.type = $1.type;
+              $4.type = $2.type;  
+    }
+    | DATATYPE ID ASSGN rhs Multideclstmt SEMICOL {
+        
+    }
     | DATATYPE ID access2 ASSGN MultiDimL Multideclstmt SEMICOL  {}
     | MatrixDecl MultiMatrixDecl SEMICOL {}
     | object_decl
     | DF_DECL
     ;
 
-Multideclstmt : COMMA ID Multideclstmt {}
-    | COMMA ID access Multideclstmt {}
+Multideclstmt : COMMA ID Multideclstmt {
+    $2.type= $$.type;
+    $3.type= $$.type;
+}
+    | COMMA ID access Multideclstmt {
+               
+    }
     | COMMA ID ASSGN rhs Multideclstmt {}
     | COMMA ID access2 ASSGN MultiDimL Multideclstmt {}
     | /* empty */
