@@ -1,4 +1,5 @@
 %{
+    #include"global.hpp"
     #include<bits/stdc++.h>
     #include "helper_functions.hpp"
     void yyerror(const char* s);
@@ -6,7 +7,7 @@
     extern int yylineno;
     extern FILE* yyin;
     extern FILE* out;
-#global variables
+//global variables
 int scope = 0;
 vector<unordered_map<string,x*>> sym_table_list;
 %}

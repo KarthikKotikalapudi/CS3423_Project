@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "y.tab.h"
+#include "parse.tab.hpp"
 FILE * out; //output file
 %}
 digit [0-9]
