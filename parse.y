@@ -11,10 +11,22 @@
 int scope = 0;
 vector<unordered_map<string,x*>> sym_table_list;
 %}
-%token NUM FLOAT DATATYPE MATRIX DF IF ELIF ELSE RETURN BREAK CONT ID OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
+%token NUM FLOAT DATATYPE MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR ASSGN ARTHASSGN MATRIX_TYPE FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
 %token BOOL NUL SORT SELECT UPDATE DELETE
 %left NEG LOG ARTH BIT_OP SHIFT COMP COMMA MINUS
+%union{
+     struct D{
+        string name;
+        string type;
+        vector<int>dim;
+        int scope;
+    } datatype;
+}
+
+%token <datatype> ID
+%type <datatype> Multideclstmt rhs pred call_expression uni arg 
+
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
   ;
@@ -53,7 +65,11 @@ stmtD : declstmt
 
 
 // declaration statment      
-declstmt : DATATYPE ID Multideclstmt SEMICOL {}
+declstmt : DATATYPE ID Multideclstmt SEMICOL { 
+                               $2.type = 
+                               $3.type = $2.type;
+                                                  
+                                             }
     | DATATYPE ID access Multideclstmt SEMICOL {}
     | DATATYPE ID ASSGN rhs Multideclstmt SEMICOL {}
     | DATATYPE ID access2 ASSGN MultiDimL Multideclstmt SEMICOL  {}
