@@ -14,7 +14,7 @@ int scope = 0;
 vector<symbol_table> var_list;
 vector<unordered_map<string,symtab>> sym_table_list;
 %}
-%token NUM FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
+%token NUM FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE open_marker closing_marker CBRACE  DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR ASSGN ARTHASSGN MATRIX_TYPE FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
 %token BOOL NUL SORT SELECT UPDATE DELETE
 %left NEG LOG ARTH BIT_OP SHIFT COMP COMMA MINUS
@@ -46,14 +46,23 @@ Decl : /* empty */
   | FuncDecl Decl // function declaration
   ;
 
-Main: MAIN OBRACE stmt CBRACE
+Main : MAIN OBRACE open_marker stmt closing_marker CBRACE 
+    ;
+
+open_marker : {scope++;}
+    ;
+
+closing_marker : {
+    delete_symtab_level(scope);
+    scope--;}
+    ;
 
 GlobalDecl : declstmt
            |  class_decl {}
    ;
 
 // stmt rule produces all possible sequence of statements with scopes in between 
-stmt : stmtL OBRACE stmt CBRACE stmt {} // modify this if needed
+stmt : stmtL OBRACE open_marker stmt closing_marker CBRACE  stmt {} // modify this if needed
     | stmtL {}
     ;
 
@@ -112,33 +121,33 @@ constL : numbers COMMA constL {}
     ;
 
 
-MultiDimL : OBRACE MultiDimL CBRACE
+MultiDimL : OBRACE open_marker MultiDimL closing_marker CBRACE 
     | MultiDimL COMMA MultiDimL
-    | OBRACE constL CBRACE
+    | OBRACE open_marker constL closing_marker CBRACE 
     ;
 
 MatrixDecl : MATRIX ID MATRIX_TYPE {}
     | MATRIX ID MATRIX_TYPE ASSGN ID{}
     | MATRIX ID MATRIX_TYPE OBRAK numL CBRAK{}
-    | MATRIX ID MATRIX_TYPE ASSGN OBRACE MatrixL CBRACE{}
+    | MATRIX ID MATRIX_TYPE ASSGN OBRACE open_marker MatrixL closing_marker CBRACE {}
     ;
 
 MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {}
     | COMMA ID MATRIX_TYPE ASSGN ID MultiMatrixDecl {}
     | COMMA ID MATRIX_TYPE OBRAK numL CBRAK MultiMatrixDecl {}
-    | COMMA ID MATRIX_TYPE ASSGN OBRACE MatrixL CBRACE MultiMatrixDecl {}
+    | COMMA ID MATRIX_TYPE ASSGN OBRACE open_marker MatrixL closing_marker CBRACE  MultiMatrixDecl {}
     | /* empty */
     ;
 
 numL : numbers COMMA numbers
     ;
 
-MatrixL : OBRACE constL CBRACE COMMA MatrixL
-    | OBRACE constL CBRACE
+MatrixL : OBRACE open_marker constL closing_marker CBRACE  COMMA MatrixL
+    | OBRACE open_marker constL closing_marker CBRACE 
     ;
 
 //function declaration
-FuncDecl :FuncHead OBRAK params CBRAK OBRACE FuncBody CBRACE 
+FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker CBRACE  
     ;
 
 FuncHead : DATATYPE ID
@@ -271,20 +280,20 @@ exprstmt : expr SEMICOL
     ;
 
 // conditional statement
-condstmt : IF OBRAK pred CBRAK OBRACE stmt CBRACE  elif_list
-    | IF OBRAK pred CBRAK OBRACE stmt CBRACE elif_list  ELSE OBRACE stmt CBRACE
+condstmt : IF OBRAK pred CBRAK OBRACE open_marker stmt closing_marker CBRACE   elif_list
+    | IF OBRAK pred CBRAK OBRACE open_marker stmt closing_marker CBRACE  elif_list  ELSE OBRACE open_marker stmt closing_marker CBRACE 
     ;
 
 elif_list : /* empty */
-    | elif_list ELIF OBRAK pred CBRAK OBRACE stmt CBRACE
+    | elif_list ELIF OBRAK pred CBRAK OBRACE open_marker stmt closing_marker CBRACE 
     ;
             
 // loop statements
-loop : FOR OBRAK declstmt  pred SEMICOL expr CBRAK OBRACE stmt CBRACE
-    | FOR OBRAK declstmt  pred SEMICOL  CBRAK  OBRACE stmt CBRACE
-    | FOR OBRAK   SEMICOL pred SEMICOL expr CBRAK  OBRACE stmt CBRACE
-    | FOR OBRAK   SEMICOL pred SEMICOL  CBRAK  OBRACE stmt CBRACE
-    | WHILE OBRAK pred CBRAK  OBRACE stmt CBRACE
+loop : FOR OBRAK declstmt  pred SEMICOL expr CBRAK OBRACE open_marker stmt closing_marker CBRACE 
+    | FOR OBRAK declstmt  pred SEMICOL  CBRAK  OBRACE open_marker stmt closing_marker CBRACE 
+    | FOR OBRAK   SEMICOL pred SEMICOL expr CBRAK  OBRACE open_marker stmt closing_marker CBRACE 
+    | FOR OBRAK   SEMICOL pred SEMICOL  CBRAK  OBRACE open_marker stmt closing_marker CBRACE 
+    | WHILE OBRAK pred CBRAK  OBRACE open_marker stmt closing_marker CBRACE 
     ;
 
 break:
@@ -306,7 +315,7 @@ printstmt : PRINT OBRAK STRING CBRAK SEMICOL
 
 //class related syntax
 
-class_decl:  CLASS ID OBRACE class_body CBRACE SEMICOL
+class_decl:  CLASS ID OBRACE class_body CBRACE  SEMICOL
            | Inheritance SEMICOL
    ;
 
@@ -339,7 +348,7 @@ Multiobj : /* empty */
          ;
 
 //Inheritance
-Inheritance: CLASS ID INHERITS PARENT_LIST OBRACE class_body CBRACE 
+Inheritance: CLASS ID INHERITS PARENT_LIST OBRACE class_body CBRACE  
 
 PARENT_LIST:  access_specifier ID 
            | access_specifier ID COMMA PARENT_LIST
