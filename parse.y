@@ -4,7 +4,6 @@
     #include<string.h>
     #include <bits/stc++.h>
     using namespace std;
-    #include<bits/stdc++.h>
     #include "helper_functions.hpp"
     void yyerror(const char* s);
     extern int yylex(void);
