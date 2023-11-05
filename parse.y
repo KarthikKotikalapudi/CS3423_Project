@@ -20,12 +20,13 @@ vector<unordered_map<string,symtab>> sym_table_list;
 %left NEG LOG ARTH BIT_OP SHIFT COMP COMMA MINUS
 %union{
      struct D{
-        std::string name;
-        std::string type;
-        std::vector<int> dim;
+        char* name;
+        char* type;
+        int* dim;
+        int dim_len;
         int level;
     } datatype;
-    std::string type;
+    char* type;
 }
 
 %token <type> DATATYPE
@@ -80,7 +81,6 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL {}
     ;
 
 Multideclstmt : COMMA ID Multideclstmt {
-    var_
 }
     | COMMA ID access Multideclstmt {
                
