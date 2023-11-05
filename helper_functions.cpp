@@ -14,7 +14,7 @@ int insert_symtab(std::string name,std::string type,std::vector<int>dim,int leve
       sym_table_list[level][name]->dim = dim; sym_table_list[level][name]->level = level;
 }
 
-int delete_symtab_level(int level)
+void delete_symtab_level(int level)
 {
        for(auto it  : sym_table_list[level])
        {
