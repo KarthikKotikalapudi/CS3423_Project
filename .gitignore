@@ -9,3 +9,4 @@ y.tab.h
 parse.tab.cpp
 parse.tab.hpp
 compile.sh
+1.sh
