@@ -12,7 +12,9 @@
 //global variables
 int scope = 0;
 vector<symbol_table> var_list;
+vector<string> params;
 vector<unordered_map<string,symtab>> sym_table_list;
+std::unordered_map<std::vector<std::vector<std::string>>,functab> func_table_list;
     bool coersible(string a, string b){
         if (a==b) return true;
         if(a =="int" && b=="float" || a=="float" && b=="int" || a=="int" && b=="bool" || a=="bool" && b=="int" || a=="float" && b=="bool" || a=="bool" && b=="float"){
@@ -37,15 +39,15 @@ vector<unordered_map<string,symtab>> sym_table_list;
     int dim_len;
          struct F{
         char* name;
-        char** types;
-        int par_num;
         char* ret_type;
     } funcattr;
 }
 
-%token <type> DATATYPE 
+%token <type> DATATYPE
+%type <type> parameter
 %type <dim_len> access access2 access_assgn access_retn
-%type <type> uni arg 
+%type <type> uni arg numbers
+%type <funcattr> FuncHead 
 %token <datatype> ID 
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
@@ -202,8 +204,12 @@ Multideclstmt : COMMA ID Multideclstmt {
     | /* empty */
     ;
 
-numbers : NUM
-     | MINUS NUM
+numbers : NUM {
+          $$ = "int";
+       }
+     | MINUS NUM {
+          $$ = "int";
+     }
      ;
 
 constL : numbers COMMA constL {}
@@ -245,9 +251,16 @@ MatrixL : OBRACE open_marker constL closing_marker CBRACE  COMMA MatrixL
 
 //function declaration
 FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker CBRACE  
+{
+    //search if this function already exists
+
+    //inserting function to function table
+    insert_functab($1.name,params,$1.ret_type);
+    params.clear();
+}
     ;
 
-FuncHead : DATATYPE ID
+FuncHead : DATATYPE ID {$$.name = $2; $$.ret_type = $1;}
     | ID ID
     | MATRIX MATRIX_TYPE ID
     | DF ID
@@ -255,11 +268,15 @@ FuncHead : DATATYPE ID
     | ID access_retn ID
     ;
 
-params : parameter COMMA params
-    | parameter
+params : parameter COMMA params {params.push_back($1);}
+    | parameter {params.push_back($1);}
     ;
 
-parameter : DATATYPE ID
+parameter : DATATYPE ID 
+{ // sending datatypes for onserting function
+   $$ = $1;
+ // check if same name is used for different parameters
+}
     | MATRIX ID MATRIX_TYPE
     | DATATYPE ID OSQA NUM CSQA
     | ID ID
@@ -322,7 +339,7 @@ pred : pred LOG pred { }
     
 
 arg : ID { //use after declaration check
-        symtab var = search_symtab($1.type,scope); //check this,can string be char * 
+        symtab var = search_symtab($1.name,scope); //check this,can string be char * 
         if(!var)
         {
            cout<<"Semantic Error: A variable must be declared before use\n";
@@ -332,12 +349,39 @@ arg : ID { //use after declaration check
         }
     | uni {$$ = $1;}
     | call_expression {}
-    | numbers
-    | FLOAT
-    | BOOL
-    | CHAR
-    | STRING
-    | ID access
+    | numbers {
+        //arg gets its attribute from child numbers
+        $$ = $1;
+    }
+    | FLOAT {
+        $$ = "float";
+    }
+    | BOOL{
+        $$ = "bool";
+    }
+    | CHAR{
+        $$ = "char";
+    } 
+    | STRING{
+        $$ = "string";
+    }
+    | ID access{  symtab s;
+       if((s=search_symtab($1.name,scope))){
+      
+           if($2 == s->dim.size()){
+                   $$ = s->type;
+           }
+           else{
+               cout<<"Semantic error: dimensions do not match\n";
+               exit(1);
+           }
+        }
+      else{
+        //error
+        cout<<"Semantic Error: A variable must be declared before use\n";
+        exit(1);
+      }
+    }
     | class_arg
     ;
 
