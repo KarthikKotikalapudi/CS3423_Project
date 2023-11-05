@@ -253,7 +253,11 @@ MatrixL : OBRACE open_marker constL closing_marker CBRACE  COMMA MatrixL
 FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker CBRACE  
 {
     //search if this function already exists
-
+    if(search_functab($1.name,params))
+    {
+        cout<<"Semantic Error: variable already declared\n";
+        exit(1);
+    }
     //inserting function to function table
     insert_functab($1.name,params,$1.ret_type);
     params.clear();
@@ -556,6 +560,7 @@ returnstmt : RETURN pred SEMICOL
 
 // print statement
 printstmt : PRINT OBRAK STRING CBRAK SEMICOL
+    ;
 
 
 

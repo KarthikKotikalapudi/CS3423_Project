@@ -15,7 +15,6 @@ typedef struct symbol_table symbolTable;
 struct func_table 
 {
     std::string name;
-    int no_of_params;
     std::vector<std::string> params;
     std::string return_type;
 };
