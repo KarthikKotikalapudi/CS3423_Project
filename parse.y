@@ -38,7 +38,7 @@ vector<unordered_map<string,symtab>> sym_table_list;
 
 %token <type> DATATYPE 
 %type <dim_len> access access2 access_assgn access_retn
-%type <type> uni arg 
+%type <type> uni arg numbers
 %token <datatype> ID 
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
@@ -195,8 +195,12 @@ Multideclstmt : COMMA ID Multideclstmt {
     | /* empty */
     ;
 
-numbers : NUM
-     | MINUS NUM
+numbers : NUM {
+          $$ = "int";
+       }
+     | MINUS NUM {
+          $$ = "int";
+     }
      ;
 
 constL : numbers COMMA constL {}
@@ -325,12 +329,39 @@ arg : ID { //use after declaration check
         }
     | uni {$$ = $1;}
     | call_expression {}
-    | numbers
-    | FLOAT
-    | BOOL
-    | CHAR
-    | STRING
-    | ID access
+    | numbers {
+        //arg gets its attribute from child numbers
+        $$ = $1;
+    }
+    | FLOAT {
+        $$ = "float";
+    }
+    | BOOL{
+        $$ = "bool";
+    }
+    | CHAR{
+        $$ = "char";
+    } 
+    | STRING{
+        $$ = "string";
+    }
+    | ID access{  symtab s;
+       if((s=search_symtab($1.name,scope))){
+      
+           if($2 == s->dim.size()){
+                   $$ = s->type;
+           }
+           else{
+               cout<<"Semantic error: dimensions do not match\n";
+               exit(1);
+           }
+        }
+      else{
+        //error
+        cout<<"Semantic Error: A variable must be declared before use\n";
+        exit(1);
+      }
+    }
     | class_arg
     ;
 
