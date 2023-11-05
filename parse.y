@@ -8,6 +8,7 @@
     extern int yylineno;
     extern FILE* yyin;
     extern FILE* out;
+    using namespace std;
 //global variables
 int scope = 0;
 vector<symbol_table> var_list;
