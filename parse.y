@@ -13,6 +13,13 @@
 int scope = 0;
 vector<symbol_table> var_list;
 vector<unordered_map<string,symtab>> sym_table_list;
+    bool coersible(string a, string b){
+        if (a==b) return true;
+        if(a =="int" && b=="float" || a=="float" && b=="int" || a=="int" && b=="bool" || a=="bool" && b=="int" || a=="float" && b=="bool" || a=="bool" && b=="float"){
+            return true;
+        }
+        return false;
+    }
 %}
 %token NUM FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR ASSGN ARTHASSGN MATRIX_TYPE FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
@@ -92,14 +99,14 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             symtab var = search_symtab($2.name,scope); //check this,can string be char * 
             if(var)
             {
-            cout<<"Semantic Error: variable already declared before use\n";
+            cout<<"Semantic Error: variable already declared\n";
             exit(1);
             } 
             insert_symtab($2.name,$1,{},scope);
             for(int i=0;i<var_list.size();i++){
                 if(search_symtab(var_list[i].name,scope))
                 {
-                cout<<"Semantic Error: variable already declared before use\n";
+                cout<<"Semantic Error: variable already declared \n";
                 exit(1);
                 }
                 insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
@@ -117,7 +124,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             for(int i=0;i<var_list.size();i++){
                 if(search_symtab(var_list[i].name,scope))
                 {
-                cout<<"Semantic Error: variable already declared before use\n";
+                cout<<"Semantic Error: variable already declared\n";
                 exit(1);
                 }
                 insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
@@ -129,14 +136,14 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             symtab var = search_symtab($2.name,scope); //check this,can string be char * 
             if(var)
             {
-            cout<<"Semantic Error: variable already declared before use\n";
+            cout<<"Semantic Error: variable already declared\n";
             exit(1);
             } 
             insert_symtab($2.name,$1,{},scope);
             for(int i=0;i<var_list.size();i++){
                 if(search_symtab(var_list[i].name,scope))
                 {
-                cout<<"Semantic Error: variable already declared before use\n";
+                cout<<"Semantic Error: variable already declared\n";
                 exit(1);
                 }
                 insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
@@ -154,7 +161,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             for(int i=0;i<var_list.size();i++){
                 if(search_symtab(var_list[i].name,scope))
                 {
-                cout<<"Semantic Error: variable already declared before use\n";
+                cout<<"Semantic Error: variable already declared\n";
                 exit(1);
                 }
                 insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
@@ -395,13 +402,80 @@ uni : ID POST {
 // bin : arg ARTH arg 
 //     ;
 
-expr : ID ASSGN rhs {}
-    | ID ARTHASSGN rhs {}
-    | ID access ASSGN rhs {}
-    | ID access ARTHASSGN rhs {}
-    | uni {}
-    | ID DOT ID ASSGN rhs {}
-    | ID DOT ID ARTHASSGN rhs {}
+expr : ID ASSGN rhs 
+        {   symtab var;
+            if((var=search_symtab($1.name,scope))){
+                if(!coersible(var->type,$3)){
+                    cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                    exit(1);
+                }
+            }
+            else{
+                //error
+                cout<<"Semantic Error: A variable must be declared before use\n";
+                exit(1);
+            }
+        }
+    | ID ARTHASSGN rhs 
+        {   symtab var;
+            if((var=search_symtab($1.name,scope))){
+                if(!coersible(var->type,$3)){
+                    cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                    exit(1);
+                }
+            }
+            else{
+                //error
+                cout<<"Semantic Error: A variable must be declared before use\n";
+                exit(1);
+            }
+        }
+    | ID access ASSGN rhs 
+        {   
+            symtab var;
+            if((var=search_symtab($1.name,scope))){
+                if(var->dim.size()!=$2){
+                    cout<<"Semantic error: dimensions do not match\n";
+                    exit(1);
+                }
+                if(!coersible(var->type,$4)){
+                    cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                    exit(1);
+                }
+            }
+            else{
+                //error
+                cout<<"Semantic Error: A variable must be declared before use\n";
+                exit(1);
+            }
+        }
+    | ID access ARTHASSGN rhs 
+        {   symtab var;
+            if((var=search_symtab($1.name,scope))){
+                if(var->dim.size()!=$2){
+                    cout<<"Semantic error: dimensions do not match\n";
+                    exit(1);
+                }
+                if(!coersible(var->type,$4)){
+                    cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                    exit(1);
+                }
+            }
+            else{
+                //error
+                cout<<"Semantic Error: A variable must be declared before use\n";
+                exit(1);
+            }
+        }
+    | uni { $$ = $1; }
+    | ID DOT ID ASSGN rhs 
+        {
+            
+        }
+    | ID DOT ID ARTHASSGN rhs 
+        {
+            
+        }
     ;
 
 exprstmt : expr SEMICOL
