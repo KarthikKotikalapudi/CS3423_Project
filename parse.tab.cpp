@@ -77,11 +77,12 @@
     extern int yylineno;
     extern FILE* yyin;
     extern FILE* out;
+    using namespace std;
 //global variables
 int scope = 0;
-vector<unordered_map<string,x*>> sym_table_list;
+vector<unordered_map<string,symtab>> sym_table_list;
 
-#line 85 "parse.tab.cpp"
+#line 86 "parse.tab.cpp"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -609,23 +610,23 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    31,    31,    34,    35,    36,    39,    41,    42,    46,
-      47,    50,    51,    55,    56,    57,    58,    59,    60,    61,
-      62,    63,    68,    72,    76,    79,    80,    81,    82,    85,
-      89,    92,    93,    94,    97,    98,   101,   102,   103,   104,
-     105,   106,   107,   108,   109,   113,   114,   115,   118,   119,
-     120,   121,   124,   125,   126,   127,   128,   131,   134,   135,
-     139,   142,   143,   144,   145,   146,   147,   150,   151,   154,
-     155,   156,   157,   158,   161,   164,   165,   168,   169,   170,
-     171,   172,   175,   178,   179,   180,   184,   185,   189,   193,
-     194,   195,   196,   197,   198,   199,   200,   201,   216,   217,
-     218,   219,   220,   221,   222,   223,   224,   225,   228,   229,
-     233,   234,   237,   238,   241,   242,   245,   246,   252,   253,
-     254,   255,   256,   257,   258,   261,   265,   266,   269,   270,
-     274,   275,   276,   277,   278,   282,   286,   290,   294,   300,
-     301,   306,   306,   309,   310,   311,   312,   317,   318,   321,
-     322,   323,   326,   327,   328,   329,   333,   335,   336,   340,
-     341,   346,   349,   352,   353,   356
+       0,    32,    32,    35,    36,    37,    40,    42,    43,    47,
+      48,    51,    52,    56,    57,    58,    59,    60,    61,    62,
+      63,    64,    69,    73,    77,    80,    81,    82,    83,    86,
+      90,    93,    94,    95,    98,    99,   102,   103,   104,   105,
+     106,   107,   108,   109,   110,   114,   115,   116,   119,   120,
+     121,   122,   125,   126,   127,   128,   129,   132,   135,   136,
+     140,   143,   144,   145,   146,   147,   148,   151,   152,   155,
+     156,   157,   158,   159,   162,   165,   166,   169,   170,   171,
+     172,   173,   176,   179,   180,   181,   185,   186,   190,   194,
+     195,   196,   197,   198,   199,   200,   201,   202,   217,   218,
+     219,   220,   221,   222,   223,   224,   225,   226,   229,   230,
+     234,   235,   238,   239,   242,   243,   246,   247,   253,   254,
+     255,   256,   257,   258,   259,   262,   266,   267,   270,   271,
+     275,   276,   277,   278,   279,   283,   287,   291,   295,   301,
+     302,   307,   307,   310,   311,   312,   313,   318,   319,   322,
+     323,   324,   327,   328,   329,   330,   334,   336,   337,   341,
+     342,   347,   350,   353,   354,   357
 };
 #endif
 
@@ -1469,320 +1470,320 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* S: Decl Main Decl  */
-#line 31 "parse.y"
+#line 32 "parse.y"
                    {}
-#line 1475 "parse.tab.cpp"
+#line 1476 "parse.tab.cpp"
     break;
 
   case 4: /* Decl: GlobalDecl Decl  */
-#line 35 "parse.y"
+#line 36 "parse.y"
                    {}
-#line 1481 "parse.tab.cpp"
+#line 1482 "parse.tab.cpp"
     break;
 
   case 8: /* GlobalDecl: class_decl  */
-#line 42 "parse.y"
+#line 43 "parse.y"
                          {}
-#line 1487 "parse.tab.cpp"
+#line 1488 "parse.tab.cpp"
     break;
 
   case 9: /* stmt: stmtL OBRACE stmt CBRACE stmt  */
-#line 46 "parse.y"
+#line 47 "parse.y"
                                      {}
-#line 1493 "parse.tab.cpp"
+#line 1494 "parse.tab.cpp"
     break;
 
   case 10: /* stmt: stmtL  */
-#line 47 "parse.y"
+#line 48 "parse.y"
             {}
-#line 1499 "parse.tab.cpp"
+#line 1500 "parse.tab.cpp"
     break;
 
   case 11: /* stmtL: stmtD stmtL  */
-#line 50 "parse.y"
+#line 51 "parse.y"
                     {}
-#line 1505 "parse.tab.cpp"
+#line 1506 "parse.tab.cpp"
     break;
 
   case 12: /* stmtL: %empty  */
-#line 51 "parse.y"
+#line 52 "parse.y"
       {}
-#line 1511 "parse.tab.cpp"
+#line 1512 "parse.tab.cpp"
     break;
 
   case 22: /* declstmt: DATATYPE ID Multideclstmt SEMICOL  */
-#line 68 "parse.y"
+#line 69 "parse.y"
                                              { 
                                (yyvsp[-2].datatype).type = (yyvsp[-3].datatype).type;
                                (yyvsp[-1].datatype).type = (yyvsp[-2].datatype).type;           
                                              }
-#line 1520 "parse.tab.cpp"
+#line 1521 "parse.tab.cpp"
     break;
 
   case 23: /* declstmt: DATATYPE ID access Multideclstmt SEMICOL  */
-#line 72 "parse.y"
+#line 73 "parse.y"
                                                {
               (yyvsp[-3].datatype).type = (yyvsp[-4].datatype).type;
               (yyvsp[-1].datatype).type = (yyvsp[-3].datatype).type;  
     }
-#line 1529 "parse.tab.cpp"
+#line 1530 "parse.tab.cpp"
     break;
 
   case 24: /* declstmt: DATATYPE ID ASSGN rhs Multideclstmt SEMICOL  */
-#line 76 "parse.y"
+#line 77 "parse.y"
                                                   {
         
     }
-#line 1537 "parse.tab.cpp"
+#line 1538 "parse.tab.cpp"
     break;
 
   case 25: /* declstmt: DATATYPE ID access2 ASSGN MultiDimL Multideclstmt SEMICOL  */
-#line 79 "parse.y"
+#line 80 "parse.y"
                                                                  {}
-#line 1543 "parse.tab.cpp"
+#line 1544 "parse.tab.cpp"
     break;
 
   case 26: /* declstmt: MatrixDecl MultiMatrixDecl SEMICOL  */
-#line 80 "parse.y"
+#line 81 "parse.y"
                                          {}
-#line 1549 "parse.tab.cpp"
+#line 1550 "parse.tab.cpp"
     break;
 
   case 29: /* Multideclstmt: COMMA ID Multideclstmt  */
-#line 85 "parse.y"
+#line 86 "parse.y"
                                        {
     (yyvsp[-1].datatype).type= (yyval.datatype).type;
     (yyvsp[0].datatype).type= (yyval.datatype).type;
 }
-#line 1558 "parse.tab.cpp"
+#line 1559 "parse.tab.cpp"
     break;
 
   case 30: /* Multideclstmt: COMMA ID access Multideclstmt  */
-#line 89 "parse.y"
+#line 90 "parse.y"
                                     {
                
     }
-#line 1566 "parse.tab.cpp"
+#line 1567 "parse.tab.cpp"
     break;
 
   case 31: /* Multideclstmt: COMMA ID ASSGN rhs Multideclstmt  */
-#line 92 "parse.y"
+#line 93 "parse.y"
                                        {}
-#line 1572 "parse.tab.cpp"
+#line 1573 "parse.tab.cpp"
     break;
 
   case 32: /* Multideclstmt: COMMA ID access2 ASSGN MultiDimL Multideclstmt  */
-#line 93 "parse.y"
+#line 94 "parse.y"
                                                      {}
-#line 1578 "parse.tab.cpp"
+#line 1579 "parse.tab.cpp"
     break;
 
   case 36: /* constL: numbers COMMA constL  */
-#line 101 "parse.y"
+#line 102 "parse.y"
                               {}
-#line 1584 "parse.tab.cpp"
+#line 1585 "parse.tab.cpp"
     break;
 
   case 37: /* constL: FLOAT COMMA constL  */
-#line 102 "parse.y"
+#line 103 "parse.y"
                          {}
-#line 1590 "parse.tab.cpp"
+#line 1591 "parse.tab.cpp"
     break;
 
   case 38: /* constL: STRING COMMA constL  */
-#line 103 "parse.y"
+#line 104 "parse.y"
                           {}
-#line 1596 "parse.tab.cpp"
+#line 1597 "parse.tab.cpp"
     break;
 
   case 39: /* constL: CHAR COMMA constL  */
-#line 104 "parse.y"
+#line 105 "parse.y"
                         {}
-#line 1602 "parse.tab.cpp"
+#line 1603 "parse.tab.cpp"
     break;
 
   case 48: /* MatrixDecl: MATRIX ID MATRIX_TYPE  */
-#line 118 "parse.y"
+#line 119 "parse.y"
                                    {}
-#line 1608 "parse.tab.cpp"
+#line 1609 "parse.tab.cpp"
     break;
 
   case 49: /* MatrixDecl: MATRIX ID MATRIX_TYPE ASSGN ID  */
-#line 119 "parse.y"
+#line 120 "parse.y"
                                     {}
-#line 1614 "parse.tab.cpp"
+#line 1615 "parse.tab.cpp"
     break;
 
   case 50: /* MatrixDecl: MATRIX ID MATRIX_TYPE OBRAK numL CBRAK  */
-#line 120 "parse.y"
+#line 121 "parse.y"
                                             {}
-#line 1620 "parse.tab.cpp"
+#line 1621 "parse.tab.cpp"
     break;
 
   case 51: /* MatrixDecl: MATRIX ID MATRIX_TYPE ASSGN OBRACE MatrixL CBRACE  */
-#line 121 "parse.y"
+#line 122 "parse.y"
                                                        {}
-#line 1626 "parse.tab.cpp"
+#line 1627 "parse.tab.cpp"
     break;
 
   case 52: /* MultiMatrixDecl: COMMA ID MATRIX_TYPE MultiMatrixDecl  */
-#line 124 "parse.y"
+#line 125 "parse.y"
                                                        {}
-#line 1632 "parse.tab.cpp"
+#line 1633 "parse.tab.cpp"
     break;
 
   case 53: /* MultiMatrixDecl: COMMA ID MATRIX_TYPE ASSGN ID MultiMatrixDecl  */
-#line 125 "parse.y"
+#line 126 "parse.y"
                                                     {}
-#line 1638 "parse.tab.cpp"
+#line 1639 "parse.tab.cpp"
     break;
 
   case 54: /* MultiMatrixDecl: COMMA ID MATRIX_TYPE OBRAK numL CBRAK MultiMatrixDecl  */
-#line 126 "parse.y"
+#line 127 "parse.y"
                                                             {}
-#line 1644 "parse.tab.cpp"
+#line 1645 "parse.tab.cpp"
     break;
 
   case 55: /* MultiMatrixDecl: COMMA ID MATRIX_TYPE ASSGN OBRACE MatrixL CBRACE MultiMatrixDecl  */
-#line 127 "parse.y"
+#line 128 "parse.y"
                                                                        {}
-#line 1650 "parse.tab.cpp"
+#line 1651 "parse.tab.cpp"
     break;
 
   case 88: /* rhs: pred  */
-#line 189 "parse.y"
+#line 190 "parse.y"
            {}
-#line 1656 "parse.tab.cpp"
+#line 1657 "parse.tab.cpp"
     break;
 
   case 89: /* pred: pred LOG pred  */
-#line 193 "parse.y"
+#line 194 "parse.y"
                      { }
-#line 1662 "parse.tab.cpp"
+#line 1663 "parse.tab.cpp"
     break;
 
   case 90: /* pred: OBRAK pred CBRAK  */
-#line 194 "parse.y"
+#line 195 "parse.y"
                        { }
-#line 1668 "parse.tab.cpp"
+#line 1669 "parse.tab.cpp"
     break;
 
   case 92: /* pred: arg  */
-#line 196 "parse.y"
+#line 197 "parse.y"
           { }
-#line 1674 "parse.tab.cpp"
+#line 1675 "parse.tab.cpp"
     break;
 
   case 93: /* pred: pred COMP pred  */
-#line 197 "parse.y"
+#line 198 "parse.y"
                      { }
-#line 1680 "parse.tab.cpp"
+#line 1681 "parse.tab.cpp"
     break;
 
   case 94: /* pred: pred SHIFT pred  */
-#line 198 "parse.y"
+#line 199 "parse.y"
                       { }
-#line 1686 "parse.tab.cpp"
+#line 1687 "parse.tab.cpp"
     break;
 
   case 95: /* pred: pred BIT_OP pred  */
-#line 199 "parse.y"
+#line 200 "parse.y"
                        { }
-#line 1692 "parse.tab.cpp"
+#line 1693 "parse.tab.cpp"
     break;
 
   case 96: /* pred: pred ARTH pred  */
-#line 200 "parse.y"
+#line 201 "parse.y"
                      { }
-#line 1698 "parse.tab.cpp"
+#line 1699 "parse.tab.cpp"
     break;
 
   case 97: /* pred: pred MINUS pred  */
-#line 201 "parse.y"
+#line 202 "parse.y"
                       { }
-#line 1704 "parse.tab.cpp"
+#line 1705 "parse.tab.cpp"
     break;
 
   case 98: /* arg: ID  */
-#line 216 "parse.y"
+#line 217 "parse.y"
          {}
-#line 1710 "parse.tab.cpp"
+#line 1711 "parse.tab.cpp"
     break;
 
   case 99: /* arg: uni  */
-#line 217 "parse.y"
+#line 218 "parse.y"
           {}
-#line 1716 "parse.tab.cpp"
+#line 1717 "parse.tab.cpp"
     break;
 
   case 100: /* arg: call_expression  */
-#line 218 "parse.y"
+#line 219 "parse.y"
                       {}
-#line 1722 "parse.tab.cpp"
+#line 1723 "parse.tab.cpp"
     break;
 
   case 109: /* access: OSQA pred CSQA  */
-#line 229 "parse.y"
+#line 230 "parse.y"
                         {}
-#line 1728 "parse.tab.cpp"
+#line 1729 "parse.tab.cpp"
     break;
 
   case 111: /* access_assgn: OSQA CSQA  */
-#line 234 "parse.y"
+#line 235 "parse.y"
                     {}
-#line 1734 "parse.tab.cpp"
+#line 1735 "parse.tab.cpp"
     break;
 
   case 115: /* access_retn: OSQA CSQA  */
-#line 242 "parse.y"
+#line 243 "parse.y"
                     {}
-#line 1740 "parse.tab.cpp"
+#line 1741 "parse.tab.cpp"
     break;
 
   case 118: /* expr: ID ASSGN rhs  */
-#line 252 "parse.y"
+#line 253 "parse.y"
                     {}
-#line 1746 "parse.tab.cpp"
+#line 1747 "parse.tab.cpp"
     break;
 
   case 119: /* expr: ID ARTHASSGN rhs  */
-#line 253 "parse.y"
+#line 254 "parse.y"
                        {}
-#line 1752 "parse.tab.cpp"
+#line 1753 "parse.tab.cpp"
     break;
 
   case 120: /* expr: ID access ASSGN rhs  */
-#line 254 "parse.y"
+#line 255 "parse.y"
                           {}
-#line 1758 "parse.tab.cpp"
+#line 1759 "parse.tab.cpp"
     break;
 
   case 121: /* expr: ID access ARTHASSGN rhs  */
-#line 255 "parse.y"
+#line 256 "parse.y"
                               {}
-#line 1764 "parse.tab.cpp"
+#line 1765 "parse.tab.cpp"
     break;
 
   case 122: /* expr: uni  */
-#line 256 "parse.y"
+#line 257 "parse.y"
           {}
-#line 1770 "parse.tab.cpp"
+#line 1771 "parse.tab.cpp"
     break;
 
   case 123: /* expr: ID DOT ID ASSGN rhs  */
-#line 257 "parse.y"
+#line 258 "parse.y"
                           {}
-#line 1776 "parse.tab.cpp"
+#line 1777 "parse.tab.cpp"
     break;
 
   case 124: /* expr: ID DOT ID ARTHASSGN rhs  */
-#line 258 "parse.y"
+#line 259 "parse.y"
                               {}
-#line 1782 "parse.tab.cpp"
+#line 1783 "parse.tab.cpp"
     break;
 
 
-#line 1786 "parse.tab.cpp"
+#line 1787 "parse.tab.cpp"
 
       default: break;
     }
@@ -1975,7 +1976,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 359 "parse.y"
+#line 360 "parse.y"
 
 int main(int argc,char** argv)
 {

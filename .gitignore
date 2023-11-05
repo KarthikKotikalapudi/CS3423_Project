@@ -2,6 +2,9 @@
 a.out
 *.txt
 lex.yy.c
+lex.yy.cpp
 y.tab.c
 y.tab.h
+parse.tab.cpp
+parse.tab.hpp
 compile.sh

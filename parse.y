@@ -7,9 +7,10 @@
     extern int yylineno;
     extern FILE* yyin;
     extern FILE* out;
+    using namespace std;
 //global variables
 int scope = 0;
-vector<unordered_map<string,x*>> sym_table_list;
+vector<unordered_map<string,symtab>> sym_table_list;
 %}
 %token NUM FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR ASSGN ARTHASSGN MATRIX_TYPE FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS

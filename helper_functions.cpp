@@ -12,6 +12,7 @@ int insert_symtab(std::string name,std::string type,std::vector<int>dim,int leve
       sym_table_list[level][name] = new struct symbol_table;
       sym_table_list[level][name]->name = name; sym_table_list[level][name]->type = type;
       sym_table_list[level][name]->dim = dim; sym_table_list[level][name]->level = level;
+      return 1;
 }
 
 int delete_symtab_level(int level)
@@ -22,6 +23,7 @@ int delete_symtab_level(int level)
        }
        sym_table_list[level].clear();
        sym_table_list.pop_back();
+       return 1;
 }
 
 symtab search_symtab(std::string name,int level,bool main)
