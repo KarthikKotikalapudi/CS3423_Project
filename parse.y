@@ -40,6 +40,7 @@ std::unordered_map<std::vector<std::vector<std::string>>,functab> func_table_lis
 %type <type> parameter
 %type <dim_len> access access2 access_assgn access_retn
 %type <type> uni arg numbers
+%type <funcattr> FuncHead 
 %token <datatype> ID 
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
