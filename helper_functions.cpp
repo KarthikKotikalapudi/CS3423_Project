@@ -16,12 +16,16 @@ int insert_symtab(std::string name,std::string type,std::vector<int>dim,int leve
 
 void delete_symtab_level(int level)
 {
+       if(level < sym_table_list.size()){
        for(auto it  : sym_table_list[level])
        {
                delete it.second;
        }
-       sym_table_list[level].clear();
-       sym_table_list.pop_back();
+       if(sym_table_list.size()){
+              sym_table_list[level].clear();
+              sym_table_list.pop_back();
+       }
+       }
 }
 
 symtab search_symtab(std::string name,int level)
@@ -34,4 +38,8 @@ symtab search_symtab(std::string name,int level)
             if(i == 1)      i--;
        }
        return NULL;
+}
+
+int insert_functab(std::string name, int no_of_params, std::vector<std::string>params, std::string return_type){
+       functab function_table = new struct func_table;
 }

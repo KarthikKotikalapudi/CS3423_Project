@@ -14,7 +14,7 @@ int scope = 0;
 vector<symbol_table> var_list;
 vector<unordered_map<string,symtab>> sym_table_list;
 %}
-%token NUM FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE open_marker closing_marker CBRACE  DOT NEG COL SEMICOL  POST
+%token NUM FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR ASSGN ARTHASSGN MATRIX_TYPE FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
 %token BOOL NUL SORT SELECT UPDATE DELETE
 %left NEG LOG ARTH BIT_OP SHIFT COMP COMMA MINUS
@@ -43,7 +43,7 @@ Decl : /* empty */
 Main : MAIN OBRACE open_marker stmt closing_marker CBRACE 
     ;
 
-open_marker : {scope++;}
+open_marker :  {scope++;}
     ;
 
 closing_marker : {
@@ -364,6 +364,7 @@ DF_SELECT   : SELECT OBRAK ID COMMA ID COMMA pred CBRAK
 %%
 int main(int argc,char** argv)
 {
+ 
     
     if(argc!= 2)
     {
