@@ -87,9 +87,20 @@ stmtD : declstmt
 
 // declaration statment      
 declstmt : DATATYPE ID Multideclstmt SEMICOL
-        {
+        {   
+            symtab var = search_symtab($2.name,scope); //check this,can string be char * 
+            if(var)
+            {
+            cout<<"Semantic Error: variable already declared before use\n";
+            exit(1);
+            } 
             insert_symtab($2.name,$1,{},scope);
             for(int i=0;i<var_list.size();i++){
+                if(search_symtab(var_list[i].name,scope))
+                {
+                cout<<"Semantic Error: variable already declared before use\n";
+                exit(1);
+                }
                 insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
             }
             var_list.clear();
@@ -103,14 +114,30 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             }
             var_list.push_back(s2);
             for(int i=0;i<var_list.size();i++){
+                if(search_symtab(var_list[i].name,scope))
+                {
+                cout<<"Semantic Error: variable already declared before use\n";
+                exit(1);
+                }
                 insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
             }
             var_list.clear();
         }
     | DATATYPE ID ASSGN rhs Multideclstmt SEMICOL 
         {   
+            symtab var = search_symtab($2.name,scope); //check this,can string be char * 
+            if(var)
+            {
+            cout<<"Semantic Error: variable already declared before use\n";
+            exit(1);
+            } 
             insert_symtab($2.name,$1,{},scope);
             for(int i=0;i<var_list.size();i++){
+                if(search_symtab(var_list[i].name,scope))
+                {
+                cout<<"Semantic Error: variable already declared before use\n";
+                exit(1);
+                }
                 insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
             }
             var_list.clear();
@@ -124,6 +151,11 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             }
             var_list.push_back(s2);
             for(int i=0;i<var_list.size();i++){
+                if(search_symtab(var_list[i].name,scope))
+                {
+                cout<<"Semantic Error: variable already declared before use\n";
+                exit(1);
+                }
                 insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
             }
             var_list.clear();
