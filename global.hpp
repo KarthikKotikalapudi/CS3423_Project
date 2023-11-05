@@ -10,6 +10,7 @@ struct symbol_table
     std::vector<int> dim;
     int level;
 };
+typedef struct symbol_table symbolTable;
 
 struct func_table 
 {
@@ -20,6 +21,6 @@ struct func_table
 };
 
 extern int scope ;
-extern vector<symbol_table> var_list;
+extern vector<struct symbol_table> var_list;
 extern std::vector<std::unordered_map<std::string,symtab>> sym_table_list;
 extern std::unordered_map<std::vector<std::vector<std::string>>,functab> func_table_list;
