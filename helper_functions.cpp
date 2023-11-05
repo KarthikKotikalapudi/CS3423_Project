@@ -1,12 +1,11 @@
 #include"global.hpp"
 #include "helper_functions.hpp"
 
-
-int insert_symtab(string name,string type,vector<int>dim,int level)
+int insert_symtab(std::string name,std::string type,std::vector<int>dim,int level)
 {
-      if(sym_tab_list.size()<level)
+      if(sym_table_list.size()<level)
       {
-        unordered_map<string,symtab> newtab;
+        std::unordered_map<std::string,symtab> newtab;
       }
 }
 
