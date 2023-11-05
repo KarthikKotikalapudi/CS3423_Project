@@ -56,61 +56,75 @@ extern int yydebug;
     YYUNDEF = 257,                 /* "invalid token"  */
     NUM = 258,                     /* NUM  */
     FLOAT = 259,                   /* FLOAT  */
-    DATATYPE = 260,                /* DATATYPE  */
-    MATRIX = 261,                  /* MATRIX  */
-    DF = 262,                      /* DF  */
-    IF = 263,                      /* IF  */
-    ELIF = 264,                    /* ELIF  */
-    ELSE = 265,                    /* ELSE  */
-    RETURN = 266,                  /* RETURN  */
-    BREAK = 267,                   /* BREAK  */
-    CONT = 268,                    /* CONT  */
-    ID = 269,                      /* ID  */
-    OBRAK = 270,                   /* OBRAK  */
-    CBRAK = 271,                   /* CBRAK  */
-    OSQA = 272,                    /* OSQA  */
-    CSQA = 273,                    /* CSQA  */
-    OBRACE = 274,                  /* OBRACE  */
-    CBRACE = 275,                  /* CBRACE  */
-    DOT = 276,                     /* DOT  */
-    NEG = 277,                     /* NEG  */
-    COL = 278,                     /* COL  */
-    SEMICOL = 279,                 /* SEMICOL  */
-    POST = 280,                    /* POST  */
-    COMMA = 281,                   /* COMMA  */
-    STRING = 282,                  /* STRING  */
-    CHAR = 283,                    /* CHAR  */
-    ASSGN = 284,                   /* ASSGN  */
-    ARTHASSGN = 285,               /* ARTHASSGN  */
-    MATRIX_TYPE = 286,             /* MATRIX_TYPE  */
-    FOR = 287,                     /* FOR  */
-    WHILE = 288,                   /* WHILE  */
-    PRINT = 289,                   /* PRINT  */
-    MAIN = 290,                    /* MAIN  */
-    CLASS = 291,                   /* CLASS  */
-    PRIVATE = 292,                 /* PRIVATE  */
-    PROTECTED = 293,               /* PROTECTED  */
-    PUBLIC = 294,                  /* PUBLIC  */
-    INHERITS = 295,                /* INHERITS  */
-    BOOL = 296,                    /* BOOL  */
-    NUL = 297,                     /* NUL  */
-    SORT = 298,                    /* SORT  */
-    SELECT = 299,                  /* SELECT  */
-    UPDATE = 300,                  /* UPDATE  */
-    DELETE = 301,                  /* DELETE  */
-    LOG = 302,                     /* LOG  */
-    ARTH = 303,                    /* ARTH  */
-    BIT_OP = 304,                  /* BIT_OP  */
-    SHIFT = 305,                   /* SHIFT  */
-    COMP = 306,                    /* COMP  */
-    MINUS = 307                    /* MINUS  */
+    MATRIX = 260,                  /* MATRIX  */
+    DF = 261,                      /* DF  */
+    IF = 262,                      /* IF  */
+    ELIF = 263,                    /* ELIF  */
+    ELSE = 264,                    /* ELSE  */
+    RETURN = 265,                  /* RETURN  */
+    BREAK = 266,                   /* BREAK  */
+    CONT = 267,                    /* CONT  */
+    OBRAK = 268,                   /* OBRAK  */
+    CBRAK = 269,                   /* CBRAK  */
+    OSQA = 270,                    /* OSQA  */
+    CSQA = 271,                    /* CSQA  */
+    OBRACE = 272,                  /* OBRACE  */
+    CBRACE = 273,                  /* CBRACE  */
+    DOT = 274,                     /* DOT  */
+    NEG = 275,                     /* NEG  */
+    COL = 276,                     /* COL  */
+    SEMICOL = 277,                 /* SEMICOL  */
+    POST = 278,                    /* POST  */
+    COMMA = 279,                   /* COMMA  */
+    STRING = 280,                  /* STRING  */
+    CHAR = 281,                    /* CHAR  */
+    ASSGN = 282,                   /* ASSGN  */
+    ARTHASSGN = 283,               /* ARTHASSGN  */
+    MATRIX_TYPE = 284,             /* MATRIX_TYPE  */
+    FOR = 285,                     /* FOR  */
+    WHILE = 286,                   /* WHILE  */
+    PRINT = 287,                   /* PRINT  */
+    MAIN = 288,                    /* MAIN  */
+    CLASS = 289,                   /* CLASS  */
+    PRIVATE = 290,                 /* PRIVATE  */
+    PROTECTED = 291,               /* PROTECTED  */
+    PUBLIC = 292,                  /* PUBLIC  */
+    INHERITS = 293,                /* INHERITS  */
+    BOOL = 294,                    /* BOOL  */
+    NUL = 295,                     /* NUL  */
+    SORT = 296,                    /* SORT  */
+    SELECT = 297,                  /* SELECT  */
+    UPDATE = 298,                  /* UPDATE  */
+    DELETE = 299,                  /* DELETE  */
+    LOG = 300,                     /* LOG  */
+    ARTH = 301,                    /* ARTH  */
+    BIT_OP = 302,                  /* BIT_OP  */
+    SHIFT = 303,                   /* SHIFT  */
+    COMP = 304,                    /* COMP  */
+    MINUS = 305,                   /* MINUS  */
+    ID = 306,                      /* ID  */
+    DATATYPE = 307                 /* DATATYPE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+union YYSTYPE
+{
+#line 18 "parse.y"
+
+     struct D{
+        string name;
+        string type;
+        vector<int>dim;
+        int scope;
+    } datatype;
+
+#line 125 "parse.tab.h"
+
+};
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
