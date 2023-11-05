@@ -39,7 +39,6 @@ std::unordered_map<std::vector<std::vector<std::string>>,functab> func_table_lis
 %token <type> DATATYPE
 %type <type> parameter
 %type <dim_len> access access2 access_assgn access_retn
-%type <funcattr> FuncHead
 %token <datatype> ID 
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
@@ -89,9 +88,20 @@ stmtD : declstmt
 
 // declaration statment      
 declstmt : DATATYPE ID Multideclstmt SEMICOL
-        {
+        {   
+            symtab var = search_symtab($2.name,scope); //check this,can string be char * 
+            if(var)
+            {
+            cout<<"Semantic Error: variable already declared before use\n";
+            exit(1);
+            } 
             insert_symtab($2.name,$1,{},scope);
             for(int i=0;i<var_list.size();i++){
+                if(search_symtab(var_list[i].name,scope))
+                {
+                cout<<"Semantic Error: variable already declared before use\n";
+                exit(1);
+                }
                 insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
             }
             var_list.clear();
@@ -105,14 +115,30 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             }
             var_list.push_back(s2);
             for(int i=0;i<var_list.size();i++){
+                if(search_symtab(var_list[i].name,scope))
+                {
+                cout<<"Semantic Error: variable already declared before use\n";
+                exit(1);
+                }
                 insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
             }
             var_list.clear();
         }
     | DATATYPE ID ASSGN rhs Multideclstmt SEMICOL 
         {   
+            symtab var = search_symtab($2.name,scope); //check this,can string be char * 
+            if(var)
+            {
+            cout<<"Semantic Error: variable already declared before use\n";
+            exit(1);
+            } 
             insert_symtab($2.name,$1,{},scope);
             for(int i=0;i<var_list.size();i++){
+                if(search_symtab(var_list[i].name,scope))
+                {
+                cout<<"Semantic Error: variable already declared before use\n";
+                exit(1);
+                }
                 insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
             }
             var_list.clear();
@@ -126,6 +152,11 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             }
             var_list.push_back(s2);
             for(int i=0;i<var_list.size();i++){
+                if(search_symtab(var_list[i].name,scope))
+                {
+                cout<<"Semantic Error: variable already declared before use\n";
+                exit(1);
+                }
                 insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
             }
             var_list.clear();
@@ -246,7 +277,7 @@ varL: rhs
     | varL COMMA rhs
     ;
 
-function_call:ID OBRAK varL CBRAK
+function_call:ID OBRAK varL CBRAK 
     | ID OBRAK CBRAK
     | DF_UPDATECOL
     | DF_SELECT
@@ -301,8 +332,9 @@ arg : ID { //use after declaration check
            cout<<"Semantic Error: A variable must be declared before use\n";
            exit(1);
         } 
+        $$ = var.type;
         }
-    | uni {}
+    | uni {$$ = $1;}
     | call_expression {}
     | numbers
     | FLOAT
@@ -340,8 +372,35 @@ access_retn : OSQA CSQA access_retn{ $$ = $3+1;}
         | OSQA CSQA {$$ = 1;}
        ;
        
-uni : ID POST
-    | ID access POST
+uni : ID POST {
+      symtab s;
+       if((s=search_symtab($1.name,scope))){
+           $$ = s->type;
+        }
+      else{
+        //error
+        cout<<"Semantic Error: A variable must be declared before use\n";
+        exit(1);
+      }
+    }
+    | ID access POST{
+      symtab s;
+       if((s=search_symtab($1.name,scope))){
+      
+           if($2 == s->dim.size()){
+                   $$ = s->type;
+           }
+           else{
+               cout<<"Semantic error: dimensions do not match\n";
+               exit(1);
+           }
+        }
+      else{
+        //error
+        cout<<"Semantic Error: A variable must be declared before use\n";
+        exit(1);
+      }
+    }
     ;
 
 // bin : arg ARTH arg 
