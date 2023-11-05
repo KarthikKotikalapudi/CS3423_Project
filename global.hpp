@@ -11,5 +11,5 @@ struct symbol_table
 };
 
 extern int scope ;
-vector<string> var_list;
+extern vector<symbol_table> var_list;
 extern std::vector<std::unordered_map<std::string,symtab>> sym_table_list;

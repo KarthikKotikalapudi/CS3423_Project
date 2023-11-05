@@ -2,6 +2,7 @@
     #include"global.hpp"
     #include<bits/stdc++.h>
     #include "helper_functions.hpp"
+    using namespace std;
     void yyerror(const char* s);
     extern int yylex(void);
     extern int yylineno;
@@ -9,7 +10,8 @@
     extern FILE* out;
 //global variables
 int scope = 0;
-vector<unordered_map<string,x*>> sym_table_list;
+vector<symbol_table> var_list;
+vector<unordered_map<string,symtab>> sym_table_list;
 %}
 %token NUM FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR ASSGN ARTHASSGN MATRIX_TYPE FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
@@ -17,12 +19,12 @@ vector<unordered_map<string,x*>> sym_table_list;
 %left NEG LOG ARTH BIT_OP SHIFT COMP COMMA MINUS
 %union{
      struct D{
-        string name;
-        string type;
-        vector<int>dim;
-        int scope;
+        std::string name;
+        std::string type;
+        std::vector<int> dim;
+        int level;
     } datatype;
-    string type;
+    std::string type;
 }
 
 %token <type> DATATYPE
@@ -77,7 +79,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL {}
     ;
 
 Multideclstmt : COMMA ID Multideclstmt {
-    
+    var_
 }
     | COMMA ID access Multideclstmt {
                

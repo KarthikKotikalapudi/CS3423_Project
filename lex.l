@@ -19,7 +19,7 @@ beta  [0-9A-Za-z_]
     i++;
 }}
 int|char|float|string|void|bool   { //printf("Datatype: %s\n", yytext);
-                                yylval.type = yytext;
+                                yylval.type = strdup(yytext); 
                                 return DATATYPE; }
 matrix                          {return MATRIX;}
 dataframe                       {return DF;}
@@ -60,7 +60,7 @@ sort {return SORT;}
 
 
 (\")([^\"]|\\.)*(\")   {
-                        // yylval.str = strdup(yytext); 
+                        // yylval.str = 
                         return STRING;
                        }
 '[^'\n]?' {
