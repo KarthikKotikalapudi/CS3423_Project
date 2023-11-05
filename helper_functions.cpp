@@ -1,7 +1,7 @@
 #include"global.hpp"
 #include "helper_functions.hpp"
 
-int insert_symtab(std::string name,std::string type,std::vector<int>dim,int level)
+void insert_symtab(std::string name,std::string type,std::vector<int>dim,int level)
 {
      if(sym_table_list.size()<level+1)
       {
@@ -40,6 +40,25 @@ symtab search_symtab(std::string name,int level)
        return NULL;
 }
 
-int insert_functab(std::string name, int no_of_params, std::vector<std::string>params, std::string return_type){
+void insert_functab(std::string name, std::vector<std::string>params, std::string return_type){
        functab function_table = new struct func_table;
+       function_table->name = name;
+       function_table->params = params;
+       function_table->return_type = return_type;
+       std::vector<std::string> temp;
+       temp.push_back(name);
+       std::vector<std::vector<std::string>> v;
+       v.push_back(temp);
+       v.push_back(params);
+       func_table_list[v] = function_table;
+}
+
+functab search_functab(std::string name, std::vector<std::string>args){
+       std::vector<std::string> temp;
+       temp.push_back(name);
+       std::vector<std::vector<std::string>> v;
+       v.push_back(temp);
+       v.push_back(args);
+       if(func_table_list[v])   return func_table_list[v];
+       return NULL;
 }

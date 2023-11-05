@@ -225,7 +225,7 @@ pred : pred LOG pred { }
     
 
 arg : ID { //use after declaration check
-        symtab var = search_symtab($1.datatype.type,scope); //check this,can string be char * 
+        symtab var = search_symtab($1.type,scope); //check this,can string be char * 
         if(!var)
         {
            cout<<"Semantic Error: A variable must be declared before use\n";
