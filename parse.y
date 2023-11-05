@@ -23,11 +23,11 @@ vector<unordered_map<string,symtab>> sym_table_list;
         vector<int>dim;
         int scope;
     } datatype;
+    string type;
 }
 
-%token <datatype> ID DATATYPE
-%type <datatype> Multideclstmt rhs pred call_expression uni arg 
-
+%token <type> DATATYPE
+%token <datatype> ID
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
   ;
@@ -66,14 +66,8 @@ stmtD : declstmt
 
 
 // declaration statment      
-declstmt : DATATYPE ID Multideclstmt SEMICOL { 
-                               $2.type = $1.type;
-                               $3.type = $2.type;           
-                                             }
-    | DATATYPE ID access Multideclstmt SEMICOL {
-              $2.type = $1.type;
-              $4.type = $2.type;  
-    }
+declstmt : DATATYPE ID Multideclstmt SEMICOL {}
+    | DATATYPE ID access Multideclstmt SEMICOL {    }
     | DATATYPE ID ASSGN rhs Multideclstmt SEMICOL {
         
     }
@@ -84,8 +78,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL {
     ;
 
 Multideclstmt : COMMA ID Multideclstmt {
-    $2.type= $$.type;
-    $3.type= $$.type;
+    
 }
     | COMMA ID access Multideclstmt {
                

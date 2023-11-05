@@ -1,5 +1,5 @@
 #include<bits/stdc++.h>
-
+using namespace std;
 typedef struct symbol_table* symtab;
 
 struct symbol_table 
@@ -11,4 +11,5 @@ struct symbol_table
 };
 
 extern int scope ;
+vector<string> var_list;
 extern std::vector<std::unordered_map<std::string,symtab>> sym_table_list;
