@@ -14,7 +14,7 @@ int scope = 0;
 vector<symbol_table> var_list;
 vector<unordered_map<string,symtab>> sym_table_list;
 %}
-%token NUM FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
+%token NUM FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR ASSGN ARTHASSGN MATRIX_TYPE FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
 %token BOOL NUL SORT SELECT UPDATE DELETE
 %left NEG LOG ARTH BIT_OP SHIFT COMP COMMA MINUS
@@ -27,10 +27,18 @@ vector<unordered_map<string,symtab>> sym_table_list;
         int level;
     } datatype;
     char* type;
+    int dim_len;
+         struct F{
+        char* name;
+        char** types;
+        int par_num;
+        char* ret_type;
+    } funcattr;
 }
 
 %token <type> DATATYPE
-%token <datatype> ID
+%type <dim_len> access access2 access_assgn access_retn
+%token <datatype> ID 
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
   ;
@@ -40,14 +48,23 @@ Decl : /* empty */
   | FuncDecl Decl // function declaration
   ;
 
-Main: MAIN OBRACE stmt CBRACE
+Main : MAIN OBRACE open_marker stmt closing_marker CBRACE 
+    ;
+
+open_marker :  {scope++;}
+    ;
+
+closing_marker : {
+    delete_symtab_level(scope);
+    scope--;}
+    ;
 
 GlobalDecl : declstmt
            |  class_decl {}
    ;
 
 // stmt rule produces all possible sequence of statements with scopes in between 
-stmt : stmtL OBRACE stmt CBRACE stmt {} // modify this if needed
+stmt : stmtL OBRACE open_marker stmt closing_marker CBRACE  stmt {} // modify this if needed
     | stmtL {}
     ;
 
@@ -69,24 +86,79 @@ stmtD : declstmt
 
 
 // declaration statment      
-declstmt : DATATYPE ID Multideclstmt SEMICOL {}
-    | DATATYPE ID access Multideclstmt SEMICOL {    }
-    | DATATYPE ID ASSGN rhs Multideclstmt SEMICOL {
-        
-    }
-    | DATATYPE ID access2 ASSGN MultiDimL Multideclstmt SEMICOL  {}
+declstmt : DATATYPE ID Multideclstmt SEMICOL
+        {
+            insert_symtab($2.name,$1,{},scope);
+            for(int i=0;i<var_list.size();i++){
+                insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
+            }
+            var_list.clear();
+        }
+    | DATATYPE ID access Multideclstmt SEMICOL
+        {   
+            symbolTable s2;
+            s2.name= $2.name;
+            for(int i=0;i<$3;i++){
+                s2.dim.push_back(-1);
+            }
+            var_list.push_back(s2);
+            for(int i=0;i<var_list.size();i++){
+                insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
+            }
+            var_list.clear();
+        }
+    | DATATYPE ID ASSGN rhs Multideclstmt SEMICOL 
+        {   
+            insert_symtab($2.name,$1,{},scope);
+            for(int i=0;i<var_list.size();i++){
+                insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
+            }
+            var_list.clear();
+        }
+    | DATATYPE ID access2 ASSGN MultiDimL Multideclstmt SEMICOL  
+        {   
+            symbolTable s2;
+            s2.name= $2.name;
+            for(int i=0;i<$3;i++){
+                s2.dim.push_back(-1);
+            }
+            var_list.push_back(s2);
+            for(int i=0;i<var_list.size();i++){
+                insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
+            }
+            var_list.clear();
+        }
     | MatrixDecl MultiMatrixDecl SEMICOL {}
     | object_decl
     | DF_DECL
     ;
 
 Multideclstmt : COMMA ID Multideclstmt {
+    symbolTable s2;
+    s2.name= $2.name;
+    var_list.push_back(s2);
 }
     | COMMA ID access Multideclstmt {
-               
+        symbolTable s2;
+        s2.name= $2.name;
+        for(int i=0;i<$3;i++){
+            s2.dim.push_back(-1);
+        }
+        var_list.push_back(s2);
     }
-    | COMMA ID ASSGN rhs Multideclstmt {}
-    | COMMA ID access2 ASSGN MultiDimL Multideclstmt {}
+    | COMMA ID ASSGN rhs Multideclstmt {
+        symbolTable s2;
+        s2.name= $2.name;
+        var_list.push_back(s2);
+    }
+    | COMMA ID access2 ASSGN MultiDimL Multideclstmt {
+        symbolTable s2;
+        s2.name= $2.name;
+        for(int i=0;i<$3;i++){
+            s2.dim.push_back(-1);
+        }
+        var_list.push_back(s2);
+    }
     | /* empty */
     ;
 
@@ -106,33 +178,33 @@ constL : numbers COMMA constL {}
     ;
 
 
-MultiDimL : OBRACE MultiDimL CBRACE
+MultiDimL : OBRACE open_marker MultiDimL closing_marker CBRACE 
     | MultiDimL COMMA MultiDimL
-    | OBRACE constL CBRACE
+    | OBRACE open_marker constL closing_marker CBRACE 
     ;
 
 MatrixDecl : MATRIX ID MATRIX_TYPE {}
     | MATRIX ID MATRIX_TYPE ASSGN ID{}
     | MATRIX ID MATRIX_TYPE OBRAK numL CBRAK{}
-    | MATRIX ID MATRIX_TYPE ASSGN OBRACE MatrixL CBRACE{}
+    | MATRIX ID MATRIX_TYPE ASSGN OBRACE open_marker MatrixL closing_marker CBRACE {}
     ;
 
 MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {}
     | COMMA ID MATRIX_TYPE ASSGN ID MultiMatrixDecl {}
     | COMMA ID MATRIX_TYPE OBRAK numL CBRAK MultiMatrixDecl {}
-    | COMMA ID MATRIX_TYPE ASSGN OBRACE MatrixL CBRACE MultiMatrixDecl {}
+    | COMMA ID MATRIX_TYPE ASSGN OBRACE open_marker MatrixL closing_marker CBRACE  MultiMatrixDecl {}
     | /* empty */
     ;
 
 numL : numbers COMMA numbers
     ;
 
-MatrixL : OBRACE constL CBRACE COMMA MatrixL
-    | OBRACE constL CBRACE
+MatrixL : OBRACE open_marker constL closing_marker CBRACE  COMMA MatrixL
+    | OBRACE open_marker constL closing_marker CBRACE 
     ;
 
 //function declaration
-FuncDecl :FuncHead OBRAK params CBRAK OBRACE FuncBody CBRACE 
+FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker CBRACE  
     ;
 
 FuncHead : DATATYPE ID
@@ -209,7 +281,14 @@ pred : pred LOG pred { }
 //       ;
     
 
-arg : ID {}
+arg : ID { //use after declaration check
+        symtab var = search_symtab($1.type,scope); //check this,can string be char * 
+        if(!var)
+        {
+           cout<<"Semantic Error: A variable must be declared before use\n";
+           exit(1);
+        } 
+        }
     | uni {}
     | call_expression {}
     | numbers
@@ -221,21 +300,31 @@ arg : ID {}
     | class_arg
     ;
 
-access : OSQA pred CSQA access
+access : OSQA pred CSQA access {
+    $$ = $4 +1;
+}
        | OSQA pred CSQA {}
+       {
+        $$ =1;
+       }
        ;
 
 access_assgn :
         OSQA CSQA access
-        | OSQA CSQA {}
+        {
+            $$ = $3+1;
+        }
+        | OSQA CSQA {
+            $$ = 1;
+        }
        ;
 
-access2 : access 
-        | access_assgn
+access2 : access {$$ = $1;}
+        | access_assgn {$$ =$1;}
         ;
 
-access_retn : OSQA CSQA access_retn
-        | OSQA CSQA {}
+access_retn : OSQA CSQA access_retn{ $$ = $3+1;}
+        | OSQA CSQA {$$ = 1;}
        ;
        
 uni : ID POST
@@ -258,20 +347,20 @@ exprstmt : expr SEMICOL
     ;
 
 // conditional statement
-condstmt : IF OBRAK pred CBRAK OBRACE stmt CBRACE  elif_list
-    | IF OBRAK pred CBRAK OBRACE stmt CBRACE elif_list  ELSE OBRACE stmt CBRACE
+condstmt : IF OBRAK pred CBRAK OBRACE open_marker stmt closing_marker CBRACE   elif_list
+    | IF OBRAK pred CBRAK OBRACE open_marker stmt closing_marker CBRACE  elif_list  ELSE OBRACE open_marker stmt closing_marker CBRACE 
     ;
 
 elif_list : /* empty */
-    | elif_list ELIF OBRAK pred CBRAK OBRACE stmt CBRACE
+    | elif_list ELIF OBRAK pred CBRAK OBRACE open_marker stmt closing_marker CBRACE 
     ;
             
 // loop statements
-loop : FOR OBRAK declstmt  pred SEMICOL expr CBRAK OBRACE stmt CBRACE
-    | FOR OBRAK declstmt  pred SEMICOL  CBRAK  OBRACE stmt CBRACE
-    | FOR OBRAK   SEMICOL pred SEMICOL expr CBRAK  OBRACE stmt CBRACE
-    | FOR OBRAK   SEMICOL pred SEMICOL  CBRAK  OBRACE stmt CBRACE
-    | WHILE OBRAK pred CBRAK  OBRACE stmt CBRACE
+loop : FOR OBRAK declstmt  pred SEMICOL expr CBRAK OBRACE open_marker stmt closing_marker CBRACE 
+    | FOR OBRAK declstmt  pred SEMICOL  CBRAK  OBRACE open_marker stmt closing_marker CBRACE 
+    | FOR OBRAK   SEMICOL pred SEMICOL expr CBRAK  OBRACE open_marker stmt closing_marker CBRACE 
+    | FOR OBRAK   SEMICOL pred SEMICOL  CBRAK  OBRACE open_marker stmt closing_marker CBRACE 
+    | WHILE OBRAK pred CBRAK  OBRACE open_marker stmt closing_marker CBRACE 
     ;
 
 break:
@@ -293,7 +382,7 @@ printstmt : PRINT OBRAK STRING CBRAK SEMICOL
 
 //class related syntax
 
-class_decl:  CLASS ID OBRACE class_body CBRACE SEMICOL
+class_decl:  CLASS ID OBRACE class_body CBRACE  SEMICOL
            | Inheritance SEMICOL
    ;
 
@@ -326,7 +415,7 @@ Multiobj : /* empty */
          ;
 
 //Inheritance
-Inheritance: CLASS ID INHERITS PARENT_LIST OBRACE class_body CBRACE 
+Inheritance: CLASS ID INHERITS PARENT_LIST OBRACE class_body CBRACE  
 
 PARENT_LIST:  access_specifier ID 
            | access_specifier ID COMMA PARENT_LIST
@@ -355,6 +444,7 @@ DF_SELECT   : SELECT OBRAK ID COMMA ID COMMA pred CBRAK
 %%
 int main(int argc,char** argv)
 {
+ 
     
     if(argc!= 2)
     {
