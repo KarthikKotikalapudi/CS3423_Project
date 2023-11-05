@@ -88,7 +88,8 @@ Public {return PUBLIC;}
 Protected { return PROTECTED;}
 Class {return CLASS;}
 Inherits {return INHERITS;}
-{alpha}+({beta})* {return ID;}
+{alpha}+({beta})* { yylval.datatype.name = strdup(yytext);
+    return ID;}
 
 
 [ \t]  { /*Ignore whitespace and tabs*/ }
