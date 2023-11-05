@@ -27,6 +27,12 @@ vector<unordered_map<string,symtab>> sym_table_list;
         int level;
     } datatype;
     char* type;
+         struct F{
+        char* name;
+        char** types;
+        int par_num;
+        char* ret_type;
+    } funcattr;
 }
 
 %token <type> DATATYPE
@@ -209,7 +215,14 @@ pred : pred LOG pred { }
 //       ;
     
 
-arg : ID {}
+arg : ID { //use after declaration check
+        symtab var = search_symtab($1.datatype.type,scope); //check this,can string be char * 
+        if(!var)
+        {
+           cout<<"Semantic Error: A variable must be declared before use\n";
+           exit(1);
+        } 
+        }
     | uni {}
     | call_expression {}
     | numbers
