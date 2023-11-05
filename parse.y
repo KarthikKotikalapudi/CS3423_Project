@@ -27,10 +27,12 @@ vector<unordered_map<string,symtab>> sym_table_list;
         int level;
     } datatype;
     char* type;
+    int dim_len;
 }
 
 %token <type> DATATYPE
-%token <datatype> ID
+%type <dim_len> access access2 access_assgn access_retn
+%token <datatype> ID 
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
   ;
@@ -69,24 +71,79 @@ stmtD : declstmt
 
 
 // declaration statment      
-declstmt : DATATYPE ID Multideclstmt SEMICOL {}
-    | DATATYPE ID access Multideclstmt SEMICOL {    }
-    | DATATYPE ID ASSGN rhs Multideclstmt SEMICOL {
-        
-    }
-    | DATATYPE ID access2 ASSGN MultiDimL Multideclstmt SEMICOL  {}
+declstmt : DATATYPE ID Multideclstmt SEMICOL
+        {
+            insert_symtab($2.name,$1,{},scope);
+            for(int i=0;i<var_list.size();i++){
+                insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
+            }
+            var_list.clear();
+        }
+    | DATATYPE ID access Multideclstmt SEMICOL
+        {   
+            symbolTable s2;
+            s2.name= $2.name;
+            for(int i=0;i<$3;i++){
+                s2.dim.push_back(-1);
+            }
+            var_list.push_back(s2);
+            for(int i=0;i<var_list.size();i++){
+                insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
+            }
+            var_list.clear();
+        }
+    | DATATYPE ID ASSGN rhs Multideclstmt SEMICOL 
+        {   
+            insert_symtab($2.name,$1,{},scope);
+            for(int i=0;i<var_list.size();i++){
+                insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
+            }
+            var_list.clear();
+        }
+    | DATATYPE ID access2 ASSGN MultiDimL Multideclstmt SEMICOL  
+        {   
+            symbolTable s2;
+            s2.name= $2.name;
+            for(int i=0;i<$3;i++){
+                s2.dim.push_back(-1);
+            }
+            var_list.push_back(s2);
+            for(int i=0;i<var_list.size();i++){
+                insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
+            }
+            var_list.clear();
+        }
     | MatrixDecl MultiMatrixDecl SEMICOL {}
     | object_decl
     | DF_DECL
     ;
 
 Multideclstmt : COMMA ID Multideclstmt {
+    symbolTable s2;
+    s2.name= $2.name;
+    var_list.push_back(s2);
 }
     | COMMA ID access Multideclstmt {
-               
+        symbolTable s2;
+        s2.name= $2.name;
+        for(int i=0;i<$3;i++){
+            s2.dim.push_back(-1);
+        }
+        var_list.push_back(s2);
     }
-    | COMMA ID ASSGN rhs Multideclstmt {}
-    | COMMA ID access2 ASSGN MultiDimL Multideclstmt {}
+    | COMMA ID ASSGN rhs Multideclstmt {
+        symbolTable s2;
+        s2.name= $2.name;
+        var_list.push_back(s2);
+    }
+    | COMMA ID access2 ASSGN MultiDimL Multideclstmt {
+        symbolTable s2;
+        s2.name= $2.name;
+        for(int i=0;i<$3;i++){
+            s2.dim.push_back(-1);
+        }
+        var_list.push_back(s2);
+    }
     | /* empty */
     ;
 
@@ -221,21 +278,31 @@ arg : ID {}
     | class_arg
     ;
 
-access : OSQA pred CSQA access
+access : OSQA pred CSQA access {
+    $$ = $4 +1;
+}
        | OSQA pred CSQA {}
+       {
+        $$ =1;
+       }
        ;
 
 access_assgn :
         OSQA CSQA access
-        | OSQA CSQA {}
+        {
+            $$ = $3+1;
+        }
+        | OSQA CSQA {
+            $$ = 1;
+        }
        ;
 
-access2 : access 
-        | access_assgn
+access2 : access {$$ = $1;}
+        | access_assgn {$$ =$1;}
         ;
 
-access_retn : OSQA CSQA access_retn
-        | OSQA CSQA {}
+access_retn : OSQA CSQA access_retn{ $$ = $3+1;}
+        | OSQA CSQA {$$ = 1;}
        ;
        
 uni : ID POST
