@@ -36,8 +36,9 @@ vector<unordered_map<string,symtab>> sym_table_list;
     } funcattr;
 }
 
-%token <type> DATATYPE
+%token <type> DATATYPE 
 %type <dim_len> access access2 access_assgn access_retn
+%type <type> uni arg 
 %token <datatype> ID 
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
@@ -265,7 +266,7 @@ varL: rhs
     | varL COMMA rhs
     ;
 
-function_call:ID OBRAK varL CBRAK
+function_call:ID OBRAK varL CBRAK 
     | ID OBRAK CBRAK
     | DF_UPDATECOL
     | DF_SELECT
@@ -320,8 +321,9 @@ arg : ID { //use after declaration check
            cout<<"Semantic Error: A variable must be declared before use\n";
            exit(1);
         } 
+        $$ = var.type;
         }
-    | uni {}
+    | uni {$$ = $1;}
     | call_expression {}
     | numbers
     | FLOAT
@@ -359,8 +361,35 @@ access_retn : OSQA CSQA access_retn{ $$ = $3+1;}
         | OSQA CSQA {$$ = 1;}
        ;
        
-uni : ID POST
-    | ID access POST
+uni : ID POST {
+      symtab s;
+       if((s=search_symtab($1.name,scope))){
+           $$ = s->type;
+        }
+      else{
+        //error
+        cout<<"Semantic Error: A variable must be declared before use\n";
+        exit(1);
+      }
+    }
+    | ID access POST{
+      symtab s;
+       if((s=search_symtab($1.name,scope))){
+      
+           if($2 == s->dim.size()){
+                   $$ = s->type;
+           }
+           else{
+               cout<<"Semantic error: dimensions do not match\n";
+               exit(1);
+           }
+        }
+      else{
+        //error
+        cout<<"Semantic Error: A variable must be declared before use\n";
+        exit(1);
+      }
+    }
     ;
 
 // bin : arg ARTH arg 
