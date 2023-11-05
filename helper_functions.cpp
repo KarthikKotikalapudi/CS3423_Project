@@ -24,15 +24,14 @@ int delete_symtab_level(int level)
        sym_table_list.pop_back();
 }
 
-symtab search_symtab(std::string name,int level,bool main)
+symtab search_symtab(std::string name,int level)
 {
        int i = level;
        while(i>=0)
        {
-            if(i==1 && main) continue;
-
             if(!sym_table_list[i][name]) return sym_table_list[i][name];
             i--;
+            if(i == 1)      i--;
        }
        return NULL;
 }
