@@ -4,11 +4,16 @@
     #include<string.h>
     #include <bits/stc++.h>
     using namespace std;
+    #include<bits/stdc++.h>
+    #include "helper_functions.hpp"
     void yyerror(const char* s);
     extern int yylex(void);
     extern int yylineno;
     extern FILE* yyin;
     extern FILE* out;
+#global variables
+int scope = 0;
+vector<unordered_map<string,x*>> sym_table_list;
 %}
 %token NUM FLOAT DATATYPE MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR ASSGN ARTHASSGN MATRIX_TYPE FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
