@@ -11,18 +11,8 @@
     using namespace std;
 //global variables
 int scope = 0;
-vector<symbol_table> var_list;
 vector<string> params; 
 bool func = true;
-vector<unordered_map<string,symtab>> sym_table_list;
-std::unordered_map<std::vector<std::vector<std::string>>,functab> func_table_list;
-    bool coersible(string a, string b){
-        if (a==b) return true;
-        if(a =="int" && b=="float" || a=="float" && b=="int" || a=="int" && b=="bool" || a=="bool" && b=="int" || a=="float" && b=="bool" || a=="bool" && b=="float"){
-            return true;
-        }
-        return false;
-    }
 %}
 %token NUM FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR ASSGN ARTHASSGN MATRIX_TYPE FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
@@ -45,7 +35,7 @@ std::unordered_map<std::vector<std::vector<std::string>>,functab> func_table_lis
 }
 
 %token <type> DATATYPE
-%type <type> parameter
+%type <type> parameter access_specifier
 %type <dim_len> access access2 access_assgn access_retn
 %type <type> uni arg numbers rhs
 %type <name> function_call
@@ -273,7 +263,7 @@ FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker
     //search if this function already exists
     if(search_functab($1.name,params))
     {
-        cout<<"Semantic Error: variable already declared\n";
+        cout<<"Semantic Error: function already declared\n";
         exit(1);
     }
     //inserting function to function table
@@ -598,8 +588,15 @@ printstmt : PRINT OBRAK STRING CBRAK SEMICOL
 
 //class related syntax
 
-class_decl:  CLASS ID OBRACE class_body CBRACE  SEMICOL
-           | Inheritance SEMICOL
+class_decl:  CLASS ID OBRACE class_body CBRACE  SEMICOL{
+    if(search_classtab(std::string name)){
+        cout<<"Semantic Error: Class already declared\n";
+        exit(1);
+    }
+    pair<string,string> temp;
+    insert_classtab($2.name,temp);
+}
+    | Inheritance SEMICOL
    ;
 
 
@@ -607,9 +604,12 @@ class_decl:  CLASS ID OBRACE class_body CBRACE  SEMICOL
 class_body:| class_body access_specifier section_body
    ;
 
-access_specifier: PRIVATE COL                                                                                                       
+access_specifier: PRIVATE COL
+                {$$ = "private"; }                                                                                                   
               | PUBLIC COL 
+                {$$ = "public";   }  
               | PROTECTED COL
+                {$$ = "protected"; }
               |
               ;
 
@@ -631,10 +631,16 @@ Multiobj : /* empty */
          ;
 
 //Inheritance
-Inheritance: CLASS ID INHERITS PARENT_LIST OBRACE class_body CBRACE  
-
-PARENT_LIST:  access_specifier ID 
-           | access_specifier ID COMMA PARENT_LIST
+Inheritance: CLASS ID INHERITS access_specifier ID OBRACE class_body CBRACE  {
+    if(search_classtab(std::string name)){
+        cout<<"Semantic Error: Class already declared\n";
+        exit(1);
+    }
+    pair<string,string> temp;
+    temp.first = $4;
+    temp.second = $2.name;
+    insert_classtab($2.name,temp);
+}
 
            
 //SORT FUNC
