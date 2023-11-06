@@ -11,7 +11,8 @@
     using namespace std;
 //global variables
 int scope = 0;
-vector<string> params;
+vector<string> params; 
+bool func = true;
 %}
 %token NUM FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR ASSGN ARTHASSGN MATRIX_TYPE FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
@@ -25,7 +26,7 @@ vector<string> params;
         int dim_len;
         int level;
     } datatype;
-    char* type;
+    char* type; char* name;
     int dim_len;
          struct F{
         char* name;
@@ -36,7 +37,8 @@ vector<string> params;
 %token <type> DATATYPE
 %type <type> parameter access_specifier
 %type <dim_len> access access2 access_assgn access_retn
-%type <type> uni arg numbers
+%type <type> uni arg numbers rhs
+%type <name> function_call
 %type <funcattr> FuncHead 
 %token <datatype> ID 
 %%
@@ -51,12 +53,12 @@ Decl : /* empty */
 Main : MAIN OBRACE open_marker stmt closing_marker CBRACE 
     ;
 
-open_marker :  {scope++;}
+open_marker :  {scope++; func = false;}
     ;
 
 closing_marker : {
     delete_symtab_level(scope);
-    scope--;}
+    scope--; func=true;}
     ;
 
 GlobalDecl : declstmt
@@ -88,7 +90,7 @@ stmtD : declstmt
 // declaration statment      
 declstmt : DATATYPE ID Multideclstmt SEMICOL
         {   
-            symtab var = search_symtab($2.name,scope); //check this,can string be char * 
+            symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
             if(var)
             {
             cout<<"Semantic Error: variable already declared\n";
@@ -96,7 +98,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             } 
             insert_symtab($2.name,$1,{},scope);
             for(int i=0;i<var_list.size();i++){
-                if(search_symtab(var_list[i].name,scope))
+                if(search_symtab(var_list[i].name,scope,func))
                 {
                 cout<<"Semantic Error: variable already declared \n";
                 exit(1);
@@ -114,7 +116,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             }
             var_list.push_back(s2);
             for(int i=0;i<var_list.size();i++){
-                if(search_symtab(var_list[i].name,scope))
+                if(search_symtab(var_list[i].name,scope,func))
                 {
                 cout<<"Semantic Error: variable already declared\n";
                 exit(1);
@@ -125,7 +127,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
         }
     | DATATYPE ID ASSGN rhs Multideclstmt SEMICOL 
         {   
-            symtab var = search_symtab($2.name,scope); //check this,can string be char * 
+            symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
             if(var)
             {
             cout<<"Semantic Error: variable already declared\n";
@@ -133,7 +135,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             } 
             insert_symtab($2.name,$1,{},scope);
             for(int i=0;i<var_list.size();i++){
-                if(search_symtab(var_list[i].name,scope))
+                if(search_symtab(var_list[i].name,scope,func))
                 {
                 cout<<"Semantic Error: variable already declared\n";
                 exit(1);
@@ -151,7 +153,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             }
             var_list.push_back(s2);
             for(int i=0;i<var_list.size();i++){
-                if(search_symtab(var_list[i].name,scope))
+                if(search_symtab(var_list[i].name,scope,func))
                 {
                 cout<<"Semantic Error: variable already declared\n";
                 exit(1);
@@ -269,32 +271,46 @@ params : parameter COMMA params {params.push_back($1);}
 parameter : DATATYPE ID 
 { // sending datatypes for onserting function
    $$ = $1;
- // check if same name is used for different parameters
+ // checking if same name is used for different parameters
+ symtab par = search_symtab($2.name,scope+1,func);
+ if(par)
+            {
+            cout<<"Semantic Error: two parameters cannot have same name\n Parameter name "<<$2.name<<" is already used\n";
+            exit(1);
+            } 
 }
     | MATRIX ID MATRIX_TYPE
-    | DATATYPE ID OSQA NUM CSQA
+    | DATATYPE ID OSQA CSQA {string dt = $1;
+       dt = dt+"[]";
+       char* temp = new char[dt.length()+1]; strcpy(temp,dt.c_str());
+       $$ = temp;}
     | ID ID
-    | ID ID OSQA NUM CSQA
+    | ID ID OSQA CSQA
     ;
 
 FuncBody : stmt
     ;
 
-varL: rhs 
-    | varL COMMA rhs
+varL: rhs {params.push_back($1);}
+    | rhs COMMA varL {params.push_back($1);}
     ;
 
-function_call:ID OBRAK varL CBRAK 
-    | ID OBRAK CBRAK
+function_call:ID OBRAK varL CBRAK  {$$ = $1.name;}
+    | ID OBRAK CBRAK {$$ = $1.name;}
     | DF_UPDATECOL
     | DF_SELECT
     | DF_DELETEROW
     ;
 
-call_expression: function_call
-    ;
-
-callstmt: call_expression SEMICOL
+callstmt: function_call SEMICOL {
+     functab fun = search_function($1,params);
+     if(!fun)
+     {
+            cout<<"Semantic Error: This function is not declared\n";
+            error(1);
+     }
+     params.clear();
+     }
         | class_arg SEMICOL
         | SORT_FUN
     ;
@@ -333,7 +349,7 @@ pred : pred LOG pred { }
     
 
 arg : ID { //use after declaration check
-        symtab var = search_symtab($1.name,scope); //check this,can string be char * 
+        symtab var = search_symtab($1.name,scope,func); //check this,can string be char * 
         if(!var)
         {
            cout<<"Semantic Error: A variable must be declared before use\n";
@@ -360,7 +376,7 @@ arg : ID { //use after declaration check
         $$ = "string";
     }
     | ID access{  symtab s;
-       if((s=search_symtab($1.name,scope))){
+       if((s=search_symtab($1.name,scope,func))){
       
            if($2 == s->dim.size()){
                    $$ = s->type;
@@ -408,7 +424,7 @@ access_retn : OSQA CSQA access_retn{ $$ = $3+1;}
        
 uni : ID POST {
       symtab s;
-       if((s=search_symtab($1.name,scope))){
+       if((s=search_symtab($1.name,scope,func))){
            $$ = s->type;
         }
       else{
@@ -419,7 +435,7 @@ uni : ID POST {
     }
     | ID access POST{
       symtab s;
-       if((s=search_symtab($1.name,scope))){
+       if((s=search_symtab($1.name,scope,func))){
       
            if($2 == s->dim.size()){
                    $$ = s->type;
@@ -442,7 +458,7 @@ uni : ID POST {
 
 expr : ID ASSGN rhs 
         {   symtab var;
-            if((var=search_symtab($1.name,scope))){
+            if((var=search_symtab($1.name,scope,func))){
                 if(!coersible(var->type,$3)){
                     cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
                     exit(1);
@@ -456,7 +472,7 @@ expr : ID ASSGN rhs
         }
     | ID ARTHASSGN rhs 
         {   symtab var;
-            if((var=search_symtab($1.name,scope))){
+            if((var=search_symtab($1.name,scope,func))){
                 if(!coersible(var->type,$3)){
                     cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
                     exit(1);
@@ -471,7 +487,7 @@ expr : ID ASSGN rhs
     | ID access ASSGN rhs 
         {   
             symtab var;
-            if((var=search_symtab($1.name,scope))){
+            if((var=search_symtab($1.name,scope,func))){
                 if(var->dim.size()!=$2){
                     cout<<"Semantic error: dimensions do not match\n";
                     exit(1);
@@ -489,7 +505,7 @@ expr : ID ASSGN rhs
         }
     | ID access ARTHASSGN rhs 
         {   symtab var;
-            if((var=search_symtab($1.name,scope))){
+            if((var=search_symtab($1.name,scope,func))){
                 if(var->dim.size()!=$2){
                     cout<<"Semantic error: dimensions do not match\n";
                     exit(1);
