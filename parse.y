@@ -26,7 +26,8 @@ bool func = true;
         int dim_len;
         int level;
     } datatype;
-    char* type; char* name;
+    const char* type;
+    const char* name;
     int dim_len;
          struct F{
         char* name;
@@ -104,7 +105,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 exit(1);
                 }
                 string s=$1;
-                for(int j=0;j<var_list[i].dim;j++){
+                for(int j=0;j<var_list[i].dim.size();j++){
                     s+="[]";
                 }
                 insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
@@ -126,7 +127,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 exit(1);
                 }
                 string s=$1;
-                for(int j=0;j<var_list[i].dim;j++){
+                for(int j=0;j<var_list[i].dim.size();j++){
                     s+="[]";
                 }
                 insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
@@ -149,7 +150,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 exit(1);
                 }
                 string s=$1;
-                for(int j=0;j<var_list[i].dim;j++){
+                for(int j=0;j<var_list[i].dim.size();j++){
                     s+="[]";
                 }
                 insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
@@ -171,7 +172,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 exit(1);
                 }
                 string s=$1;
-                for(int j=0;j<var_list[i].dim;j++){
+                for(int j=0;j<var_list[i].dim.size();j++){
                     s+="[]";
                 }
                 insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
@@ -337,7 +338,7 @@ class_arg:
     ;
 
 // expression statments    
-rhs : pred { $$ = $1}
+rhs : pred { $$ = $1;}
     ;
 
 // pred rules produces all valid predicates
@@ -386,7 +387,7 @@ pred : pred LOG pred
             cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible"<<endl;
             exit(1);
         }
-        $$ = dominate($1,$3);
+        $$ = dominate($1,$3).c_str();
     }
     | pred MINUS pred 
     {   
@@ -398,7 +399,7 @@ pred : pred LOG pred
             cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible"<<endl;
             exit(1);
         }
-        $$ = dominate($1,$3);
+        $$ = dominate($1,$3).c_str();;
     }
     ;
 
@@ -421,10 +422,10 @@ arg : ID { //use after declaration check
            cout<<"Semantic Error: A variable must be declared before use\n";
            exit(1);
         } 
-        $$ = var.type;
+        $$ = var->type.c_str();
         }
     | uni {$$ = $1;}
-    | call_expression {}
+    // | call_expression {}
     | numbers {
         //arg gets its attribute from child numbers
         $$ = $1;
@@ -445,7 +446,7 @@ arg : ID { //use after declaration check
        if((s=search_symtab($1.name,scope,func))){
       
            if($2 == s->dim.size()){
-                   $$ = s->type;
+                   $$ = s->type.c_str();
            }
            else{
                cout<<"Semantic error: dimensions do not match\n";
@@ -492,7 +493,7 @@ access_retn : OSQA CSQA access_retn{ $$ = $3+1;}
 uni : ID POST {
       symtab s;
        if((s=search_symtab($1.name,scope,func))){
-           $$ = s->type;
+           $$ = s->type.c_str();
         }
       else{
         //error
@@ -505,7 +506,7 @@ uni : ID POST {
        if((s=search_symtab($1.name,scope,func))){
       
            if($2 == s->dim.size()){
-                   $$ = s->type;
+                   $$ = s->type.c_str();
            }
            else{
                cout<<"Semantic error: dimensions do not match\n";
@@ -640,7 +641,7 @@ printstmt : PRINT OBRAK STRING CBRAK SEMICOL
 //class related syntax
 
 class_decl:  CLASS ID OBRACE class_body CBRACE  SEMICOL{
-    if(search_classtab(std::string name)){
+    if(search_classtab($2.name)){
         cout<<"Semantic Error: Class already declared\n";
         exit(1);
     }
