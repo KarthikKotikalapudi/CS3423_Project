@@ -15,7 +15,7 @@ vector<string> params;
 bool func = true;
 %}
 %token NUM FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST
-%token COMMA STRING CHAR ASSGN ARTHASSGN MATRIX_TYPE FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
+%token COMMA STRING CHAR ASSGN ARTHASSGN  FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
 %token BOOL NUL SORT SELECT UPDATE DELETE
 %left NEG LOG ARTH BIT_OP SHIFT COMP COMMA MINUS
 %union{
@@ -34,7 +34,7 @@ bool func = true;
     } funcattr;
 }
 
-%token <type> DATATYPE
+%token <type> DATATYPE MATRIX_TYPE
 %type <type> parameter access_specifier
 %type <dim_len> access access2 access_assgn access_retn
 %type <type> uni arg numbers rhs pred
@@ -237,13 +237,72 @@ MultiDimL : OBRACE open_marker MultiDimL closing_marker CBRACE
     | OBRACE open_marker constL closing_marker CBRACE 
     ;
 
-MatrixDecl : MATRIX ID MATRIX_TYPE {}
-    | MATRIX ID MATRIX_TYPE ASSGN ID{}
-    | MATRIX ID MATRIX_TYPE OBRAK numL CBRAK{}
-    | MATRIX ID MATRIX_TYPE ASSGN OBRACE open_marker MatrixL closing_marker CBRACE {}
+MatrixDecl : MATRIX ID MATRIX_TYPE {
+         char mtype[] = "<int>";
+         if(strcmp(mtype,$3)){
+            //add matrix with type int
+         }
+         else{
+            //add matrix with type float 
+         }
+
+    }
+    | MATRIX ID MATRIX_TYPE ASSGN ID{
+         char mtype[] = "<int>";
+         if(strcmp(mtype,$3)){
+            //add matrix with type int
+
+            //search for ID
+
+            //if matrix type not problem
+               
+               //then check for element type
+
+               //if it is same as $3 then okay
+
+               //else  give error 
+
+                
+         }
+         else{
+            //add matrix with type float
+
+            //search for ID
+
+            //if matrix type not problem
+               
+               //then check for element type
+
+               //if it is same as $3 then okay
+
+               //else  give error 
+         }
+    }
+    | MATRIX ID MATRIX_TYPE OBRAK numL CBRAK{
+                     char mtype[] = "<int>";
+              if(strcmp(mtype,$3)){
+                  //add matrix with type int
+                }
+             else{
+                //add matrix with type float 
+                }
+
+    }
+    | MATRIX ID MATRIX_TYPE ASSGN OBRACE open_marker MatrixL closing_marker CBRACE {
+                              char mtype[] = "<int>";
+              if(strcmp(mtype,$3)){
+                  //add matrix with type int
+                }
+             else{
+                //add matrix with type float 
+                }
+
+    }
     ;
 
-MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {}
+MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
+       //Assign type to ID , MultiMatrixDecl
+}
     | COMMA ID MATRIX_TYPE ASSGN ID MultiMatrixDecl {}
     | COMMA ID MATRIX_TYPE OBRAK numL CBRAK MultiMatrixDecl {}
     | COMMA ID MATRIX_TYPE ASSGN OBRACE open_marker MatrixL closing_marker CBRACE  MultiMatrixDecl {}
@@ -317,6 +376,8 @@ function_call:ID OBRAK varL CBRAK  {$$ = $1.name;}
     | DF_SELECT
     | DF_DELETEROW
     ;
+
+
 
 callstmt: function_call SEMICOL {
      functab fun = search_function($1,params);
