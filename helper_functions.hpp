@@ -11,7 +11,7 @@ void insert_functab(std::string name, std::vector<std::string>params, std::strin
 functab search_functab(std::string name, std::vector<std::string>args);
 
 bool coersible(string a, string b);
-
+string dominate(string a, string b);
 int insert_classtab(std::string name, std::vector<std::string>Inherited);
 
 classtab search_classtab(std::string name);

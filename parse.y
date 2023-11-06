@@ -37,7 +37,7 @@ bool func = true;
 %token <type> DATATYPE
 %type <type> parameter access_specifier
 %type <dim_len> access access2 access_assgn access_retn
-%type <type> uni arg numbers rhs
+%type <type> uni arg numbers rhs pred
 %type <name> function_call
 %type <funcattr> FuncHead 
 %token <datatype> ID 
@@ -337,19 +337,69 @@ class_arg:
     ;
 
 // expression statments    
-rhs : pred {}
+rhs : pred { $$ = $1}
     ;
 
 // pred rules produces all valid predicates
-pred : pred LOG pred { } 
-    | OBRAK pred CBRAK { }
-    | NEG pred
-    | arg { }
-    | pred COMP pred { }
-    | pred SHIFT pred { }
-    | pred BIT_OP pred { }
-    | pred ARTH pred { }
-    | pred MINUS pred { }
+pred : pred LOG pred 
+        {
+            $$ ="bool";
+        }
+    | OBRAK pred CBRAK { $$ = $2; }
+    | NEG pred { $$ = "bool"; }
+    | arg { $$ = $1; }
+    | pred COMP pred 
+    {
+        if(!coersible($1,$3)){
+            cout<<"Semantic Error: Both sides of the Comparator operation must be same"<<endl;
+            exit(1);
+        }
+        $$ = "bool";
+    }
+    | pred SHIFT pred 
+    {
+        if($1=="string" || $1=="char"||$3=="string" || $3=="char"){
+            cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
+            exit(1);
+        }
+        if(!coersible($1,$3)){
+            cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible"<<endl;
+            exit(1);
+        }
+        $$ = $1;
+    }
+    | pred BIT_OP pred 
+    {
+        if($1 != $3){
+            cout<<"Semantic Error: Both sides of the Bitwise operation must be same"<<endl;
+            exit(1);
+        }
+        $$ = $1;
+    }
+    | pred ARTH pred 
+    {   
+        if($1=="string" || $1=="char"||$3=="string" || $3=="char"){
+            cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
+            exit(1);
+        }
+        if(!coersible($1,$3)){
+            cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible"<<endl;
+            exit(1);
+        }
+        $$ = dominate($1,$3);
+    }
+    | pred MINUS pred 
+    {   
+        if($1=="string" || $1=="char"||$3=="string" || $3=="char"){
+            cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
+            exit(1);
+        }
+        if(!coersible($1,$3)){
+            cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible"<<endl;
+            exit(1);
+        }
+        $$ = dominate($1,$3);
+    }
     ;
 
 // OP : LOG
@@ -411,9 +461,10 @@ arg : ID { //use after declaration check
     | class_arg
     ;
 
-access : OSQA pred CSQA access {
-    $$ = $4 +1;
-}
+access : OSQA pred CSQA access 
+        {
+            $$ = $4 +1;
+        }
        | OSQA pred CSQA {}
        {
         $$ =1;

@@ -63,6 +63,18 @@ bool coersible(string a, string b){
        return false;
 }
 
+string dominate(string a, string b){
+       if (a==b) return a;
+       else if(a=="float" || b=="float"){
+              if(a=="float") return a;
+              return b;
+       }
+       else{
+              if(a=="int")return a;
+              return b;
+       }
+}
+
 int insert_classtab(std::string name, std::pair<std::string,std::string>Inherited){
        classtab c_table = new struct class_table;
        c_table->name = name;
