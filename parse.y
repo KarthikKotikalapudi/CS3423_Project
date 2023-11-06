@@ -515,7 +515,7 @@ expr : ID ASSGN rhs
                 exit(1);
             }
         }
-    | uni { $$ = $1; }
+    | uni { }
     | ID DOT ID ASSGN rhs 
         {
             
