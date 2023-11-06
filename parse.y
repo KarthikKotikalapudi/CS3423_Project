@@ -589,11 +589,11 @@ class_body:| class_body access_specifier section_body
    ;
 
 access_specifier: PRIVATE COL
-                $$ = "private";                                                                                                    
+                {$$ = "private"; }                                                                                                   
               | PUBLIC COL 
-                $$ = "public";     
+                {$$ = "public";   }  
               | PROTECTED COL
-                $$ = "protected"; 
+                {$$ = "protected"; }
               |
               ;
 
