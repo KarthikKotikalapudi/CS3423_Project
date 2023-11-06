@@ -113,7 +113,11 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 cout<<"Semantic Error: variable already declared \n";
                 exit(1);
                 }
-                insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
+                string s=$1;
+                for(int j=0;j<var_list[i].dim;j++){
+                    s+="[]";
+                }
+                insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
             }
             var_list.clear();
         }
@@ -131,7 +135,11 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 cout<<"Semantic Error: variable already declared\n";
                 exit(1);
                 }
-                insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
+                string s=$1;
+                for(int j=0;j<var_list[i].dim;j++){
+                    s+="[]";
+                }
+                insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
             }
             var_list.clear();
         }
@@ -150,7 +158,11 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 cout<<"Semantic Error: variable already declared\n";
                 exit(1);
                 }
-                insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
+                string s=$1;
+                for(int j=0;j<var_list[i].dim;j++){
+                    s+="[]";
+                }
+                insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
             }
             var_list.clear();
         }
@@ -168,7 +180,11 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 cout<<"Semantic Error: variable already declared\n";
                 exit(1);
                 }
-                insert_symtab(var_list[i].name,$1,var_list[i].dim,scope);
+                string s=$1;
+                for(int j=0;j<var_list[i].dim;j++){
+                    s+="[]";
+                }
+                insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
             }
             var_list.clear();
         }
