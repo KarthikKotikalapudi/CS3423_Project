@@ -480,7 +480,7 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
             //add matrix with type int or float
             // also patch the dimensions from MAtrixL
 
-            insert_symtab($2.name,$3,{$6.row,$6.col},scope);
+            insert_symtab($2.name,$3,{$7.row,$7.col},scope);
 
          }
          else{
@@ -492,11 +492,100 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
 
 MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
        //Assign type to ID , MultiMatrixDecl
+       symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
+           if(var)
+           {
+            cout<<"Semantic Error: variable already declared\n";
+            exit(1);
+           } 
+         
+         char mtype[] = "<int>";
+         char mtype1[] = "<float>";
+         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+            //add matrix with type int or float
+            insert_symtab($2.name,$3,{},scope);
+         }
+         else{
+             cout<<"Semantic Error: Matrix can only have int or float\n";
+         }
 }
-    | COMMA ID MATRIX_TYPE ASSGN ID MultiMatrixDecl {}
-    | COMMA ID MATRIX_TYPE OBRAK numL CBRAK MultiMatrixDecl {}
-    | COMMA ID MATRIX_TYPE ASSGN OBRACE open_marker MatrixL closing_marker CBRACE  MultiMatrixDecl {}
+    | COMMA ID MATRIX_TYPE ASSGN ID MultiMatrixDecl {
+            symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
+           if(var)
+           {
+            cout<<"Semantic Error: variable already declared\n";
+            exit(1);
+           } 
+         
+         char mtype[] = "<int>";
+         char mtype1[] = "<float>";
+         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+              //add matrix with type int or float
+               insert_symtab($2.name,$3,{},scope);
+            
+               symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
+              if(var)
+               {
+                //compare the rhs matrix type
+                if(strcmp(var->type,$3)){
+                    //do nothing
+                }
+                else{
+                    cout<<"Semantic Error: Martices are of different types\n";
+                }
+               } 
+               else{
+                cout<<"Semantic Error: variable already declared\n";
+                exit(1);
+               }
+         }
+         else{
+             cout<<"Semantic Error: Matrix can only have int or float\n";
+         }
+    }
+    | COMMA ID MATRIX_TYPE OBRAK numL CBRAK MultiMatrixDecl {
+           symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
+           if(var)
+           {
+            cout<<"Semantic Error: variable already declared\n";
+            exit(1);
+           } 
+         
+         char mtype[] = "<int>";
+         char mtype1[] = "<float>";
+         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+            //add matrix with type int or float
+            // also patch the dimensions from numL
+            insert_symtab($2.name,$3,{$5.row,$5.col},scope);
+         }
+         else{
+             cout<<"Semantic Error: Matrix can only have int or float\n";
+         }
+    }
+    | COMMA ID MATRIX_TYPE ASSGN OBRACE open_marker MatrixL closing_marker CBRACE  MultiMatrixDecl {
+         symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
+           if(var)
+           {
+            cout<<"Semantic Error: variable already declared\n";
+            exit(1);
+           } 
+         
+         char mtype[] = "<int>";
+         char mtype1[] = "<float>";
+         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+            //add matrix with type int or float
+            // also patch the dimensions from MAtrixL
+
+            insert_symtab($2.name,$3,{$7.row,$7.col},scope);
+
+         }
+         else{
+             cout<<"Semantic Error: Matrix can only have int or float\n";
+         }      
+
+    }
     | /* empty */
+
     ;
 
 numL : numbers COMMA numbers {
@@ -701,7 +790,7 @@ arg : ID { //use after declaration check
         $$ = var->type.c_str();
         }
     | uni {$$ = $1;}
-    // | call_expression {}
+    | function_call {$$ = $1}
     | numbers {
         //arg gets its attribute from child numbers
         $$ = $1;
@@ -1076,18 +1165,72 @@ start_end_pos : ID
 
 //decl, select, update, delete 
 
-DF_DECL: DF ID ASSGN DF OBRAK CBRAK SEMICOL
+DF_DECL: DF ID ASSGN DF OBRAK CBRAK SEMICOL { if(search_symtab($2.name,scope,func))
+
+{
+ cout<<"Semantic Error: variable already declared\n";
+ exit(1);
+}
+  insert_symtab($2.name,"dataframe",{},0);
+ }
         ;
 
-DF_DELETEROW : DELETE OBRAK ID COMMA pred CBRAK
+DF_DELETEROW : DELETE OBRAK ID COMMA pred1 CBRAK {   symtab var = search_symtab($3.name,scope,func);
+  if(!var )
+  {
+    cout<<"Semantic Eroor: The variable has to be declared before use\n";
+    exit(1);
+  }
+  if( var->type != "dataframe" )
+  {
+    cout<<"Semantic Eroor: The variable is not of type datarame\n";
+    exit(1);
+  }
+}
              ;
             
-DF_UPDATECOL : UPDATE OBRAK ID COMMA ID COMMA pred COMMA rhs CBRAK
-             | UPDATE OBRAK ID COMMA ID COMMA NUL COMMA rhs CBRAK
+DF_UPDATECOL : UPDATE OBRAK ID COMMA ID COMMA pred1 COMMA rhs CBRAK {   symtab var = search_symtab($3.name,scope,func);
+                    if(!var )
+                    {
+                        cout<<"Semantic Eroor: The variable has to be declared before use\n";
+                        exit(1);
+                    }
+                    if( var->type != "dataframe" )
+                    {
+                        cout<<"Semantic Eroor: The variable is not of type datarame\n";
+                        exit(1);
+                    }
+                    }
+             | UPDATE OBRAK ID COMMA ID COMMA NUL COMMA rhs CBRAK {   symtab var = search_symtab($3.name,scope,func);
+                    if(!var )
+                    {
+                        cout<<"Semantic Eroor: The variable has to be declared before use\n";
+                        exit(1);
+                    }
+                    if( var->type != "dataframe" )
+                    {
+                        cout<<"Semantic Eroor: The variable is not of type datarame\n";
+                        exit(1);
+                    }
+                    }
              ;
 
-DF_SELECT   : SELECT OBRAK ID COMMA ID COMMA pred CBRAK
+DF_SELECT   : SELECT OBRAK ID COMMA ID COMMA pred1 CBRAK{   symtab var = search_symtab($3.name,scope,func);
+                if(!var )
+                {
+                    cout<<"Semantic Eroor: The variable has to be declared before use\n";
+                    exit(1);
+                }
+                if( var->type != "dataframe" )
+                {
+                    cout<<"Semantic Eroor: The variable is not of type datarame\n";
+                    exit(1);
+                }
+                // check what second ID is for, if doesn't have special semantics, just copy above block
+                }
             ;
+
+pred1 : STRING
 
 %%
 int main(int argc,char** argv)
