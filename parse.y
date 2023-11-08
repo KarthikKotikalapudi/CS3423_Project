@@ -248,8 +248,8 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
            } 
          
          char mtype[] = "<int>";
-
-         if(strcmp(mtype,$3) || strcmp(mytpe,$3)){
+         char mtype1[] = "<float>";
+         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
             //add matrix with type int or float
             insert_symtab($2.name,$3,{},scope);
          }
