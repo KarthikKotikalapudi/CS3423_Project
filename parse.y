@@ -34,6 +34,14 @@ classtab active_class_ptr = NULL;
         char* name;
         char* ret_type;
     } funcattr;
+    struct matrixdim{
+        int row;
+        int col;
+    } MD;
+    struct CONSTL{
+        int len;
+        char*name;
+    }CL;
 }
 
 %token <type> DATATYPE MATRIX_TYPE
@@ -43,6 +51,8 @@ classtab active_class_ptr = NULL;
 %type <name> function_call
 %type <funcattr> FuncHead 
 %token <datatype> ID 
+%type <MD> numL MatrixL
+%type <CL> constL
 %%
 S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
   ;
@@ -222,15 +232,15 @@ numbers : NUM {
      }
      ;
 
-constL : numbers COMMA constL {}
-    | FLOAT COMMA constL {}
-    | STRING COMMA constL {}
-    | CHAR COMMA constL {}
-    | numbers
-    | FLOAT
-    | STRING
-    | CHAR
-    | BOOL
+constL : numbers COMMA constL { $$.len =   $3.len + 1;}
+    | FLOAT COMMA constL {  $$.len = $3.len +1 ;}
+    | STRING COMMA constL { $$.len = $3.len +1; }
+    | CHAR COMMA constL { $$ = $3 +1 ;}
+    | numbers {$$.len = 1;}
+    | FLOAT { $$.len = 1;}
+    | STRING {$$.len = 1;}
+    | CHAR {$$.len = 1 ;}
+    | BOOL {$$.len = 1;}
     ;
 
 
@@ -240,64 +250,100 @@ MultiDimL : OBRACE open_marker MultiDimL closing_marker CBRACE
     ;
 
 MatrixDecl : MATRIX ID MATRIX_TYPE {
+         //first check if already declared
+           symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
+           if(var)
+           {
+            cout<<"Semantic Error: variable already declared\n";
+            exit(1);
+           } 
+         
          char mtype[] = "<int>";
-         if(strcmp(mtype,$3)){
-            //add matrix with type int
+         char mtype1[] = "<float>";
+         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+            //add matrix with type int or float
+            insert_symtab($2.name,$3,{},scope);
          }
          else{
-            //add matrix with type float 
+             cout<<"Semantic Error: Matrix can only have int or float\n";
          }
 
     }
     | MATRIX ID MATRIX_TYPE ASSGN ID{
+        symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
+           if(var)
+           {
+            cout<<"Semantic Error: variable already declared\n";
+            exit(1);
+           } 
+         
          char mtype[] = "<int>";
-         if(strcmp(mtype,$3)){
-            //add matrix with type int
-
-            //search for ID
-
-            //if matrix type not problem
-               
-               //then check for element type
-
-               //if it is same as $3 then okay
-
-               //else  give error 
-
-                
+         char mtype1[] = "<float>";
+         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+              //add matrix with type int or float
+               insert_symtab($2.name,$3,{},scope);
+            
+               symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
+              if(var)
+               {
+                //compare the rhs matrix type
+                if(strcmp(var->type,$3)){
+                    //do nothing
+                }
+                else{
+                    cout<<"Semantic Error: Martices are of different types\n";
+                }
+               } 
+               else{
+                cout<<"Semantic Error: variable already declared\n";
+                exit(1);
+               }
          }
          else{
-            //add matrix with type float
-
-            //search for ID
-
-            //if matrix type not problem
-               
-               //then check for element type
-
-               //if it is same as $3 then okay
-
-               //else  give error 
+             cout<<"Semantic Error: Matrix can only have int or float\n";
          }
+    
     }
     | MATRIX ID MATRIX_TYPE OBRAK numL CBRAK{
-                     char mtype[] = "<int>";
-              if(strcmp(mtype,$3)){
-                  //add matrix with type int
-                }
-             else{
-                //add matrix with type float 
-                }
+             symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
+           if(var)
+           {
+            cout<<"Semantic Error: variable already declared\n";
+            exit(1);
+           } 
+         
+         char mtype[] = "<int>";
+         char mtype1[] = "<float>";
+         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+            //add matrix with type int or float
+            // also patch the dimensions from numL
+            insert_symtab($2.name,$3,{$5.row,$5.col},scope);
+         }
+         else{
+             cout<<"Semantic Error: Matrix can only have int or float\n";
+         }
 
     }
     | MATRIX ID MATRIX_TYPE ASSGN OBRACE open_marker MatrixL closing_marker CBRACE {
-                              char mtype[] = "<int>";
-              if(strcmp(mtype,$3)){
-                  //add matrix with type int
-                }
-             else{
-                //add matrix with type float 
-                }
+                        symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
+           if(var)
+           {
+            cout<<"Semantic Error: variable already declared\n";
+            exit(1);
+           } 
+         
+         char mtype[] = "<int>";
+         char mtype1[] = "<float>";
+         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+            //add matrix with type int or float
+            // also patch the dimensions from MAtrixL
+
+            insert_symtab($2.name,$3,{$6.row,$6.col},scope);
+
+         }
+         else{
+             cout<<"Semantic Error: Matrix can only have int or float\n";
+         }      
 
     }
     ;
@@ -311,11 +357,26 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
     | /* empty */
     ;
 
-numL : numbers COMMA numbers
+numL : numbers COMMA numbers {
+            $$.row = $1;
+            $$.col = $3;
+      }
     ;
 
-MatrixL : OBRACE open_marker constL closing_marker CBRACE  COMMA MatrixL
-    | OBRACE open_marker constL closing_marker CBRACE 
+MatrixL : OBRACE open_marker constL closing_marker CBRACE  COMMA MatrixL {
+                //get the dimesion from inner MatrixL and constL
+                $$.row = $7.row + 1;
+                if($7.col ! = $3.len){
+                    cout<<"Intiliaztion of Matrix with jagged array is not allowed"<<endl;
+                    exit(1);
+                }
+                $$.col = $3.len;
+       }
+    | OBRACE open_marker constL closing_marker CBRACE {
+               //get the dimesion from constL
+               $$.row = 1;
+               $$.col = $3.len;
+    }
     ;
 
 //function declaration
