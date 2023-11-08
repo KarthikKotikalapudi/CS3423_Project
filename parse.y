@@ -959,12 +959,45 @@ expr : ID ASSGN rhs
     | uni { }
     | ID DOT ID ASSGN rhs 
         {
-            
+            symtab var = search_symtab($1.name,scope,func);
+            pair<string,string> temp = search_classvar($2.name, var->type);
+            if(temp.first == ""){
+                //error
+                cout<<"Semantic Error: A variable must be declared before use\n";
+                exit(1);
+            }
+            if(temp.second != public){
+                //error
+                cout<<"Semantic Error: Variable not accessible\n";
+                exit(1);
+            }
+            if(!coersible(temp.first,$5)){
+                //error
+                cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                exit(1);
+            }
         }
     | ID DOT ID ARTHASSGN rhs 
         {
-            
+            symtab var = search_symtab($1.name,scope,func);
+            pair<string,string> temp = search_classvar($2.name, var->type);
+            if(temp.first == ""){
+                //error
+                cout<<"Semantic Error: A variable must be declared before use\n";
+                exit(1);
+            }
+            if(temp.second != public){
+                //error
+                cout<<"Semantic Error: Variable not accessible\n";
+                exit(1);
+            }
+            if(!coersible(temp.first,$5)){
+                //error
+                cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                exit(1);
+            }
         }
+    | class_arg {}
     ;
 
 exprstmt : expr SEMICOL
@@ -1077,7 +1110,7 @@ object_decl : ID ID Multiobj SEMICOL{
             cout<<"Semantic Error: variable already declared \n";
             exit(1);
             }
-            string s=$1;
+            string s=$1.name;
             for(int j=0;j<var_list[i].dim.size();j++){
                 s+="[]";
             }
@@ -1117,7 +1150,7 @@ object_decl : ID ID Multiobj SEMICOL{
             cout<<"Semantic Error: variable already declared \n";
             exit(1);
             }
-            string s=$1;
+            string s=$1.name;
             for(int j=0;j<var_list[i].dim.size();j++){
                 s+="[]";
             }
@@ -1125,25 +1158,60 @@ object_decl : ID ID Multiobj SEMICOL{
         }
         var_list.clear();
     }
-    | ID ID access Multiobj SEMICOL
+    | ID ID access Multiobj SEMICOL{ 
+            symbolTable s2;
+            s2.name= $2.name;
+            for(int i=0;i<$3;i++){
+                s2.dim.push_back(-1);
+            }
+            var_list.push_back(s2);
+            classtab c = search_classtab($1.name);
+            if(!c)
+            {
+                cout<<"Semantic Error: class "<<$1.name<<" not found\n";
+                exit(1);
+            } 
+            for(int i=0;i<var_list.size();i++){
+                if(search_symtab(var_list[i].name,scope,func))
+                {
+                cout<<"Semantic Error: variable already declared\n";
+                exit(1);
+                }
+                string s=$1.name;
+                for(int j=0;j<var_list[i].dim.size();j++){
+                    s+="[]";
+                }
+                if(var_list[i].type!=""){
+                    if(s != var_list[i].type){
+                        cout<<"Semantic Error: Type Mismatch\n";
+                        exit(1);
+                    }
+                }
+                insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
+            }
+            var_list.clear();
+    }
     ;  
 
 Multiobj : /* empty */
-        | COMMA ID{
+        | COMMA ID Multiobj{
             symbolTable s;
             s.name= $2.name;
             var_list.push_back(s);
         }
-        | COMMA ID ASSGN function_call {}
-        | COMMA ID ASSGN ID{
+        | COMMA ID ASSGN function_call Multiobj{}
+        | COMMA ID ASSGN ID Multiobj{
             symbolTable s;
             s.name = $2.name;
             s.type = $4.type;
             var_list.push_back(s);
         }
-        | COMMA ID access {
+        | COMMA ID access Multiobj{
             symbolTable s;
-            s.name = $2.name;
+            s.name= $2.name;
+            for(int i=0;i<$3;i++){
+                s.dim.push_back(-1);
+            }
             var_list.push_back(s);
         }
         ;
