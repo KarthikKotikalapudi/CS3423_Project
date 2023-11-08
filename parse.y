@@ -294,23 +294,47 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
     
     }
     | MATRIX ID MATRIX_TYPE OBRAK numL CBRAK{
-                     char mtype[] = "<int>";
-              if(strcmp(mtype,$3)){
-                  //add matrix with type int
-                }
-             else{
-                //add matrix with type float 
-                }
+             symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
+           if(var)
+           {
+            cout<<"Semantic Error: variable already declared\n";
+            exit(1);
+           } 
+         
+         char mtype[] = "<int>";
+         char mtype1[] = "<float>";
+         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+            //add matrix with type int or float
+            insert_symtab($2.name,$3,{},scope);
+
+            // also patch the dimensions from numL
+
+         }
+         else{
+             cout<<"Semantic Error: Matrix can only have int or float\n";
+         }
 
     }
     | MATRIX ID MATRIX_TYPE ASSGN OBRACE open_marker MatrixL closing_marker CBRACE {
-                              char mtype[] = "<int>";
-              if(strcmp(mtype,$3)){
-                  //add matrix with type int
-                }
-             else{
-                //add matrix with type float 
-                }
+                        symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
+           if(var)
+           {
+            cout<<"Semantic Error: variable already declared\n";
+            exit(1);
+           } 
+         
+         char mtype[] = "<int>";
+         char mtype1[] = "<float>";
+         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+            //add matrix with type int or float
+            insert_symtab($2.name,$3,{},scope);
+
+            // also patch the dimensions from MAtrixL
+
+         }
+         else{
+             cout<<"Semantic Error: Matrix can only have int or float\n";
+         }      
 
     }
     ;
