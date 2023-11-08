@@ -13,6 +13,8 @@
 int scope = 0;
 vector<string> params; 
 bool func = true;
+classtab active_class_ptr = NULL;
+string access_spec;
 %}
 %token NUM FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR ASSGN ARTHASSGN  FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
@@ -53,7 +55,7 @@ bool func = true;
 %type <MD> numL MatrixL
 %type <CL> constL
 %%
-S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
+S : Decl Main{}  // a valid program is sequence of declarations, functions
   ;
 
 Decl : /* empty */
@@ -101,26 +103,62 @@ stmtD : declstmt
 // declaration statment      
 declstmt : DATATYPE ID Multideclstmt SEMICOL
         {   
-            symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
-            if(var)
-            {
-            cout<<"Semantic Error: variable already declared\n";
-            exit(1);
-            } 
-            insert_symtab($2.name,$1,{},scope);
-            for(int i=0;i<var_list.size();i++){
-                if(search_symtab(var_list[i].name,scope,func))
+            if(active_class_ptr){
+                pair<string,string> var = search_classvar($2.name,active_class_ptr->name); //check this,can string be char * 
+                if(var.first != "")
                 {
-                cout<<"Semantic Error: variable already declared \n";
+                cout<<"Semantic Error: variable already declared\n";
                 exit(1);
+                } 
+                insert_classvar($2.name,$1,access_spec,active_class_ptr);
+                for(int i=0;i<var_list.size();i++){
+                    if(search_classvar(var_list[i].name,active_class_ptr->name).first!="")
+                    {
+                    cout<<"Semantic Error: variable already declared \n";
+                    exit(1);
+                    }
+                    string s=$1;
+                    for(int j=0;j<var_list[i].dim.size();j++){
+                        s+="[]";
+                    }
+                    if(var_list[i].type!=""){
+                        if(!coersible(s,var_list[i].type)){
+                            cout<<"Semantic Error: Type Mismatch\n";
+                            exit(1);
+                        }
+                    }
+                    insert_classvar(var_list[i].name,s,access_spec,active_class_ptr);
                 }
-                string s=$1;
-                for(int j=0;j<var_list[i].dim.size();j++){
-                    s+="[]";
-                }
-                insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
+                var_list.clear();
             }
-            var_list.clear();
+            else{
+                symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
+                if(var)
+                {
+                cout<<"Semantic Error: variable already declared\n";
+                exit(1);
+                } 
+                insert_symtab($2.name,$1,{},scope);
+                for(int i=0;i<var_list.size();i++){
+                    if(search_symtab(var_list[i].name,scope,func))
+                    {
+                    cout<<"Semantic Error: variable already declared \n";
+                    exit(1);
+                    }
+                    string s=$1;
+                    for(int j=0;j<var_list[i].dim.size();j++){
+                        s+="[]";
+                    }
+                    if(var_list[i].type!=""){
+                        if(!coersible(s,var_list[i].type)){
+                            cout<<"Semantic Error: Type Mismatch\n";
+                            exit(1);
+                        }
+                    }
+                    insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
+                }
+                var_list.clear();
+            }
         }
     | DATATYPE ID access Multideclstmt SEMICOL
         {   
@@ -130,64 +168,167 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 s2.dim.push_back(-1);
             }
             var_list.push_back(s2);
-            for(int i=0;i<var_list.size();i++){
-                if(search_symtab(var_list[i].name,scope,func))
-                {
-                cout<<"Semantic Error: variable already declared\n";
-                exit(1);
+            if(active_class_ptr){
+                for(int i=0;i<var_list.size();i++){
+                    if(search_classvar(var_list[i].name,active_class_ptr->name).first!="")
+                    {
+                    cout<<"Semantic Error: variable already declared \n";
+                    exit(1);
+                    }
+                    string s=$1;
+                    for(int j=0;j<var_list[i].dim.size();j++){
+                        s+="[]";
+                    }
+                    if(var_list[i].type!=""){
+                        if(!coersible(s,var_list[i].type)){
+                            cout<<"Semantic Error: Type Mismatch\n";
+                            exit(1);
+                        }
+                    }
+                    insert_classvar(var_list[i].name,s,access_spec,active_class_ptr);
                 }
-                string s=$1;
-                for(int j=0;j<var_list[i].dim.size();j++){
-                    s+="[]";
-                }
-                insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
+                var_list.clear();
             }
-            var_list.clear();
+            else{
+                for(int i=0;i<var_list.size();i++){
+                    if(search_symtab(var_list[i].name,scope,func))
+                    {
+                    cout<<"Semantic Error: variable already declared\n";
+                    exit(1);
+                    }
+                    string s=$1;
+                    for(int j=0;j<var_list[i].dim.size();j++){
+                        s+="[]";
+                    }
+                    if(var_list[i].type!=""){
+                        if(!coersible(s,var_list[i].type)){
+                            cout<<"Semantic Error: Type Mismatch\n";
+                            exit(1);
+                        }
+                    }
+                    insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
+                }
+                var_list.clear();
+            }
         }
     | DATATYPE ID ASSGN rhs Multideclstmt SEMICOL 
         {   
-            symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
-            if(var)
-            {
-            cout<<"Semantic Error: variable already declared\n";
-            exit(1);
-            } 
-            insert_symtab($2.name,$1,{},scope);
-            for(int i=0;i<var_list.size();i++){
-                if(search_symtab(var_list[i].name,scope,func))
+            if(active_class_ptr){
+                pair<string,string> var = search_classvar($2.name,active_class_ptr->name); //check this,can string be char * 
+                if(var.first != "")
                 {
                 cout<<"Semantic Error: variable already declared\n";
                 exit(1);
                 }
-                string s=$1;
-                for(int j=0;j<var_list[i].dim.size();j++){
-                    s+="[]";
+                if(!coersible($1,$4)){
+                    cout<<"Semantic Error: Type Mismatch\n";
+                    exit(1);
+                } 
+                insert_classvar($2.name,$1,access_spec,active_class_ptr);
+                for(int i=0;i<var_list.size();i++){
+                    if(search_classvar(var_list[i].name,active_class_ptr->name).first!="")
+                    {
+                    cout<<"Semantic Error: variable already declared \n";
+                    exit(1);
+                    }
+                    string s=$1;
+                    for(int j=0;j<var_list[i].dim.size();j++){
+                        s+="[]";
+                    }
+                    if(var_list[i].type!=""){
+                        if(!coersible(s,var_list[i].type)){
+                            cout<<"Semantic Error: Type Mismatch\n";
+                            exit(1);
+                        }
+                    }
+                    insert_classvar(var_list[i].name,s,access_spec,active_class_ptr);
                 }
-                insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
+                var_list.clear();
             }
-            var_list.clear();
+            else{
+                symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
+                if(var)
+                {
+                cout<<"Semantic Error: variable already declared\n";
+                exit(1);
+                } 
+                if($4!=$1){
+                    cout<<"Semantic Error: Type Mismatch\n";
+                    exit(1);
+                }
+                insert_symtab($2.name,$1,{},scope);
+                for(int i=0;i<var_list.size();i++){
+                    if(search_symtab(var_list[i].name,scope,func))
+                    {
+                    cout<<"Semantic Error: variable already declared\n";
+                    exit(1);
+                    }
+                    string s=$1;
+                    for(int j=0;j<var_list[i].dim.size();j++){
+                        s+="[]";
+                    }
+                    if(var_list[i].type!=""){
+                        if(!coersible(s,var_list[i].type)){
+                            cout<<"Semantic Error: Type Mismatch\n";
+                            exit(1);
+                        }
+                    }
+                    insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
+                }
+                var_list.clear();
+            }
         }
     | DATATYPE ID access2 ASSGN MultiDimL Multideclstmt SEMICOL  
         {   
+
             symbolTable s2;
             s2.name= $2.name;
             for(int i=0;i<$3;i++){
                 s2.dim.push_back(-1);
             }
             var_list.push_back(s2);
-            for(int i=0;i<var_list.size();i++){
-                if(search_symtab(var_list[i].name,scope,func))
-                {
-                cout<<"Semantic Error: variable already declared\n";
-                exit(1);
+            if(active_class_ptr){
+                for(int i=0;i<var_list.size();i++){
+                    if(search_classvar(var_list[i].name,active_class_ptr->name).first!="")
+                    {
+                    cout<<"Semantic Error: variable already declared \n";
+                    exit(1);
+                    }
+                    string s=$1;
+                    for(int j=0;j<var_list[i].dim.size();j++){
+                        s+="[]";
+                    }
+                    if(var_list[i].type!=""){
+                        if(!coersible(s,var_list[i].type)){
+                            cout<<"Semantic Error: Type Mismatch\n";
+                            exit(1);
+                        }
+                    }
+                    insert_classvar(var_list[i].name,s,access_spec,active_class_ptr);
                 }
-                string s=$1;
-                for(int j=0;j<var_list[i].dim.size();j++){
-                    s+="[]";
-                }
-                insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
+                var_list.clear();
             }
-            var_list.clear();
+            else{
+                for(int i=0;i<var_list.size();i++){
+                    if(search_symtab(var_list[i].name,scope,func))
+                    {
+                    cout<<"Semantic Error: variable already declared\n";
+                    exit(1);
+                    }
+                    string s=$1;
+                    for(int j=0;j<var_list[i].dim.size();j++){
+                        s+="[]";
+                    }
+                    if(var_list[i].type!=""){
+                        if(!coersible(s,var_list[i].type)){
+                            cout<<"Semantic Error: Type Mismatch\n";
+                            exit(1);
+                        }
+                    }
+                    insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
+                }
+                var_list.clear();
+            }
         }
     | MatrixDecl MultiMatrixDecl SEMICOL {}
     | object_decl
@@ -198,7 +339,7 @@ Multideclstmt : COMMA ID Multideclstmt {
     symbolTable s2;
     s2.name= $2.name;
     var_list.push_back(s2);
-}
+    }
     | COMMA ID access Multideclstmt {
         symbolTable s2;
         s2.name= $2.name;
@@ -209,7 +350,8 @@ Multideclstmt : COMMA ID Multideclstmt {
     }
     | COMMA ID ASSGN rhs Multideclstmt {
         symbolTable s2;
-        s2.name= $2.name;
+        s2.name = $2.name;
+        s2.type = $4;
         var_list.push_back(s2);
     }
     | COMMA ID access2 ASSGN MultiDimL Multideclstmt {
@@ -471,7 +613,9 @@ MatrixL : OBRACE open_marker constL closing_marker CBRACE  COMMA MatrixL {
 FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker CBRACE  
 {
     //search if this function already exists
-    if(search_functab($1.name,params))
+ if(!active_class_ptr)
+    {   // here we store parameter types in params global variable
+        if(search_functab($1.name,params))
     {
         cout<<"Semantic Error: function already declared\n";
         exit(1);
@@ -479,6 +623,17 @@ FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker
     //inserting function to function table
     insert_functab($1.name,params,$1.ret_type);
     params.clear();
+    }
+    // inserting function in the class
+    else 
+    {
+        if(search_classfunc($1.name, params,active_class_ptr->name))
+        {
+             cout<<"Semantic Error: function already declared in the class with same signature\n";
+        exit(1);
+        }
+        void insert_classfunc(active_class_ptr->name, $1.ret_type, access_spec, params, active_class_ptr);
+    }
 }
     ;
 
@@ -636,7 +791,7 @@ arg : ID { //use after declaration check
         $$ = var->type.c_str();
         }
     | uni {$$ = $1;}
-    // | call_expression {}
+    | function_call {$$ = $1}
     | numbers {
         //arg gets its attribute from child numbers
         $$ = $1;
@@ -653,18 +808,18 @@ arg : ID { //use after declaration check
     | STRING{
         $$ = "string";
     }
-    | ID access{  symtab s;
-       if((s=search_symtab($1.name,scope,func))){
-      
-           if($2 == s->dim.size()){
-                   $$ = s->type.c_str();
+    | ID access{  
+        symtab s;
+        if((s=search_symtab($1.name,scope,func))){
+           if($2 <= s->dim.size()){
+                   $$ = s->type.substr(0, s->type.size() - 2*$2).c_str();
            }
            else{
                cout<<"Semantic error: dimensions do not match\n";
                exit(1);
            }
         }
-      else{
+        else{
         //error
         cout<<"Semantic Error: A variable must be declared before use\n";
         exit(1);
@@ -716,8 +871,8 @@ uni : ID POST {
       symtab s;
        if((s=search_symtab($1.name,scope,func))){
       
-           if($2 == s->dim.size()){
-                   $$ = s->type.c_str();
+           if($2 <= s->dim.size()){
+                   $$ = s->type.substr(0, s->type.size() - 2*$2).c_str();
            }
            else{
                cout<<"Semantic error: dimensions do not match\n";
@@ -767,11 +922,12 @@ expr : ID ASSGN rhs
         {   
             symtab var;
             if((var=search_symtab($1.name,scope,func))){
-                if(var->dim.size()!=$2){
+                if(var->dim.size()<$2){
                     cout<<"Semantic error: dimensions do not match\n";
                     exit(1);
                 }
-                if(!coersible(var->type,$4)){
+                string s = var->type.substr(0, var->type.size() - 2*$2);
+                if(!coersible(s,$4)){
                     cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
                     exit(1);
                 }
@@ -785,10 +941,11 @@ expr : ID ASSGN rhs
     | ID access ARTHASSGN rhs 
         {   symtab var;
             if((var=search_symtab($1.name,scope,func))){
-                if(var->dim.size()!=$2){
+                if(var->dim.size()<$2){
                     cout<<"Semantic error: dimensions do not match\n";
                     exit(1);
                 }
+                string s = var->type.substr(0, var->type.size() - 2*$2);
                 if(!coersible(var->type,$4)){
                     cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
                     exit(1);
@@ -851,80 +1008,226 @@ printstmt : PRINT OBRAK STRING CBRAK SEMICOL
 
 //class related syntax
 
-class_decl:  CLASS ID OBRACE class_body CBRACE  SEMICOL{
-    if(search_classtab($2.name)){
-        cout<<"Semantic Error: Class already declared\n";
-        exit(1);
+class_decl:  class_head OBRACE class_body CBRACE  SEMICOL{active_class_ptr = NULL;}
+   ;
+
+class_head : CLASS ID{
+        if(search_classtab($2.name)){
+            cout<<"Semantic Error: Class already declared\n";
+            exit(1);
+        }
+        pair<string,string> temp;
+        insert_classtab($2.name,temp);
+        active_class_ptr = search_classtab($2.name);
     }
-    pair<string,string> temp;
-    insert_classtab($2.name,temp);
-}
-    | Inheritance SEMICOL
-   ;
+    | CLASS ID INHERITS access_specifier ID{
+        //Inheritance
 
+        if(search_classtab($2.name)){
+            cout<<"Semantic Error: Class already declared\n";
+            exit(1);
+        }
+        pair<string,string> temp;
+        temp.first = access_spec;
+        temp.second = $5.name;
+        insert_classtab($2.name,temp);
+        active_class_ptr = search_classtab($2.name);
+    }
+    ;
 
-
-class_body:| class_body access_specifier section_body
-   ;
+class_body:
+    | section_body class_body
+    ;
 
 access_specifier: PRIVATE COL
-                {$$ = "private"; }                                                                                                   
+                {access_spec = "private" }                                                                                                   
               | PUBLIC COL 
-                {$$ = "public";   }  
+                {access_spec = "public";   }  
               | PROTECTED COL
-                {$$ = "protected"; }
-              |
+                {access_spec = "protected"; }
+              | {access_spec = "public";   } 
               ;
 
 
-
-section_body: declstmt
-            | FuncDecl
+section_body: access_specifier declstmt
+            | access_specifier FuncDecl
             ;
 
-object_decl : ID ID Multiobj SEMICOL
-          | ID ID ASSGN function_call Multiobj SEMICOL
-          | ID ID ASSGN ID Multiobj SEMICOL
-          ;  
+object_decl : ID ID Multiobj SEMICOL{
+    classtab c = search_classtab($1.name);
+    if(!c)
+    {
+        cout<<"Semantic Error: class "<<$1.name<<" not found\n";
+        exit(1);
+    } 
+    symtab var = search_symtab($2.name,scope,func);
+        if(var)
+        {
+        cout<<"Semantic Error: variable already declared\n";
+        exit(1);
+        } 
+        insert_symtab($2.name,$1,{},scope);
+        for(int i=0;i<var_list.size();i++){
+            if(var_list[i].type != $1.name)
+            {
+                cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                exit(1);
+            }
+            if(search_symtab(var_list[i].name,scope,func))
+            {
+            cout<<"Semantic Error: variable already declared \n";
+            exit(1);
+            }
+            string s=$1;
+            for(int j=0;j<var_list[i].dim.size();j++){
+                s+="[]";
+            }
+            insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
+        }
+        var_list.clear();
+    }
+    | ID ID ASSGN function_call Multiobj SEMICOL
+    | ID ID ASSGN ID Multiobj SEMICOL{
+        classtab c = search_classtab($1.name);
+        if(!c)
+        {
+            cout<<"Semantic Error: class "<<$1.name<<" not found\n";
+            exit(1);
+        } 
+        symtab var = search_symtab($2.name,scope,func);
+        if(var)
+        {
+            cout<<"Semantic Error: variable already declared\n";
+            exit(1);
+        }
+        symtab var = search_symtab($4.name,scope,func);
+        if(var->type != $1.name)
+        {
+            cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+            exit(1);
+        }
+        insert_symtab($2.name,$1,{},scope);
+        for(int i=0;i<var_list.size();i++){
+            if(var_list[i].type != $1.name)
+            {
+                cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                exit(1);
+            }
+            if(search_symtab(var_list[i].name,scope,func))
+            {
+            cout<<"Semantic Error: variable already declared \n";
+            exit(1);
+            }
+            string s=$1;
+            for(int j=0;j<var_list[i].dim.size();j++){
+                s+="[]";
+            }
+            insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
+        }
+        var_list.clear();
+    }
+    | ID ID access Multiobj SEMICOL
+    ;  
 
 Multiobj : /* empty */
-         | COMMA ID ID
-         | COMMA ID ID ASSGN function_call
-         | COMMA ID ID ASSGN ID
-         ;
+        | COMMA ID{
+            symbolTable s;
+            s.name= $2.name;
+            var_list.push_back(s);
+        }
+        | COMMA ID ASSGN function_call {}
+        | COMMA ID ASSGN ID{
+            symbolTable s;
+            s.name = $2.name;
+            s.type = $4.type;
+            var_list.push_back(s);
+        }
+        | COMMA ID access
+        ;
 
-//Inheritance
-Inheritance: CLASS ID INHERITS access_specifier ID OBRACE class_body CBRACE  {
-    if(search_classtab(std::string name)){
-        cout<<"Semantic Error: Class already declared\n";
-        exit(1);
-    }
-    pair<string,string> temp;
-    temp.first = $4;
-    temp.second = $2.name;
-    insert_classtab($2.name,temp);
-}
 
            
 //SORT FUNC
-SORT_FUN    : SORT OBRAK rhs COMMA rhs CBRAK SEMICOL
-            | SORT OBRAK rhs COMMA rhs COMMA MINUS NUM CBRAK SEMICOL
+SORT_FUN    : SORT OBRAK start_end_pos COMMA start_end_pos CBRAK SEMICOL
+            | SORT OBRAK start_end_pos COMMA start_end_pos COMMA MINUS NUM CBRAK SEMICOL
             ;
+
+start_end_pos : ID
+              | ID ARTH rhs {if($3 != "int")
+              {
+                cout<<"Semantic Error: array can be appended with only a number\n";
+                exit(1)
+              }}
+
 
 //decl, select, update, delete 
 
-DF_DECL: DF ID ASSGN DF OBRAK CBRAK SEMICOL
+DF_DECL: DF ID ASSGN DF OBRAK CBRAK SEMICOL { if(search_symtab($2.name,scope,func))
+
+{
+ cout<<"Semantic Error: variable already declared\n";
+ exit(1);
+}
+  insert_symtab($2.name,"dataframe",{},0);
+ }
         ;
 
-DF_DELETEROW : DELETE OBRAK ID COMMA pred CBRAK
+DF_DELETEROW : DELETE OBRAK ID COMMA pred1 CBRAK {   symtab var = search_symtab($3.name,scope,func);
+  if(!var )
+  {
+    cout<<"Semantic Eroor: The variable has to be declared before use\n";
+    exit(1);
+  }
+  if( var->type != "dataframe" )
+  {
+    cout<<"Semantic Eroor: The variable is not of type datarame\n";
+    exit(1);
+  }
+}
              ;
             
-DF_UPDATECOL : UPDATE OBRAK ID COMMA ID COMMA pred COMMA rhs CBRAK
-             | UPDATE OBRAK ID COMMA ID COMMA NUL COMMA rhs CBRAK
+DF_UPDATECOL : UPDATE OBRAK ID COMMA ID COMMA pred1 COMMA rhs CBRAK {   symtab var = search_symtab($3.name,scope,func);
+                    if(!var )
+                    {
+                        cout<<"Semantic Eroor: The variable has to be declared before use\n";
+                        exit(1);
+                    }
+                    if( var->type != "dataframe" )
+                    {
+                        cout<<"Semantic Eroor: The variable is not of type datarame\n";
+                        exit(1);
+                    }
+                    }
+             | UPDATE OBRAK ID COMMA ID COMMA NUL COMMA rhs CBRAK {   symtab var = search_symtab($3.name,scope,func);
+                    if(!var )
+                    {
+                        cout<<"Semantic Eroor: The variable has to be declared before use\n";
+                        exit(1);
+                    }
+                    if( var->type != "dataframe" )
+                    {
+                        cout<<"Semantic Eroor: The variable is not of type datarame\n";
+                        exit(1);
+                    }
+                    }
              ;
 
-DF_SELECT   : SELECT OBRAK ID COMMA ID COMMA pred CBRAK
+DF_SELECT   : SELECT OBRAK ID COMMA ID COMMA pred1 CBRAK{   symtab var = search_symtab($3.name,scope,func);
+                if(!var )
+                {
+                    cout<<"Semantic Eroor: The variable has to be declared before use\n";
+                    exit(1);
+                }
+                if( var->type != "dataframe" )
+                {
+                    cout<<"Semantic Eroor: The variable is not of type datarame\n";
+                    exit(1);
+                }
+                // check what second ID is for, if doesn't have special semantics, just copy above block
+                }
             ;
+
+pred1 : STRING
 
 %%
 int main(int argc,char** argv)

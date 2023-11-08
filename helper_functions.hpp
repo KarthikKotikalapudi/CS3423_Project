@@ -11,7 +11,9 @@ void insert_functab(std::string name, std::vector<std::string>params, std::strin
 functab search_functab(std::string name, std::vector<std::string>args);
 
 bool coersible(string a, string b);
+
 string dominate(string a, string b);
+
 int insert_classtab(std::string name, std::vector<std::string>Inherited);
 
 classtab search_classtab(std::string name);
@@ -22,4 +24,4 @@ std::pair<std::string,std::string> search_classvar(std::string name, std::string
 
 void insert_classfunc(std::string name, std::string return_type, std::string access, std::vector<std::string>params, classtab c);
 
-std::pair<functab,std::string> search_classfunc(std::string func_name, std::string class_name);
+std::pair<functab,std::string> search_classfunc(std::string func_name, std::vector<std::string>params, std::string class_name);
