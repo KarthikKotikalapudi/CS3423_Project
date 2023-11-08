@@ -422,6 +422,7 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
          char mtype1[] = "<float>";
          if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
               //add matrix with type int or float
+              //find dimension of $3 and insert the dimesion for $2
                insert_symtab($2.name,$3,{},scope);
             
                symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
@@ -593,8 +594,6 @@ function_call:ID OBRAK varL CBRAK  {$$ = $1.name;}
     | DF_SELECT
     | DF_DELETEROW
     ;
-
-
 
 callstmt: function_call SEMICOL {
      functab fun = search_function($1,params);
@@ -1053,7 +1052,11 @@ Multiobj : /* empty */
             s.type = $4.type;
             var_list.push_back(s);
         }
-        | COMMA ID access
+        | COMMA ID access {
+            symbolTable s;
+            s.name = $2.name;
+            var_list.push_back(s);
+        }
         ;
 
 
