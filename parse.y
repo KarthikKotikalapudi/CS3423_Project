@@ -702,7 +702,7 @@ arg : ID { //use after declaration check
         $$ = var->type.c_str();
         }
     | uni {$$ = $1;}
-    // | call_expression {}
+    | function_call {$$ = $1}
     | numbers {
         //arg gets its attribute from child numbers
         $$ = $1;
@@ -992,18 +992,72 @@ start_end_pos : ID
 
 //decl, select, update, delete 
 
-DF_DECL: DF ID ASSGN DF OBRAK CBRAK SEMICOL
+DF_DECL: DF ID ASSGN DF OBRAK CBRAK SEMICOL { if(search_symtab($2.name,scope,func))
+
+{
+ cout<<"Semantic Error: variable already declared\n";
+ exit(1);
+}
+  insert_symtab($2.name,"dataframe",{},0);
+ }
         ;
 
-DF_DELETEROW : DELETE OBRAK ID COMMA pred CBRAK
+DF_DELETEROW : DELETE OBRAK ID COMMA pred1 CBRAK {   symtab var = search_symtab($3.name,scope,func);
+  if(!var )
+  {
+    cout<<"Semantic Eroor: The variable has to be declared before use\n";
+    exit(1);
+  }
+  if( var->type != "dataframe" )
+  {
+    cout<<"Semantic Eroor: The variable is not of type datarame\n";
+    exit(1);
+  }
+}
              ;
             
-DF_UPDATECOL : UPDATE OBRAK ID COMMA ID COMMA pred COMMA rhs CBRAK
-             | UPDATE OBRAK ID COMMA ID COMMA NUL COMMA rhs CBRAK
+DF_UPDATECOL : UPDATE OBRAK ID COMMA ID COMMA pred1 COMMA rhs CBRAK {   symtab var = search_symtab($3.name,scope,func);
+                    if(!var )
+                    {
+                        cout<<"Semantic Eroor: The variable has to be declared before use\n";
+                        exit(1);
+                    }
+                    if( var->type != "dataframe" )
+                    {
+                        cout<<"Semantic Eroor: The variable is not of type datarame\n";
+                        exit(1);
+                    }
+                    }
+             | UPDATE OBRAK ID COMMA ID COMMA NUL COMMA rhs CBRAK {   symtab var = search_symtab($3.name,scope,func);
+                    if(!var )
+                    {
+                        cout<<"Semantic Eroor: The variable has to be declared before use\n";
+                        exit(1);
+                    }
+                    if( var->type != "dataframe" )
+                    {
+                        cout<<"Semantic Eroor: The variable is not of type datarame\n";
+                        exit(1);
+                    }
+                    }
              ;
 
-DF_SELECT   : SELECT OBRAK ID COMMA ID COMMA pred CBRAK
+DF_SELECT   : SELECT OBRAK ID COMMA ID COMMA pred1 CBRAK{   symtab var = search_symtab($3.name,scope,func);
+                if(!var )
+                {
+                    cout<<"Semantic Eroor: The variable has to be declared before use\n";
+                    exit(1);
+                }
+                if( var->type != "dataframe" )
+                {
+                    cout<<"Semantic Eroor: The variable is not of type datarame\n";
+                    exit(1);
+                }
+                // check what second ID is for, if doesn't have special semantics, just copy above block
+                }
             ;
+
+pred1 : STRING
 
 %%
 int main(int argc,char** argv)
