@@ -475,7 +475,9 @@ MatrixL : OBRACE open_marker constL closing_marker CBRACE  COMMA MatrixL {
 FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker CBRACE  
 {
     //search if this function already exists
-    if(search_functab($1.name,params))
+ if(!active_class_ptr)
+    {   // here we store parameter types in params global variable
+        if(search_functab($1.name,params))
     {
         cout<<"Semantic Error: function already declared\n";
         exit(1);
@@ -483,6 +485,17 @@ FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker
     //inserting function to function table
     insert_functab($1.name,params,$1.ret_type);
     params.clear();
+    }
+    // inserting function in the class
+    else 
+    {
+        if(search_classfunc($1.name, params,active_class_ptr->name))
+        {
+             cout<<"Semantic Error: function already declared in the class with same signature\n";
+        exit(1);
+        }
+        void insert_classfunc(active_class_ptr->name, $1.ret_type, access_spec, params, active_class_ptr);
+    }
 }
     ;
 
@@ -914,9 +927,17 @@ Multiobj : /* empty */
 
            
 //SORT FUNC
-SORT_FUN    : SORT OBRAK rhs COMMA rhs CBRAK SEMICOL
-            | SORT OBRAK rhs COMMA rhs COMMA MINUS NUM CBRAK SEMICOL
+SORT_FUN    : SORT OBRAK start_end_pos COMMA start_end_pos CBRAK SEMICOL
+            | SORT OBRAK start_end_pos COMMA start_end_pos COMMA MINUS NUM CBRAK SEMICOL
             ;
+
+start_end_pos : ID
+              | ID ARTH rhs {if($3 != "int")
+              {
+                cout<<"Semantic Error: array can be appended with only a number\n";
+                exit(1)
+              }}
+
 
 //decl, select, update, delete 
 
