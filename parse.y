@@ -55,7 +55,7 @@ string access_spec;
 %type <MD> numL MatrixL
 %type <CL> constL
 %%
-S : Decl Main Decl {}  // a valid program is sequence of declarations, functions
+S : Decl Main{}  // a valid program is sequence of declarations, functions
   ;
 
 Decl : /* empty */
@@ -939,8 +939,8 @@ class_head : CLASS ID{
             exit(1);
         }
         pair<string,string> temp;
-        temp.first = $4;
-        temp.second = $2.name;
+        temp.first = access_spec;
+        temp.second = $5.name;
         insert_classtab($2.name,temp);
         active_class_ptr = search_classtab($2.name);
     }
@@ -964,16 +964,97 @@ section_body: access_specifier declstmt
             | access_specifier FuncDecl
             ;
 
-object_decl : ID ID Multiobj SEMICOL
-          | ID ID ASSGN function_call Multiobj SEMICOL
-          | ID ID ASSGN ID Multiobj SEMICOL
-          ;  
+object_decl : ID ID Multiobj SEMICOL{
+    classtab c = search_classtab($1.name);
+    if(!c)
+    {
+        cout<<"Semantic Error: class "<<$1.name<<" not found\n";
+        exit(1);
+    } 
+    symtab var = search_symtab($2.name,scope,func);
+        if(var)
+        {
+        cout<<"Semantic Error: variable already declared\n";
+        exit(1);
+        } 
+        insert_symtab($2.name,$1,{},scope);
+        for(int i=0;i<var_list.size();i++){
+            if(var_list[i].type != $1.name)
+            {
+                cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                exit(1);
+            }
+            if(search_symtab(var_list[i].name,scope,func))
+            {
+            cout<<"Semantic Error: variable already declared \n";
+            exit(1);
+            }
+            string s=$1;
+            for(int j=0;j<var_list[i].dim.size();j++){
+                s+="[]";
+            }
+            insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
+        }
+        var_list.clear();
+    }
+    | ID ID ASSGN function_call Multiobj SEMICOL
+    | ID ID ASSGN ID Multiobj SEMICOL{
+        classtab c = search_classtab($1.name);
+        if(!c)
+        {
+            cout<<"Semantic Error: class "<<$1.name<<" not found\n";
+            exit(1);
+        } 
+        symtab var = search_symtab($2.name,scope,func);
+        if(var)
+        {
+            cout<<"Semantic Error: variable already declared\n";
+            exit(1);
+        }
+        symtab var = search_symtab($4.name,scope,func);
+        if(var->type != $1.name)
+        {
+            cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+            exit(1);
+        }
+        insert_symtab($2.name,$1,{},scope);
+        for(int i=0;i<var_list.size();i++){
+            if(var_list[i].type != $1.name)
+            {
+                cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                exit(1);
+            }
+            if(search_symtab(var_list[i].name,scope,func))
+            {
+            cout<<"Semantic Error: variable already declared \n";
+            exit(1);
+            }
+            string s=$1;
+            for(int j=0;j<var_list[i].dim.size();j++){
+                s+="[]";
+            }
+            insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
+        }
+        var_list.clear();
+    }
+    | ID ID access Multiobj SEMICOL
+    ;  
 
 Multiobj : /* empty */
-         | COMMA ID
-         | COMMA ID ASSGN function_call
-         | COMMA ID ASSGN ID
-         ;
+        | COMMA ID{
+            symbolTable s;
+            s.name= $2.name;
+            var_list.push_back(s);
+        }
+        | COMMA ID ASSGN function_call {}
+        | COMMA ID ASSGN ID{
+            symbolTable s;
+            s.name = $2.name;
+            s.type = $4.type;
+            var_list.push_back(s);
+        }
+        | COMMA ID access
+        ;
 
 
            

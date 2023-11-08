@@ -13,3 +13,5 @@ will it be better to write a function to get metadata of a df?
 Comment : we need 
 suggest (or let's schedule a meet to get) a valid syntax for predicate logic for df.
 Comment: A new statement for select
+
+obj to a parent class cannot be assigned
