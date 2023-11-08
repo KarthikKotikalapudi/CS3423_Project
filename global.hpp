@@ -24,7 +24,7 @@ struct class_table
 {
     std::string name;
     std::unordered_map<std::string,pair<std::string,std::string>> vars;
-    std::unordered_map<std::string,pair<functab,std::string>> funcs;
+    std::unordered_map<std::string,vector<pair<functab,std::string>>> funcs;
     std::pair<std::string,std::string> inherited;
 };
 

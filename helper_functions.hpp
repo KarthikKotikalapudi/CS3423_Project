@@ -24,4 +24,4 @@ std::pair<std::string,std::string> search_classvar(std::string name, std::string
 
 void insert_classfunc(std::string name, std::string return_type, std::string access, std::vector<std::string>params, classtab c);
 
-std::pair<functab,std::string> search_classfunc(std::string func_name, std::string class_name);
+std::pair<functab,std::string> search_classfunc(std::string func_name, std::vector<std::string>params, std::string class_name);

@@ -125,14 +125,16 @@ void insert_classfunc(std::string name, std::string return_type, std::string acc
        function_table->params = params;
        function_table->return_type = return_type;
        temp.first = function_table;
-       c->funcs[name] = temp;
+       c->funcs[name].push_back(temp);
 }
 
-std::pair<functab,std::string> search_classfunc(std::string func_name, std::string class_name){
+std::pair<functab,std::string> search_classfunc(std::string func_name, std::vector<std::string>params, std::string class_name){
        classtab c = search_classtab(class_name);
        auto it = c->funcs.find(func_name);
        if(it != c->funcs.end()){
-              return c->funcs[func_name];
+              for(auto i: c->funcs[func_name]){
+                     if(i.first->params == params)      return i;
+              }
        }
        pair<functab,std::string> temp;
        temp.first = NULL;
