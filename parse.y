@@ -239,12 +239,22 @@ MultiDimL : OBRACE open_marker MultiDimL closing_marker CBRACE
     ;
 
 MatrixDecl : MATRIX ID MATRIX_TYPE {
+         //first check if already declared
+           symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
+           if(var)
+           {
+            cout<<"Semantic Error: variable already declared\n";
+            exit(1);
+           } 
+         
          char mtype[] = "<int>";
-         if(strcmp(mtype,$3)){
-            //add matrix with type int
+
+         if(strcmp(mtype,$3) || strcmp(mytpe,$3)){
+            //add matrix with type int or float
+            insert_symtab($2.name,$3,{},scope);
          }
          else{
-            //add matrix with type float 
+             cout<<"Semantic Error: Matrix can only have int or float\n";
          }
 
     }
