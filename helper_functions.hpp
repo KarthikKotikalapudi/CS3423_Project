@@ -14,7 +14,7 @@ bool coersible(string a, string b);
 
 string dominate(string a, string b);
 
-int insert_classtab(std::string name, std::vector<std::string>Inherited);
+int insert_classtab(std::string name, std::pair<std::string,std::string>Inherited);
 
 classtab search_classtab(std::string name);
 

@@ -628,12 +628,12 @@ FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker
     // inserting function in the class
     else 
     {
-        if(search_classfunc($1.name, params,active_class_ptr->name))
+        if(search_classfunc($1.name, params,active_class_ptr->name).first)
         {
              cout<<"Semantic Error: function already declared in the class with same signature\n";
         exit(1);
         }
-        void insert_classfunc(active_class_ptr->name, $1.ret_type, access_spec, params, active_class_ptr);
+        insert_classfunc(active_class_ptr->name, $1.ret_type, access_spec, params, active_class_ptr);
     }
 }
     ;
@@ -685,16 +685,16 @@ function_call:ID OBRAK varL CBRAK  {$$ = $1.name;}
     ;
 
 callstmt: function_call SEMICOL {
-     functab fun = search_function($1,params);
+     functab fun = search_functab($1,params);
      if(!fun)
      {
             cout<<"Semantic Error: This function is not declared\n";
-            error(1);
+            exit(1);
      }
      params.clear();
      }
-        | class_arg SEMICOL
-        | SORT_FUN
+    | class_arg SEMICOL
+    | SORT_FUN
     ;
 
 class_arg:
@@ -790,7 +790,7 @@ arg : ID { //use after declaration check
         $$ = var->type.c_str();
         }
     | uni {$$ = $1;}
-    | function_call {$$ = $1}
+    | function_call {$$ = $1;}
     | numbers {
         //arg gets its attribute from child numbers
         $$ = $1;
@@ -960,13 +960,13 @@ expr : ID ASSGN rhs
     | ID DOT ID ASSGN rhs 
         {
             symtab var = search_symtab($1.name,scope,func);
-            pair<string,string> temp = search_classvar($2.name, var->type);
+            pair<string,string> temp = search_classvar($3.name, var->type);
             if(temp.first == ""){
                 //error
                 cout<<"Semantic Error: A variable must be declared before use\n";
                 exit(1);
             }
-            if(temp.second != public){
+            if(temp.second != "public"){
                 //error
                 cout<<"Semantic Error: Variable not accessible\n";
                 exit(1);
@@ -980,13 +980,13 @@ expr : ID ASSGN rhs
     | ID DOT ID ARTHASSGN rhs 
         {
             symtab var = search_symtab($1.name,scope,func);
-            pair<string,string> temp = search_classvar($2.name, var->type);
+            pair<string,string> temp = search_classvar($3.name, var->type);
             if(temp.first == ""){
                 //error
                 cout<<"Semantic Error: A variable must be declared before use\n";
                 exit(1);
             }
-            if(temp.second != public){
+            if(temp.second != "public"){
                 //error
                 cout<<"Semantic Error: Variable not accessible\n";
                 exit(1);
@@ -997,7 +997,6 @@ expr : ID ASSGN rhs
                 exit(1);
             }
         }
-    | class_arg {}
     ;
 
 exprstmt : expr SEMICOL
@@ -1072,7 +1071,7 @@ class_body:
     ;
 
 access_specifier: PRIVATE COL
-                {access_spec = "private" }                                                                                                   
+                {access_spec = "private"; }                                                                                                   
               | PUBLIC COL 
                 {access_spec = "public";   }  
               | PROTECTED COL
@@ -1098,7 +1097,7 @@ object_decl : ID ID Multiobj SEMICOL{
         cout<<"Semantic Error: variable already declared\n";
         exit(1);
         } 
-        insert_symtab($2.name,$1,{},scope);
+        insert_symtab($2.name,$1.name,{},scope);
         for(int i=0;i<var_list.size();i++){
             if(var_list[i].type != $1.name)
             {
@@ -1132,13 +1131,13 @@ object_decl : ID ID Multiobj SEMICOL{
             cout<<"Semantic Error: variable already declared\n";
             exit(1);
         }
-        symtab var = search_symtab($4.name,scope,func);
-        if(var->type != $1.name)
+        symtab var1 = search_symtab($4.name,scope,func);
+        if(var1->type != $1.name)
         {
             cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
             exit(1);
         }
-        insert_symtab($2.name,$1,{},scope);
+        insert_symtab($2.name,$1.name,{},scope);
         for(int i=0;i<var_list.size();i++){
             if(var_list[i].type != $1.name)
             {
@@ -1227,7 +1226,7 @@ start_end_pos : ID
               | ID ARTH rhs {if($3 != "int")
               {
                 cout<<"Semantic Error: array can be appended with only a number\n";
-                exit(1)
+                exit(1);
               }}
 
 
