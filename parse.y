@@ -259,35 +259,39 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
 
     }
     | MATRIX ID MATRIX_TYPE ASSGN ID{
+        symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
+           if(var)
+           {
+            cout<<"Semantic Error: variable already declared\n";
+            exit(1);
+           } 
+         
          char mtype[] = "<int>";
-         if(strcmp(mtype,$3)){
-            //add matrix with type int
-
-            //search for ID
-
-            //if matrix type not problem
-               
-               //then check for element type
-
-               //if it is same as $3 then okay
-
-               //else  give error 
-
-                
+         char mtype1[] = "<float>";
+         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+              //add matrix with type int or float
+               insert_symtab($2.name,$3,{},scope);
+            
+               symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
+              if(var)
+               {
+                //compare the rhs matrix type
+                if(strcmp(var->type,$3)){
+                    //do nothing
+                }
+                else{
+                    cout<<"Semantic Error: Martices are of different types\n";
+                }
+               } 
+               else{
+                cout<<"Semantic Error: variable already declared\n";
+                exit(1);
+               }
          }
          else{
-            //add matrix with type float
-
-            //search for ID
-
-            //if matrix type not problem
-               
-               //then check for element type
-
-               //if it is same as $3 then okay
-
-               //else  give error 
+             cout<<"Semantic Error: Matrix can only have int or float\n";
          }
+    
     }
     | MATRIX ID MATRIX_TYPE OBRAK numL CBRAK{
                      char mtype[] = "<int>";
