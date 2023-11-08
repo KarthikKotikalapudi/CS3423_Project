@@ -13,6 +13,7 @@
 int scope = 0;
 vector<string> params; 
 bool func = true;
+classtab active_class_ptr = NULL;
 %}
 %token NUM FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR ASSGN ARTHASSGN  FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
@@ -701,18 +702,32 @@ printstmt : PRINT OBRAK STRING CBRAK SEMICOL
 
 //class related syntax
 
-class_decl:  CLASS ID OBRACE class_body CBRACE  SEMICOL{
-    if(search_classtab($2.name)){
-        cout<<"Semantic Error: Class already declared\n";
-        exit(1);
-    }
-    pair<string,string> temp;
-    insert_classtab($2.name,temp);
-}
-    | Inheritance SEMICOL
+class_decl:  class_head OBRACE class_body CBRACE  SEMICOL
    ;
 
+class_head : CLASS ID{
+        if(search_classtab($2.name)){
+            cout<<"Semantic Error: Class already declared\n";
+            exit(1);
+        }
+        pair<string,string> temp;
+        insert_classtab($2.name,temp);
+        active_class_ptr = search_classtab($2.name);
+    }
+    | CLASS ID INHERITS access_specifier ID{
+        //Inheritance
 
+        if(search_classtab($2.name)){
+            cout<<"Semantic Error: Class already declared\n";
+            exit(1);
+        }
+        pair<string,string> temp;
+        temp.first = $4;
+        temp.second = $2.name;
+        insert_classtab($2.name,temp);
+        active_class_ptr = search_classtab($2.name);
+    }
+    ;
 
 class_body:| class_body access_specifier section_body
    ;
@@ -727,7 +742,6 @@ access_specifier: PRIVATE COL
               ;
 
 
-
 section_body: declstmt
             | FuncDecl
             ;
@@ -738,22 +752,11 @@ object_decl : ID ID Multiobj SEMICOL
           ;  
 
 Multiobj : /* empty */
-         | COMMA ID ID
-         | COMMA ID ID ASSGN function_call
-         | COMMA ID ID ASSGN ID
+         | COMMA ID
+         | COMMA ID ASSGN function_call
+         | COMMA ID ASSGN ID
          ;
 
-//Inheritance
-Inheritance: CLASS ID INHERITS access_specifier ID OBRACE class_body CBRACE  {
-    if(search_classtab(std::string name)){
-        cout<<"Semantic Error: Class already declared\n";
-        exit(1);
-    }
-    pair<string,string> temp;
-    temp.first = $4;
-    temp.second = $2.name;
-    insert_classtab($2.name,temp);
-}
 
            
 //SORT FUNC
