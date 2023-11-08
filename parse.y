@@ -14,6 +14,7 @@ int scope = 0;
 vector<string> params; 
 bool func = true;
 classtab active_class_ptr = NULL;
+string access_spec;
 %}
 %token NUM FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR ASSGN ARTHASSGN  FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
@@ -102,26 +103,37 @@ stmtD : declstmt
 // declaration statment      
 declstmt : DATATYPE ID Multideclstmt SEMICOL
         {   
-            symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
-            if(var)
-            {
-            cout<<"Semantic Error: variable already declared\n";
-            exit(1);
-            } 
-            insert_symtab($2.name,$1,{},scope);
-            for(int i=0;i<var_list.size();i++){
-                if(search_symtab(var_list[i].name,scope,func))
+            if(active_class_ptr){
+                pair<string,string> var = search_classvar($2.name,active_class_ptr->name); //check this,can string be char * 
+                if(var.first != "")
                 {
-                cout<<"Semantic Error: variable already declared \n";
+                cout<<"Semantic Error: variable already declared\n";
                 exit(1);
-                }
-                string s=$1;
-                for(int j=0;j<var_list[i].dim.size();j++){
-                    s+="[]";
-                }
-                insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
+                } 
+                insert_classvar($2.name,$1,access_spec,active_class_ptr);
             }
-            var_list.clear();
+            else{
+                symtab var = search_symtab($2.name,scope,func); //check this,can string be char * 
+                if(var)
+                {
+                cout<<"Semantic Error: variable already declared\n";
+                exit(1);
+                } 
+                insert_symtab($2.name,$1,{},scope);
+                for(int i=0;i<var_list.size();i++){
+                    if(search_symtab(var_list[i].name,scope,func))
+                    {
+                    cout<<"Semantic Error: variable already declared \n";
+                    exit(1);
+                    }
+                    string s=$1;
+                    for(int j=0;j<var_list[i].dim.size();j++){
+                        s+="[]";
+                    }
+                    insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
+                }
+                var_list.clear();
+            }
         }
     | DATATYPE ID access Multideclstmt SEMICOL
         {   
@@ -763,7 +775,7 @@ printstmt : PRINT OBRAK STRING CBRAK SEMICOL
 
 //class related syntax
 
-class_decl:  class_head OBRACE class_body CBRACE  SEMICOL
+class_decl:  class_head OBRACE class_body CBRACE  SEMICOL{active_class_ptr = NULL;}
    ;
 
 class_head : CLASS ID{
@@ -790,21 +802,22 @@ class_head : CLASS ID{
     }
     ;
 
-class_body:| class_body access_specifier section_body
-   ;
+class_body:
+    | section_body class_body
+    ;
 
 access_specifier: PRIVATE COL
-                {$$ = "private"; }                                                                                                   
+                {access_spec = "private" }                                                                                                   
               | PUBLIC COL 
-                {$$ = "public";   }  
+                {access_spec = "public";   }  
               | PROTECTED COL
-                {$$ = "protected"; }
-              |
+                {access_spec = "protected"; }
+              | {access_spec = "public";   } 
               ;
 
 
-section_body: declstmt
-            | FuncDecl
+section_body: access_specifier declstmt
+            | access_specifier FuncDecl
             ;
 
 object_decl : ID ID Multiobj SEMICOL
