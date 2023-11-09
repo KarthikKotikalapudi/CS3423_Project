@@ -679,19 +679,19 @@ FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker
 }
     ;
 
-FuncHead : DATATYPE ID {$$.name = $2; $$.ret_type = $1;}
+FuncHead : DATATYPE ID {$$.name = $2.name; $$.ret_type = $1;}
     | ID ID { if(!search_classtab($1.name))
                {
                 cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist\n";
                 exit(1);
                }
-               $$.name = $2; $$.ret_type = $1.name;
+               $$.name = $2.name; $$.ret_type = $1.name;
              }
-    | MATRIX MATRIX_TYPE ID {}
-    | DF ID {$$.name = $2; strcpy($$.ret_type,"dataframe");}
+    | MATRIX MATRIX_TYPE ID {string s = "matrix"; s = s + $2; strcpy($$.ret_type,s.c_str()); $$.name = $3.name; }
+    | DF ID {$$.name = $2.name; strcpy($$.ret_type,"dataframe");}
     | DATATYPE access_retn ID {string s = $1; 
               for(int i=0;i<$2;i++) s = s + "[]";  
-              $$.name = $3; strcpy($$.ret_type,s.c_str());      
+              $$.name = $3.name; strcpy($$.ret_type,s.c_str());      
               }
     | ID access_retn ID {
         if(!search_classtab($1.name))
@@ -701,7 +701,7 @@ FuncHead : DATATYPE ID {$$.name = $2; $$.ret_type = $1;}
                }
               string s = $1.name; 
               for(int i=0;i<$2;i++) s = s + "[]";  
-              $$.name = $3; strcpy($$.ret_type,s.c_str());
+              $$.name = $3.name; strcpy($$.ret_type,s.c_str());
                 }
     ;
 
