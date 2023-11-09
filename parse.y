@@ -38,10 +38,11 @@ string access_spec;
     struct matrixdim{
         int row;
         int col;
+        char*type;
     } MD;
     struct CONSTL{
         int len;
-        char*name;
+        char*type;
     }CL;
 }
 
@@ -373,15 +374,16 @@ numbers : NUM {
      }
      ;
 
-constL : numbers COMMA constL { $$.len =   $3.len + 1;}
-    | FLOAT COMMA constL {  $$.len = $3.len +1 ;}
-    | STRING COMMA constL { $$.len = $3.len +1; }
-    | CHAR COMMA constL { $$ = $3 +1 ;}
-    | numbers {$$.len = 1;}
-    | FLOAT { $$.len = 1;}
-    | STRING {$$.len = 1;}
-    | CHAR {$$.len = 1 ;}
-    | BOOL {$$.len = 1;}
+constL : numbers COMMA constL { $$.len =   $3.len + 1; if(!strcmp($3,"int")){cout<<"constants are not of same type\n"; exit(1);} $$.type="int"; }
+    | FLOAT COMMA constL {  $$.len = $3.len +1 ;if(!strcmp($3,"float")){cout<<"constants are not of same type\n"; exit(1);} $$.type="int";}
+    | STRING COMMA constL { $$.len = $3.len +1; if(!strcmp($3,"string")){cout<<"constants are not of same type\n"; exit(1);} $$.type="string";}
+    | CHAR COMMA constL { $$ = $3 +1 ;if(!strcmp($3,"char")){cout<<"constants are not of same type\n"; exit(1);} $$.type="char";}
+    | BOOL COMMA constL { $$ = $3 +1 ;if(!strcmp($3,"bool")){cout<<"constants are not of same type\n"; exit(1);} $$.type="bool";}
+    | numbers {$$.len = 1;$$.type="int"}
+    | FLOAT { $$.len = 1;$$.type="float"}
+    | STRING {$$.len = 1;$$.type="string"}
+    | CHAR {$$.len = 1 ; $$.type="char"}
+    | BOOL {$$.len = 1;$$.type="bool"}
     ;
 
 
@@ -479,7 +481,10 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
          if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
             //add matrix with type int or float
             // also patch the dimensions from MAtrixL
-
+            if(!strcmp($3,$7.type)){
+                 cout<<"The assigned constant matrix is different from the variable matrix declared here\n";
+                 exit(1);  
+            }
             insert_symtab($2.name,$3,{$7.row,$7.col},scope);
 
          }
@@ -575,7 +580,10 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
          if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
             //add matrix with type int or float
             // also patch the dimensions from MAtrixL
-
+            if(!strcmp($3,$7.type)){
+                 cout<<"The assigned constant matrix is different from the variable matrix declared here\n";
+                 exit(1);  
+            }
             insert_symtab($2.name,$3,{$7.row,$7.col},scope);
 
          }
@@ -602,11 +610,13 @@ MatrixL : OBRACE open_marker constL closing_marker CBRACE  COMMA MatrixL {
                     exit(1);
                 }
                 $$.col = $3.len;
+                $$.type = $3.type;
        }
     | OBRACE open_marker constL closing_marker CBRACE {
                //get the dimesion from constL
                $$.row = 1;
                $$.col = $3.len;
+               $$.type = $3.type;
     }
     ;
 
