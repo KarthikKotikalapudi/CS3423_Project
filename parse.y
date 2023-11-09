@@ -690,11 +690,29 @@ FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker
     ;
 
 FuncHead : DATATYPE ID {$$.name = $2; $$.ret_type = $1;}
-    | ID ID
-    | MATRIX MATRIX_TYPE ID
-    | DF ID
-    | DATATYPE access_retn ID
-    | ID access_retn ID
+    | ID ID { if(!search_classtab($1.name))
+               {
+                cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist\n";
+                exit(1);
+               }
+               $$.name = $2; $$.ret_type = $1.name;
+             }
+    | MATRIX MATRIX_TYPE ID {}
+    | DF ID {$$.name = $2; strcpy($$.ret_type,"dataframe");}
+    | DATATYPE access_retn ID {string s = $1; 
+              for(int i=0;i<$2;i++) s = s + "[]";  
+              $$.name = $3; strcpy($$.ret_type,s.c_str());      
+              }
+    | ID access_retn ID {
+        if(!search_classtab($1.name))
+               {
+                cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist\n";
+                exit(1);
+               }
+              string s = $1.name; 
+              for(int i=0;i<$2;i++) s = s + "[]";  
+              $$.name = $3; strcpy($$.ret_type,s.c_str());
+                }
     ;
 
 params : parameter COMMA params {params.push_back($1);}
@@ -971,7 +989,7 @@ expr : ID ASSGN rhs
         {   symtab var;
             if((var=search_symtab($1.name,scope,func))){
 
-                if(!($4=="int" || $4=="float")){
+                if(!($3=="int" || $3=="float")){
                     cout<<"Semantic Error: Invalid RHS type expected int or float\n";
                     exit(1);
                 }
