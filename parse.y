@@ -15,6 +15,10 @@ vector<string> params;
 bool func = true;
 classtab active_class_ptr = NULL;
 string access_spec;
+vector<struct symbol_table> var_list;
+vector<std::unordered_map<std::string,symtab>> sym_table_list;
+unordered_map<std::string,vector<functab>> func_table_list;
+unordered_map<std::string,classtab> class_table_list;
 %}
 %token FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR ASSGN ARTHASSGN  FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS

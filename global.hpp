@@ -29,7 +29,6 @@ struct class_table
 };
 
 extern int scope ;
-extern std::vector<struct symbol_table> var_list;
 extern std::vector<std::unordered_map<std::string,symtab>> sym_table_list;
 extern std::unordered_map<std::string,vector<functab>> func_table_list;
 extern std::unordered_map<std::string,classtab> class_table_list;

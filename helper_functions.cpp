@@ -50,7 +50,13 @@ void insert_functab(std::string name, std::vector<std::string>params, std::strin
 
 functab search_functab(std::string name, std::vector<std::string>args){
        for(auto i : func_table_list[name]){
-              if(i->params == args)   return i;
+              int j = 0;
+              for(; j < i->params.size(); i++){
+                     if((i->params[j] != args[j]) && (i->params[j] == "float" && args[j] == "int")){
+                            break;
+                     }
+              }
+              if(j == i->params.size())   return i;
        }
        return NULL;
 }
