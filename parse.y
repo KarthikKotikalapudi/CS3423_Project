@@ -792,9 +792,9 @@ function_call:ID OBRAK varL CBRAK  { functab fun = search_functab($1.name,params
                 exit(1);
                }
         $$.name = $1.name; strcpy($$.ret_type,(fun->return_type).c_str());}
-    | DF_UPDATECOL
-    | DF_SELECT
-    | DF_DELETEROW
+    | DF_UPDATECOL { strcpy($$.name,"update");strcpy($$.ret_type,"dataframe");}
+    | DF_SELECT {strcpy($$.name,"update");strcpy($$.ret_type,"dataframe");}
+    | DF_DELETEROW {strcpy($$.name,"update");strcpy($$.ret_type,"dataframe");}
     ;
 call_expression: function_call {
     functab fun = search_functab($1.name,params);
