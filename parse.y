@@ -724,13 +724,54 @@ parameter : DATATYPE ID
             exit(1);
             } 
 }
-    | MATRIX ID MATRIX_TYPE
+    | MATRIX ID MATRIX_TYPE {string s = "matrix"; s = s + $3; strcpy($$,s.c_str());
+                          symtab par = search_symtab($2.name,scope+1,func);
+            if(par)
+            {
+            cout<<"Semantic Error: two parameters cannot have same name\n Parameter name "<<$2.name<<" is already used\n";
+            exit(1);
+            }  
+             }
     | DATATYPE ID OSQA CSQA {string dt = $1;
        dt = dt+"[]";
        char* temp = new char[dt.length()+1]; strcpy(temp,dt.c_str());
-       $$ = temp;}
-    | ID ID
-    | ID ID OSQA CSQA
+       $$ = temp;
+        symtab par = search_symtab($2.name,scope+1,func);
+        if(par)
+            {
+            cout<<"Semantic Error: two parameters cannot have same name\n Parameter name "<<$2.name<<" is already used\n";
+            exit(1);
+            } 
+       }
+    | ID ID {
+            if(!search_classtab($1.name))
+               {
+                cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist\n";
+                exit(1);
+               }
+            $$ = $1.name; 
+             symtab par = search_symtab($2.name,scope+1,func);
+            if(par)
+            {
+            cout<<"Semantic Error: two parameters cannot have same name\n Parameter name "<<$2.name<<" is already used\n";
+            exit(1);
+            } 
+            }
+    | ID ID OSQA CSQA {
+                 if(!search_classtab($1.name))
+               {
+                cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist\n";
+                exit(1);
+               }
+            string s = $1.name; s =s+"[]";
+            strcpy($$,s.c_str()); 
+            symtab par = search_symtab($2.name,scope+1,func);
+            if(par)
+            {
+            cout<<"Semantic Error: two parameters cannot have same name\n Parameter name "<<$2.name<<" is already used\n";
+            exit(1);
+            } 
+           }
     ;
 
 FuncBody : stmt
