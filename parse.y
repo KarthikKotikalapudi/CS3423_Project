@@ -377,10 +377,10 @@ Multideclstmt : COMMA ID Multideclstmt {
     ;
 
 numbers : NUM {
-          strcpy($$.type,"int");
+          strcpy($$,"int");
        }
      | MINUS NUM {
-          strcpy($$.type,"int");
+          strcpy($$,"int");
      }
      ;
 
