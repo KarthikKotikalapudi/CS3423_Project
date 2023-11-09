@@ -38,6 +38,7 @@ string access_spec;
     struct matrixdim{
         int row;
         int col;
+        char*type;
     } MD;
     struct CONSTL{
         int len;
@@ -383,43 +384,16 @@ numbers : NUM {
      }
      ;
 
-constL : numbers COMMA constL { 
-    $$.len =   $3.len + 1;
-        if($3.type!="char"){
-            cout<<"Semantic Error: A const list should contain single type consts expected"<<$3.type<<endl;
-            exit(1);
-        }
-        $$.type = $3.type; 
-    }
-    | FLOAT COMMA constL {  
-        $$.len = $3.len +1 ;
-        if($3.type!="float"){
-            cout<<"Semantic Error: A const list should contain single type consts expected"<<$3.type<<endl;
-            exit(1);
-        }
-        $$.type = $3.type; 
-    }
-    | STRING COMMA constL { 
-        $$.len = $3.len +1;
-        if($3.type!="string"){
-            cout<<"Semantic Error: A const list should contain single type consts expected"<<$3.type<<endl;
-            exit(1);
-        }
-        $$.type = $3.type; 
-         }
-    | CHAR COMMA constL { 
-        $$.len = $3 +1 ; 
-        if($3.type!="char"){
-            cout<<"Semantic Error: A const list should contain single type consts expected"<<$3.type<<endl;
-            exit(1);
-        }
-        $$.type = $3.type; 
-        }
-    | numbers {$$.len = 1; $$.type = "int";}
-    | FLOAT { $$.len = 1; $$.type = "float";}
-    | STRING {$$.len = 1; $$.type = "string";}
-    | CHAR {$$.len = 1 ; $$.type = "char";}
-    | BOOL {$$.len = 1; $$.type ="bool";}
+constL : numbers COMMA constL { $$.len =   $3.len + 1; if(!strcmp($3.type,"int")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="int"; }
+    | FLOAT COMMA constL {  $$.len = $3.len +1 ;if(!strcmp($3.type,"float")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="int";}
+    | STRING COMMA constL { $$.len = $3.len +1; if(!strcmp($3.type,"string")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="string";}
+    | CHAR COMMA constL { $$ = $3 +1 ;if(!strcmp($3.type,"char")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="char";}
+    | BOOL COMMA constL { $$ = $3 +1 ;if(!strcmp($3.type,"bool")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="bool";}
+    | numbers {$$.len = 1;$$.type="int"}
+    | FLOAT { $$.len = 1;$$.type="float"}
+    | STRING {$$.len = 1;$$.type="string"}
+    | CHAR {$$.len = 1 ; $$.type="char"}
+    | BOOL {$$.len = 1;$$.type="bool"}
     ;
 
 
@@ -530,7 +504,10 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
          if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
             //add matrix with type int or float
             // also patch the dimensions from MAtrixL
-
+            if(!strcmp($3,$7.type)){
+                 cout<<"The assigned constant matrix is different from the variable matrix declared here\n";
+                 exit(1);  
+            }
             insert_symtab($2.name,$3,{$7.row,$7.col},scope);
 
          }
@@ -626,7 +603,10 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
          if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
             //add matrix with type int or float
             // also patch the dimensions from MAtrixL
-
+            if(!strcmp($3,$7.type)){
+                 cout<<"The assigned constant matrix is different from the variable matrix declared here\n";
+                 exit(1);  
+            }
             insert_symtab($2.name,$3,{$7.row,$7.col},scope);
 
          }
@@ -653,11 +633,13 @@ MatrixL : OBRACE open_marker constL closing_marker CBRACE  COMMA MatrixL {
                     exit(1);
                 }
                 $$.col = $3.len;
+                $$.type = $3.type;
        }
     | OBRACE open_marker constL closing_marker CBRACE {
                //get the dimesion from constL
                $$.row = 1;
                $$.col = $3.len;
+               $$.type = $3.type;
     }
     ;
 
@@ -1208,7 +1190,44 @@ object_decl : ID ID Multiobj SEMICOL{
         }
         var_list.clear();
     }
-    | ID ID ASSGN function_call Multiobj SEMICOL
+    | ID ID ASSGN function_call Multiobj SEMICOL{
+        classtab c = search_classtab($1.name);
+        if(!c)
+        {
+            cout<<"Semantic Error: class "<<$1.name<<" not found\n";
+            exit(1);
+        } 
+        symtab var = search_symtab($2.name,scope,func);
+        if(var)
+        {
+            cout<<"Semantic Error: variable already declared\n";
+            exit(1);
+        }
+        if(var1->type != $4.ret_type)
+        {
+            cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+            exit(1);
+        }
+        insert_symtab($2.name,$1.name,{},scope);
+        for(int i=0;i<var_list.size();i++){
+            if(var_list[i].type != $1.name)
+            {
+                cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                exit(1);
+            }
+            if(search_symtab(var_list[i].name,scope,func))
+            {
+            cout<<"Semantic Error: variable already declared \n";
+            exit(1);
+            }
+            string s=$1.name;
+            for(int j=0;j<var_list[i].dim.size();j++){
+                s+="[]";
+            }
+            insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
+        }
+        var_list.clear();
+    }
     | ID ID ASSGN ID Multiobj SEMICOL{
         classtab c = search_classtab($1.name);
         if(!c)
@@ -1289,7 +1308,12 @@ Multiobj : /* empty */
             s.name= $2.name;
             var_list.push_back(s);
         }
-        | COMMA ID ASSGN function_call Multiobj{}
+        | COMMA ID ASSGN function_call Multiobj{
+            symbolTable s;
+            s.name = $2.name;
+            s.type = $4.ret_type;
+            var_list.push_back(s);
+        }
         | COMMA ID ASSGN ID Multiobj{
             symbolTable s;
             s.name = $2.name;
