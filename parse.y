@@ -52,9 +52,9 @@ string access_spec;
     };
 }
 
-%token <type> DATATYPE MATRIX_TYPE
+%token <type> DATATYPE MATRIX_TYPE 
 %token <val> NUM
-%type <type> parameter access_specifier
+%type <type> parameter access_specifier class_arg call_expression
 %type <dim_len> access access2 access_assgn access_retn
 %type <type> uni arg rhs pred
 %type <number> numbers
@@ -386,11 +386,9 @@ Multideclstmt : COMMA ID Multideclstmt {
 
 numbers : NUM {
           strcpy($$.type,"int");
-          $$.value = $1;
        }
      | MINUS NUM {
           strcpy($$.type,"int");
-        //    $$.value = (-1)*($1);
      }
      ;
 
@@ -744,7 +742,16 @@ function_call:ID OBRAK varL CBRAK  {$$ = $1.name;}
     | DF_SELECT
     | DF_DELETEROW
     ;
-
+call_expression: function_call {
+    functab fun = search_functab($1,params);
+     if(!fun)
+     {
+            cout<<"Semantic Error: This function is not declared\n";
+            exit(1);
+     }
+     params.clear();
+     strcpy($$,fun->return_type);
+}
 callstmt: function_call SEMICOL {
      functab fun = search_functab($1,params);
      if(!fun)
@@ -759,8 +766,31 @@ callstmt: function_call SEMICOL {
     ;
 
 class_arg:
-     ID DOT ID
-    | ID DOT function_call
+     ID DOT ID{
+        std::pair <std::string,std::string> M = search_classvar($3.name, $1.name); 
+        if(M.first==""){
+              cout<<"Semantic Error: Variable is not declared in the class/n";
+              exit(1);
+        }
+        if(M.second=="Private" || M.second=="Protected"){
+            cout<<"Semantic Error: Variable cannot be access witout a public method of the same class"<<endl;
+            exit(1);
+        }
+        strcpy($$ , M.first.c_str());
+
+     }
+    | ID DOT function_call{
+        std::pair <functab,std::string> M = search_classfunc($3.name,params,$1.name); 
+        if(M.first==NULL){
+              cout<<"Semantic Error: Method is not declared in the class/n";
+              exit(1);
+        }
+        if(M.second=="Private" || M.second=="Protected"){
+            cout<<"Semantic Error:this method cannot be used outside of the class"<<endl;
+            exit(1);
+        }
+        strcpy($$, M.first->return_type.c_str());
+    }
     ;
 
 // expression statments    
@@ -853,7 +883,7 @@ arg : ID { //use after declaration check
         strcpy($$,var->type.c_str());
         }
     | uni {$$ = $1;}
-    | function_call {$$ = $1;}
+    | call_expression{$$ = $1;}
     | numbers {
         //arg gets its attribute from child numbers
         $$ = $1;
@@ -888,7 +918,7 @@ arg : ID { //use after declaration check
         exit(1);
       }
     }
-    | class_arg
+    | class_arg {$$ = $1;}
     ;
 
 access : OSQA pred CSQA access 
