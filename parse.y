@@ -672,11 +672,29 @@ FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker
     ;
 
 FuncHead : DATATYPE ID {$$.name = $2; $$.ret_type = $1;}
-    | ID ID
-    | MATRIX MATRIX_TYPE ID
-    | DF ID
-    | DATATYPE access_retn ID
-    | ID access_retn ID
+    | ID ID { if(!search_classtab($1.name))
+               {
+                cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist\n";
+                exit(1);
+               }
+               $$.name = $2; $$.ret_type = $1.name;
+             }
+    | MATRIX MATRIX_TYPE ID {}
+    | DF ID {$$.name = $2; strcpy($$.ret_type,"dataframe");}
+    | DATATYPE access_retn ID {string s = $1; 
+              for(int i=0;i<$2;i++) s = s + "[]";  
+              $$.name = $3; strcpy($$.ret_type,s.c_str());      
+              }
+    | ID access_retn ID {
+        if(!search_classtab($1.name))
+               {
+                cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist\n";
+                exit(1);
+               }
+              string s = $1.name; 
+              for(int i=0;i<$2;i++) s = s + "[]";  
+              $$.name = $3; strcpy($$.ret_type,s.c_str());
+                }
     ;
 
 params : parameter COMMA params {params.push_back($1);}
@@ -953,7 +971,7 @@ expr : ID ASSGN rhs
         {   symtab var;
             if((var=search_symtab($1.name,scope,func))){
 
-                if(!($4=="int" || $4=="float")){
+                if(!($3=="int" || $3=="float")){
                     cout<<"Semantic Error: Invalid RHS type expected int or float\n";
                     exit(1);
                 }
@@ -1172,7 +1190,44 @@ object_decl : ID ID Multiobj SEMICOL{
         }
         var_list.clear();
     }
-    | ID ID ASSGN function_call Multiobj SEMICOL
+    | ID ID ASSGN function_call Multiobj SEMICOL{
+        classtab c = search_classtab($1.name);
+        if(!c)
+        {
+            cout<<"Semantic Error: class "<<$1.name<<" not found\n";
+            exit(1);
+        } 
+        symtab var = search_symtab($2.name,scope,func);
+        if(var)
+        {
+            cout<<"Semantic Error: variable already declared\n";
+            exit(1);
+        }
+        if(var1->type != $4.ret_type)
+        {
+            cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+            exit(1);
+        }
+        insert_symtab($2.name,$1.name,{},scope);
+        for(int i=0;i<var_list.size();i++){
+            if(var_list[i].type != $1.name)
+            {
+                cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                exit(1);
+            }
+            if(search_symtab(var_list[i].name,scope,func))
+            {
+            cout<<"Semantic Error: variable already declared \n";
+            exit(1);
+            }
+            string s=$1.name;
+            for(int j=0;j<var_list[i].dim.size();j++){
+                s+="[]";
+            }
+            insert_symtab(var_list[i].name,s,var_list[i].dim,scope);
+        }
+        var_list.clear();
+    }
     | ID ID ASSGN ID Multiobj SEMICOL{
         classtab c = search_classtab($1.name);
         if(!c)
@@ -1253,7 +1308,12 @@ Multiobj : /* empty */
             s.name= $2.name;
             var_list.push_back(s);
         }
-        | COMMA ID ASSGN function_call Multiobj{}
+        | COMMA ID ASSGN function_call Multiobj{
+            symbolTable s;
+            s.name = $2.name;
+            s.type = $4.ret_type;
+            var_list.push_back(s);
+        }
         | COMMA ID ASSGN ID Multiobj{
             symbolTable s;
             s.name = $2.name;
