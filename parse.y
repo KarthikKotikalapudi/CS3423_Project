@@ -28,10 +28,10 @@ string access_spec;
         int dim_len;
         int level;
     } datatype;
-    const char* type;
-    const char* name;
+     char* type;
+     char* name;
     int dim_len;
-         struct F{
+    struct F{
         char* name;
         char* ret_type;
     } funcattr;
@@ -454,7 +454,7 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
               if(var)
                {
                 //compare the rhs matrix type
-                if(strcmp(var->type,$3)){
+                if(strcmp(var->type.c_str(),$3)){
                     //do nothing
                 }
                 else{
@@ -555,7 +555,7 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
               if(var)
                {
                 //compare the rhs matrix type
-                if(strcmp(var->type,$3)){
+                if(strcmp(var->type.c_str(),$3)){
                     //do nothing
                 }
                 else{
@@ -742,10 +742,10 @@ rhs : pred { $$ = $1;}
 // pred rules produces all valid predicates
 pred : pred LOG pred 
         {
-            $$ ="bool";
+            strcpy($$,"bool"); // $$ ="bool";
         }
     | OBRAK pred CBRAK { $$ = $2; }
-    | NEG pred { $$ = "bool"; }
+    | NEG pred { strcpy($$,"bool"); /* $$ = "bool";*/ }
     | arg { $$ = $1; }
     | pred COMP pred 
     {
@@ -753,7 +753,7 @@ pred : pred LOG pred
             cout<<"Semantic Error: Both sides of the Comparator operation must be same"<<endl;
             exit(1);
         }
-        $$ = "bool";
+       strcpy($$,"bool")  // $$ = "bool";
     }
     | pred SHIFT pred 
     {
@@ -785,7 +785,8 @@ pred : pred LOG pred
             cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible"<<endl;
             exit(1);
         }
-        $$ = dominate($1,$3).c_str();
+      //  $$ = dominate($1,$3).c_str();
+        strcpy($$,dominate($1,$3).c_str());
     }
     | pred MINUS pred 
     {   
@@ -820,7 +821,8 @@ arg : ID { //use after declaration check
            cout<<"Semantic Error: A variable must be declared before use\n";
            exit(1);
         } 
-        $$ = var->type.c_str();
+        // $$ = var->type.c_str();
+        strcpy($$,var->type.c_str());
         }
     | uni {$$ = $1;}
     | function_call {$$ = $1;}
@@ -829,22 +831,23 @@ arg : ID { //use after declaration check
         $$ = $1;
     }
     | FLOAT {
-        $$ = "float";
+        strcpy($$,"float"); // $$ = "float";
     }
     | BOOL{
-        $$ = "bool";
+        strcpy($$,"bool"); // $$ = "bool";
     }
     | CHAR{
-        $$ = "char";
+        strcpy($$,"char"); // $$ = "char";
     } 
     | STRING{
-        $$ = "string";
+        strcpy($$,"string");        // $$ = "string";
     }
     | ID access{  
         symtab s;
         if((s=search_symtab($1.name,scope,func))){
            if($2 <= s->dim.size()){
-                   $$ = s->type.substr(0, s->type.size() - 2*$2).c_str();
+                 //  $$ = s->type.substr(0, s->type.size() - 2*$2).c_str();
+                 strcpy($$,s->type.substr(0, s->type.size() - 2*$2).c_str());
            }
            else{
                cout<<"Semantic error: dimensions do not match\n";
@@ -895,7 +898,8 @@ uni : ID POST {
                 cout<<"Semantic Error: Invalid datatype for Unary operator Expected int or float\n";
                 exit(1);
             }
-            $$ = s->type.c_str();
+           // $$ = s->type.c_str();
+          strcpy($$,s->type.c_str());
         }
       else{
         //error
@@ -912,7 +916,8 @@ uni : ID POST {
                 exit(1);
             }
            if($2 <= s->dim.size()){
-                   $$ = s->type.substr(0, s->type.size() - 2*$2).c_str();
+               //    $$ = s->type.substr(0, s->type.size() - 2*$2).c_str();
+               strcpy($$,s->type.substr(0, s->type.size() - 2*$2).c_str());
            }
            else{
                cout<<"Semantic error: dimensions do not match\n";
