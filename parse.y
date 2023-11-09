@@ -16,7 +16,7 @@ bool func = true;
 classtab active_class_ptr = NULL;
 string access_spec;
 %}
-%token NUM FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST
+%token FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST
 %token COMMA STRING CHAR ASSGN ARTHASSGN  FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
 %token BOOL NUL SORT SELECT UPDATE DELETE
 %left NEG LOG ARTH BIT_OP SHIFT COMP COMMA MINUS
@@ -30,6 +30,7 @@ string access_spec;
     } datatype;
      char* type;
      char* name;
+    int val;
     int dim_len;
     struct F{
         char* name;
@@ -44,12 +45,19 @@ string access_spec;
         int len;
         char* type;
     }CL;
+    struct number
+    {
+        char * type;
+        int value;
+    };
 }
 
 %token <type> DATATYPE MATRIX_TYPE
+%token <val> NUM
 %type <type> parameter access_specifier
 %type <dim_len> access access2 access_assgn access_retn
-%type <type> uni arg numbers rhs pred
+%type <type> uni arg rhs pred
+%type <number> numbers
 %type <name> function_call
 %type <funcattr> FuncHead 
 %token <datatype> ID 
@@ -378,9 +386,11 @@ Multideclstmt : COMMA ID Multideclstmt {
 
 numbers : NUM {
           strcpy($$.type,"int");
+          $$.value = $1;
        }
      | MINUS NUM {
           strcpy($$.type,"int");
+        //    $$.value = (-1)*($1);
      }
      ;
 

@@ -10,7 +10,7 @@ alpha [A-Za-z_]
 beta  [0-9A-Za-z_]
 
 %%
-{digit}+ {return  NUM;} 
+{digit}+ {yylval.val = atoi(yytext); return NUM;} 
 ({digit}*[.])?{digit}+ {return FLOAT;}
 
 #.*\n  {yylineno++;}/*ignoring one line comments*/
