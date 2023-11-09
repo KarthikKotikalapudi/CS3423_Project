@@ -49,7 +49,7 @@ string access_spec;
     {
         char * type;
         int value;
-    };
+    }number;
 }
 
 %token <type> DATATYPE MATRIX_TYPE 
@@ -58,7 +58,7 @@ string access_spec;
 %type <dim_len> access access2 access_assgn access_retn
 %type <type> uni arg rhs pred
 %type <number> numbers
-%type <name> function_call
+%type <funcattr> function_call
 %type <funcattr> FuncHead 
 %token <datatype> ID 
 %type <MD> numL MatrixL
@@ -394,9 +394,9 @@ numbers : NUM {
 
 constL : numbers COMMA constL { $$.len =   $3.len + 1; if(!strcmp($3.type,"int")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} strcpy($$.type,"int"); }
     | FLOAT COMMA constL {  $$.len = $3.len +1 ;if(!strcmp($3.type,"float")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} strcpy($$.type,"float");}
-    | STRING COMMA constL { $$.len = $3.len +1; if(!strcmp($3.type,"string")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="string";}
-    | CHAR COMMA constL { $$ = $3 +1 ;if(!strcmp($3.type,"char")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} strcpy($$.type,"char");}
-    | BOOL COMMA constL { $$ = $3 +1 ;if(!strcmp($3.type,"bool")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} strcpy($$.type,"bool");}
+    | STRING COMMA constL { $$.len = $3.len +1; if(!strcmp($3.type,"string")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} strcpy($$.type,"string");}
+    | CHAR COMMA constL { $$.len = $3.len +1 ;if(!strcmp($3.type,"char")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} strcpy($$.type,"char");}
+    | BOOL COMMA constL { $$.len = $3.len +1 ;if(!strcmp($3.type,"bool")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} strcpy($$.type,"bool");}
     | numbers {$$.len = 1;strcpy($$.type,"int");}
     | FLOAT { $$.len = 1;strcpy($$.type,"float");}
     | STRING {$$.len = 1;strcpy($$.type,"string");}
@@ -628,15 +628,15 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
     ;
 
 numL : numbers COMMA numbers {
-            $$.row = $1;
-            $$.col = $3;
+            $$.row = $1.value;
+            $$.col = $3.value;
       }
     ;
 
 MatrixL : OBRACE open_marker constL closing_marker CBRACE  COMMA MatrixL {
                 //get the dimesion from inner MatrixL and constL
                 $$.row = $7.row + 1;
-                if($7.col ! = $3.len){
+                if($7.col != $3.len ){
                     cout<<"Intiliaztion of Matrix with jagged array is not allowed"<<endl;
                     exit(1);
                 }
@@ -743,17 +743,17 @@ function_call:ID OBRAK varL CBRAK  {$$ = $1.name;}
     | DF_DELETEROW
     ;
 call_expression: function_call {
-    functab fun = search_functab($1,params);
+    functab fun = search_functab($1.name,params);
      if(!fun)
      {
             cout<<"Semantic Error: This function is not declared\n";
             exit(1);
      }
      params.clear();
-     strcpy($$,fun->return_type);
+     strcpy($$,(fun->return_type).c_str());
 }
 callstmt: function_call SEMICOL {
-     functab fun = search_functab($1,params);
+     functab fun = search_functab($1.name,params);
      if(!fun)
      {
             cout<<"Semantic Error: This function is not declared\n";
@@ -772,7 +772,7 @@ class_arg:
               cout<<"Semantic Error: Variable is not declared in the class/n";
               exit(1);
         }
-        if(M.second=="Private" || M.second=="Protected"){
+        if(M.second=="private" || M.second=="protected"){
             cout<<"Semantic Error: Variable cannot be access witout a public method of the same class"<<endl;
             exit(1);
         }
@@ -780,12 +780,13 @@ class_arg:
 
      }
     | ID DOT function_call{
-        std::pair <functab,std::string> M = search_classfunc($3.name,params,$1.name); 
+        string temp = $1.name;
+        pair <functab,string> M = search_classfunc($3.name,params,temp); 
         if(M.first==NULL){
               cout<<"Semantic Error: Method is not declared in the class/n";
               exit(1);
         }
-        if(M.second=="Private" || M.second=="Protected"){
+        if(M.second=="private" || M.second=="protected"){
             cout<<"Semantic Error:this method cannot be used outside of the class"<<endl;
             exit(1);
         }
@@ -1243,7 +1244,7 @@ object_decl : ID ID Multiobj SEMICOL{
             cout<<"Semantic Error: variable already declared\n";
             exit(1);
         }
-        if(var->type != $4.ret_type)
+        if(!strcmp(var->type.c_str(),$4.ret_type))
         {
             cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
             exit(1);
@@ -1345,7 +1346,7 @@ object_decl : ID ID Multiobj SEMICOL{
 Multiobj : /* empty */
         | COMMA ID Multiobj{
             symbolTable s;
-            s.name= $2.name;
+            s.name = $2.name;
             var_list.push_back(s);
         }
         | COMMA ID ASSGN function_call Multiobj{
