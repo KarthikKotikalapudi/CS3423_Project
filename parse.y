@@ -47,7 +47,7 @@ string access_spec;
 }
 
 %token <type> DATATYPE MATRIX_TYPE 
-%type <type> parameter access_specifier class_arg
+%type <type> parameter access_specifier class_arg call_expression
 %type <dim_len> access access2 access_assgn access_retn
 %type <type> uni arg numbers rhs pred
 %type <name> function_call
@@ -734,7 +734,16 @@ function_call:ID OBRAK varL CBRAK  {$$ = $1.name;}
     | DF_SELECT
     | DF_DELETEROW
     ;
-
+call_expression: function_call {
+    functab fun = search_functab($1,params);
+     if(!fun)
+     {
+            cout<<"Semantic Error: This function is not declared\n";
+            exit(1);
+     }
+     params.clear();
+     strcpy($$,fun->return_type);
+}
 callstmt: function_call SEMICOL {
      functab fun = search_functab($1,params);
      if(!fun)
@@ -866,7 +875,7 @@ arg : ID { //use after declaration check
         strcpy($$,var->type.c_str());
         }
     | uni {$$ = $1;}
-    | function_call {$$ = $1;}
+    | call_expression{$$ = $1;}
     | numbers {
         //arg gets its attribute from child numbers
         $$ = $1;
