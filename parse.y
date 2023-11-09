@@ -46,8 +46,8 @@ string access_spec;
     }CL;
 }
 
-%token <type> DATATYPE MATRIX_TYPE
-%type <type> parameter access_specifier
+%token <type> DATATYPE MATRIX_TYPE 
+%type <type> parameter access_specifier class_arg
 %type <dim_len> access access2 access_assgn access_retn
 %type <type> uni arg numbers rhs pred
 %type <name> function_call
@@ -749,8 +749,31 @@ callstmt: function_call SEMICOL {
     ;
 
 class_arg:
-     ID DOT ID
-    | ID DOT function_call
+     ID DOT ID{
+        std::pair <std::string,std::string> M = search_classvar($3.name, $1.name); 
+        if(M.first==""){
+              cout<<"Semantic Error: Variable is not declared in the class/n";
+              exit(1);
+        }
+        if(M.second=="Private" || M.second=="Protected"){
+            cout<<"Semantic Error: Variable cannot be access witout a public method of the same class"<<endl;
+            exit(1);
+        }
+        strcpy($$ , M.first.c_str());
+
+     }
+    | ID DOT function_call{
+        std::pair <functab,std::string> M = search_classfunc($3.name,params,$1.name); 
+        if(M.first==NULL){
+              cout<<"Semantic Error: Method is not declared in the class/n";
+              exit(1);
+        }
+        if(M.second=="Private" || M.second=="Protected"){
+            cout<<"Semantic Error:this method cannot be used outside of the class"<<endl;
+            exit(1);
+        }
+        strcpy($$, M.first->return_type.c_str());
+    }
     ;
 
 // expression statments    
@@ -878,7 +901,7 @@ arg : ID { //use after declaration check
         exit(1);
       }
     }
-    | class_arg
+    | class_arg {$$ = $1;}
     ;
 
 access : OSQA pred CSQA access 
