@@ -42,7 +42,7 @@ string access_spec;
     } MD;
     struct CONSTL{
         int len;
-        char*type;
+        const char* type;
     }CL;
 }
 
@@ -54,7 +54,7 @@ string access_spec;
 %type <funcattr> FuncHead 
 %token <datatype> ID 
 %type <MD> numL MatrixL
-%type <CL> constL
+%type <CL> constL MultiDimL
 %%
 S : Decl Main{}  // a valid program is sequence of declarations, functions
   ;
@@ -252,11 +252,11 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 {
                 cout<<"Semantic Error: variable already declared\n";
                 exit(1);
-                } 
-                if($4!=$1){
+                }
+                if(!coersible($1,$4)){
                     cout<<"Semantic Error: Type Mismatch\n";
                     exit(1);
-                }
+                } 
                 insert_symtab($2.name,$1,{},scope);
                 for(int i=0;i<var_list.size();i++){
                     if(search_symtab(var_list[i].name,scope,func))
@@ -284,6 +284,11 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
 
             symbolTable s2;
             s2.name= $2.name;
+            s2.type = $5.type;
+            if($3!=$5.len){
+                cout<<"Semantic Error: Diminsions on LHS and RHS are not same \n";
+                exit(1);
+            }
             for(int i=0;i<$3;i++){
                 s2.dim.push_back(-1);
             }
@@ -358,6 +363,11 @@ Multideclstmt : COMMA ID Multideclstmt {
     | COMMA ID access2 ASSGN MultiDimL Multideclstmt {
         symbolTable s2;
         s2.name= $2.name;
+        s2.type = $5.type;
+        if($3!=$5.len){
+            cout<<"Semantic Error: Diminsions on LHS and RHS are not same \n";
+            exit(1);
+        }
         for(int i=0;i<$3;i++){
             s2.dim.push_back(-1);
         }
@@ -374,11 +384,11 @@ numbers : NUM {
      }
      ;
 
-constL : numbers COMMA constL { $$.len =   $3.len + 1; if(!strcmp($3,"int")){cout<<"constants are not of same type\n"; exit(1);} $$.type="int"; }
-    | FLOAT COMMA constL {  $$.len = $3.len +1 ;if(!strcmp($3,"float")){cout<<"constants are not of same type\n"; exit(1);} $$.type="int";}
-    | STRING COMMA constL { $$.len = $3.len +1; if(!strcmp($3,"string")){cout<<"constants are not of same type\n"; exit(1);} $$.type="string";}
-    | CHAR COMMA constL { $$ = $3 +1 ;if(!strcmp($3,"char")){cout<<"constants are not of same type\n"; exit(1);} $$.type="char";}
-    | BOOL COMMA constL { $$ = $3 +1 ;if(!strcmp($3,"bool")){cout<<"constants are not of same type\n"; exit(1);} $$.type="bool";}
+constL : numbers COMMA constL { $$.len =   $3.len + 1; if(!strcmp($3,"int")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="int"; }
+    | FLOAT COMMA constL {  $$.len = $3.len +1 ;if(!strcmp($3,"float")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="int";}
+    | STRING COMMA constL { $$.len = $3.len +1; if(!strcmp($3,"string")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="string";}
+    | CHAR COMMA constL { $$ = $3 +1 ;if(!strcmp($3,"char")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="char";}
+    | BOOL COMMA constL { $$ = $3 +1 ;if(!strcmp($3,"bool")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="bool";}
     | numbers {$$.len = 1;$$.type="int"}
     | FLOAT { $$.len = 1;$$.type="float"}
     | STRING {$$.len = 1;$$.type="string"}
@@ -387,9 +397,22 @@ constL : numbers COMMA constL { $$.len =   $3.len + 1; if(!strcmp($3,"int")){cou
     ;
 
 
-MultiDimL : OBRACE open_marker MultiDimL closing_marker CBRACE 
-    | MultiDimL COMMA MultiDimL
-    | OBRACE open_marker constL closing_marker CBRACE 
+MultiDimL : OBRACE MultiDimL CBRACE {
+            $$.len = $2.len +1;
+            $$.type = $2.type;
+        }
+    | MultiDimL COMMA MultiDimL{
+            if($1.type!=$3.type || $1.len != $3.len){
+                cout<<"Semantic Error: All lists in the RHS should have same characteristics\n";
+                exit(1);
+            }
+            $$.len = $1.len;
+            $$.type = $1.type;
+        }
+    | OBRACE constL CBRACE {
+        $$.type = $2.type;
+        $$.len =1;
+    }
     ;
 
 MatrixDecl : MATRIX ID MATRIX_TYPE {
@@ -734,7 +757,7 @@ pred : pred LOG pred
     }
     | pred SHIFT pred 
     {
-        if($1=="string" || $1=="char"||$3=="string" || $3=="char"){
+        if($1=="string" || $1=="char"||$3=="string" || $3=="char"||$1=="bool" || $3=="bool"){
             cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
             exit(1);
         }
@@ -766,7 +789,7 @@ pred : pred LOG pred
     }
     | pred MINUS pred 
     {   
-        if($1=="string" || $1=="char"||$3=="string" || $3=="char"){
+        if($1=="string" || $1=="char"||$3=="string" || $3=="char"||$1=="bool" || $3=="bool"){
             cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
             exit(1);
         }
@@ -868,7 +891,11 @@ access_retn : OSQA CSQA access_retn{ $$ = $3+1;}
 uni : ID POST {
       symtab s;
        if((s=search_symtab($1.name,scope,func))){
-           $$ = s->type.c_str();
+            if(s->type!="int" && s->type!="float"){
+                cout<<"Semantic Error: Invalid datatype for Unary operator Expected int or float\n";
+                exit(1);
+            }
+            $$ = s->type.c_str();
         }
       else{
         //error
@@ -879,7 +906,11 @@ uni : ID POST {
     | ID access POST{
       symtab s;
        if((s=search_symtab($1.name,scope,func))){
-      
+
+            if(s->type!="int" && s->type!="float"){
+                cout<<"Semantic Error: Invalid datatype for Unary operator Expected int or float\n";
+                exit(1);
+            }
            if($2 <= s->dim.size()){
                    $$ = s->type.substr(0, s->type.size() - 2*$2).c_str();
            }
@@ -916,6 +947,11 @@ expr : ID ASSGN rhs
     | ID ARTHASSGN rhs 
         {   symtab var;
             if((var=search_symtab($1.name,scope,func))){
+
+                if(!($4=="int" || $4=="float")){
+                    cout<<"Semantic Error: Invalid RHS type expected int or float\n";
+                    exit(1);
+                }
                 if(!coersible(var->type,$3)){
                     cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
                     exit(1);
@@ -932,7 +968,7 @@ expr : ID ASSGN rhs
             symtab var;
             if((var=search_symtab($1.name,scope,func))){
                 if(var->dim.size()<$2){
-                    cout<<"Semantic error: dimensions do not match\n";
+                    cout<<"Semantic Error: dimensions do not match\n";
                     exit(1);
                 }
                 string s = var->type.substr(0, var->type.size() - 2*$2);
@@ -951,11 +987,15 @@ expr : ID ASSGN rhs
         {   symtab var;
             if((var=search_symtab($1.name,scope,func))){
                 if(var->dim.size()<$2){
-                    cout<<"Semantic error: dimensions do not match\n";
+                    cout<<"Semantic Error: dimensions do not match\n";
+                    exit(1);
+                }
+                if(!($4=="int" || $4=="float")){
+                    cout<<"Semantic Error: Invalid RHS type expected int or float\n";
                     exit(1);
                 }
                 string s = var->type.substr(0, var->type.size() - 2*$2);
-                if(!coersible(var->type,$4)){
+                if(!coersible(s,$4)){
                     cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
                     exit(1);
                 }
