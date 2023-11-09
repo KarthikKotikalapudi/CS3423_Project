@@ -42,7 +42,7 @@ string access_spec;
     } MD;
     struct CONSTL{
         int len;
-        const char* type;
+        char* type;
     }CL;
 }
 
@@ -389,11 +389,11 @@ constL : numbers COMMA constL { $$.len =   $3.len + 1; if(!strcmp($3.type,"int")
     | STRING COMMA constL { $$.len = $3.len +1; if(!strcmp($3.type,"string")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="string";}
     | CHAR COMMA constL { $$ = $3 +1 ;if(!strcmp($3.type,"char")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="char";}
     | BOOL COMMA constL { $$ = $3 +1 ;if(!strcmp($3.type,"bool")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="bool";}
-    | numbers {$$.len = 1;$$.type="int"}
-    | FLOAT { $$.len = 1;$$.type="float"}
-    | STRING {$$.len = 1;$$.type="string"}
-    | CHAR {$$.len = 1 ; $$.type="char"}
-    | BOOL {$$.len = 1;$$.type="bool"}
+    | numbers {$$.len = 1;$$.type="int";}
+    | FLOAT { $$.len = 1;$$.type="float";}
+    | STRING {$$.len = 1;$$.type="string";}
+    | CHAR {$$.len = 1 ; $$.type="char";}
+    | BOOL {$$.len = 1;$$.type="bool";}
     ;
 
 
@@ -771,7 +771,7 @@ pred : pred LOG pred
             cout<<"Semantic Error: Both sides of the Comparator operation must be same"<<endl;
             exit(1);
         }
-       strcpy($$,"bool")  // $$ = "bool";
+       strcpy($$,"bool");  // $$ = "bool";
     }
     | pred SHIFT pred 
     {
@@ -816,7 +816,7 @@ pred : pred LOG pred
             cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible"<<endl;
             exit(1);
         }
-        $$ = dominate($1,$3).c_str();;
+        strcpy($$,dominate($1,$3).c_str()); // $$ = dominate($1,$3).c_str();
     }
     ;
 
@@ -1203,7 +1203,7 @@ object_decl : ID ID Multiobj SEMICOL{
             cout<<"Semantic Error: variable already declared\n";
             exit(1);
         }
-        if(var1->type != $4.ret_type)
+        if(var->type != $4.ret_type)
         {
             cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
             exit(1);
