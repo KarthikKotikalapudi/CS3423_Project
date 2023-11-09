@@ -384,11 +384,11 @@ numbers : NUM {
      }
      ;
 
-constL : numbers COMMA constL { $$.len =   $3.len + 1; if(!strcmp($3,"int")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="int"; }
-    | FLOAT COMMA constL {  $$.len = $3.len +1 ;if(!strcmp($3,"float")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="int";}
-    | STRING COMMA constL { $$.len = $3.len +1; if(!strcmp($3,"string")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="string";}
-    | CHAR COMMA constL { $$ = $3 +1 ;if(!strcmp($3,"char")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="char";}
-    | BOOL COMMA constL { $$ = $3 +1 ;if(!strcmp($3,"bool")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="bool";}
+constL : numbers COMMA constL { $$.len =   $3.len + 1; if(!strcmp($3.type,"int")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="int"; }
+    | FLOAT COMMA constL {  $$.len = $3.len +1 ;if(!strcmp($3.type,"float")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="int";}
+    | STRING COMMA constL { $$.len = $3.len +1; if(!strcmp($3.type,"string")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="string";}
+    | CHAR COMMA constL { $$ = $3 +1 ;if(!strcmp($3.type,"char")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="char";}
+    | BOOL COMMA constL { $$ = $3 +1 ;if(!strcmp($3.type,"bool")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} $$.type="bool";}
     | numbers {$$.len = 1;$$.type="int"}
     | FLOAT { $$.len = 1;$$.type="float"}
     | STRING {$$.len = 1;$$.type="string"}
