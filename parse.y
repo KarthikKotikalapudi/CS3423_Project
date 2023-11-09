@@ -58,7 +58,7 @@ string access_spec;
 %type <dim_len> access access2 access_assgn access_retn
 %type <type> uni arg rhs pred
 %type <number> numbers
-%type <name> function_call
+%type <funcattr> function_call
 %type <funcattr> FuncHead 
 %token <datatype> ID 
 %type <MD> numL MatrixL
@@ -736,8 +736,21 @@ varL: rhs {params.push_back($1);}
     | rhs COMMA varL {params.push_back($1);}
     ;
 
-function_call:ID OBRAK varL CBRAK  {$$ = $1.name;}
-    | ID OBRAK CBRAK {$$ = $1.name;}
+function_call:ID OBRAK varL CBRAK  { functab fun = search_functab($1.name,params);
+               if(!fun)
+               {
+                cout<<"Semantic Error: This function doesn't exist\n";
+                exit(1);
+               }
+               $$.name = $1.name; strcpy($$.ret_type,(fun->return_type).c_str());}
+    | ID OBRAK CBRAK {
+          functab fun = search_functab($1.name,params);
+               if(!fun)
+               {
+                cout<<"Semantic Error: This function doesn't exist\n";
+                exit(1);
+               }
+        $$.name = $1.name; strcpy($$.ret_type,(fun->return_type).c_str());}
     | DF_UPDATECOL
     | DF_SELECT
     | DF_DELETEROW
@@ -886,7 +899,7 @@ arg : ID { //use after declaration check
     | call_expression{$$ = $1;}
     | numbers {
         //arg gets its attribute from child numbers
-        $$ = $1;
+        $$ = $1.type;
     }
     | FLOAT {
         strcpy($$,"float"); // $$ = "float";
