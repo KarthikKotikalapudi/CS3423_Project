@@ -128,6 +128,12 @@ void insert_classvar(std::string name, std::string type, std::string access, cla
        if(override)  temp[2] = "1";
        else   temp[2] = "0";
        c->vars[name] = temp;
+       int i;
+       for(i = 0; i < type.size(); i++){
+              if(i == '[')  break;
+       }
+       vector<int>dim(type.size()-i,-1);
+       insert_symtab(name,type,dim,1);
 }
 
 std::vector<std::string> search_classvar(std::string name, std::string class_name){
