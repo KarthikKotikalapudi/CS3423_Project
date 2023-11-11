@@ -91,14 +91,25 @@ string dominate(string a, string b){
 int insert_classtab(std::string name, std::pair<std::string,std::string>Inherited){
        classtab c_table = new struct class_table;
        c_table->name = name;
+       classtab temp = NULL;
        if(Inherited.second != ""){
-              classtab temp = search_classtab(Inherited.second);
+              temp = search_classtab(Inherited.second);
               if(!temp){
                      return 1;
               }
               c_table->inherited = Inherited;
        }
        class_table_list[name] = c_table;
+       if(temp == NULL)     return 0;
+       for(auto i : temp->vars){
+              auto j = i.second;
+              if(j[1] != "private")       insert_classvar(i.first,j[0],j[1],c_table,1);
+       }
+       for(auto i : temp->funcs){
+              for(auto j : i.second){
+                     if(j.second != "private")   insert_classfunc(i.first,j.first->return_type,j.second,j.first->params,c_table,1);
+              }
+       }
        return 0;
 }
 
@@ -110,17 +121,20 @@ classtab search_classtab(std::string name){
        return NULL;
 }
 
-void insert_classvar(std::string name, std::string type, std::string access, classtab c){
-       std::pair<std::string,std::string> temp;
-       temp.first = type;
-       temp.second = access;
+void insert_classvar(std::string name, std::string type, std::string access, classtab c, bool override){
+       vector<string> temp(3);
+       temp[0] = type;
+       temp[1] = access;
+       if(override)  temp[2] = "1";
+       else   temp[2] = "0";
        c->vars[name] = temp;
 }
 
-std::pair<std::string,std::string> search_classvar(std::string name, std::string class_name){
-       std::pair<std::string,std::string> temp;
-       temp.first = "";
-       temp.second = "";
+std::vector<std::string> search_classvar(std::string name, std::string class_name){
+       vector<std::string> temp(3);
+       temp[0] = "";
+       temp[1] = "";
+       temp[2] = "";
        classtab c = search_classtab(class_name);
        if(!c) return temp;
        auto it = c->vars.find(name);
@@ -130,14 +144,24 @@ std::pair<std::string,std::string> search_classvar(std::string name, std::string
        return temp;
 }
 
-void insert_classfunc(std::string name, std::string return_type, std::string access, std::vector<std::string>params, classtab c){
+void insert_classfunc(std::string name, std::string return_type, std::string access, std::vector<std::string>params, classtab c, bool override){
        std::pair<functab,std::string> temp;
        temp.second = access;
        functab function_table = new struct func_table;
        function_table->name = name;
        function_table->params = params;
        function_table->return_type = return_type;
+       function_table->override = override;
        temp.first = function_table;
+       auto it = c->funcs.find(name);
+       if(it != c->funcs.end()){
+              for(auto it = c->funcs[name].begin(); it != c->funcs[name].end(); ++it){
+                     auto i = *it;
+                     if(i.first->params == params){
+                            c->funcs[name].erase(it);
+                     }
+              }
+       }
        c->funcs[name].push_back(temp);
 }
 
