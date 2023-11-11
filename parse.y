@@ -11,6 +11,7 @@
     using namespace std;
 //global variables
 int scope = 0;
+bool ret=false, cond=false;
 vector<string> params; 
 bool func = true;
 classtab active_class_ptr = NULL;
@@ -639,7 +640,7 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
                  std::cout << "Error at line: " << __LINE__ << std::endl;
 
          }
-}
+    }
     | COMMA ID MATRIX_TYPE ASSGN ID MultiMatrixDecl {
             symtab var = search_symtab($2.name,scope,func,1); //check this,can string be char * 
            if(var)
@@ -854,14 +855,14 @@ params : parameter COMMA params {params.push_back($1);}
     ;
 
 parameter : DATATYPE ID 
-{ // sending datatypes for inserting function
-   $$ = $1;
- // checking if same name is used for different parameters
- symtab par = search_symtab($2.name,scope+1,func,1);
- if(par)
-            {
-            cout<<"Semantic Error: two parameters cannot have same name\n Parameter name "<<$2.name<<" is already used\n";
-                std::cout << "Error at line: " << __LINE__ << std::endl;
+    { // sending datatypes for inserting function
+    $$ = $1;
+    // checking if same name is used for different parameters
+    symtab par = search_symtab($2.name,scope+1,func,1);
+    if(par)
+                {
+                cout<<"Semantic Error: two parameters cannot have same name\n Parameter name "<<$2.name<<" is already used\n";
+                    std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
             } 
@@ -936,8 +937,15 @@ parameter : DATATYPE ID
            }
     ;
 
-FuncBody : stmt
-    ;
+FuncBody : stmt 
+        {
+            if(!ret){
+                cout<<"Semantic Error: Function must have atleast one return satement\n";
+                exit(1);
+            }
+            ret = false;
+        }
+         ; 
 
 varL: rhs {params.push_back($1);}
     | rhs COMMA varL {params.push_back($1);}
@@ -1007,8 +1015,13 @@ class_arg:
 
      }
     | ID DOT ID access 
-    {
-        vector<string> M = search_classvar($3.name, $1.name); 
+    {   symtab x = search_symtab($1.name,scope,func,0);
+        if(!x){
+            cout<<"Semantic Error: Variable is not declared in this scope\n";
+            exit(1);
+        }
+        string class_name = x->type;
+        vector<string> M = search_classvar($3.name, class_name); 
         if(M[0]==""){
               cout<<"Semantic Error: Variable is not declared in the class\n";
               exit(1);
@@ -1018,12 +1031,22 @@ class_arg:
             exit(1);
         }
         string s="",s1=M[0].substr( M.size() - 2*$4,M.size());
-        for(int j=0;j<$4;j++)s+="[]";
-        if(s1!=s){
-            cout<<"Semantic Error: dimensions do not match\n";
-            exit(1);
+        if(M[0][0]=='<'){
+            if($4!=2){
+                cout<<"Invalid Matrix access\n";
+                exit(1);
+            }
+            M[0] = M[0].substr(1,M[0].size()-2);
         }
-        M[0] = M[0].substr(0, M[0].size() - 2*$4);
+        else{
+            string s="",s1=M[0].substr( M[0].size() - 2*$4, 2*$4);
+            for(int j=0;j<$4;j++)s+="[]";
+            if(s1!=s){
+                cout<<"Semantic Error: dimensions do not match\n";
+                exit(1);
+            }
+            M[0] = M[0].substr(0, M[0].size() - 2*$4);
+        }
         $$ =strdup( M[0].c_str());
     }
     | ID DOT function_call{
@@ -1156,13 +1179,22 @@ arg : ID { //use after declaration check
     | ID access{  
         symtab s;
         if((s=search_symtab($1.name,scope,func,0))){
-           if($2 <= s->dim.size()){
-                 //  $$ = s->type.substr(0, s->type.size() - 2*$2).c_str();
-                 $$= strdup (s->type.substr(0, s->type.size() - 2*$2).c_str());
+           if(s->type[0]=='<'){
+            if($2!=2){
+                cout<<"Invalid Matrix access\n";
+                exit(1);
+            }
+            $$ = strdup(s->type.substr(1,s->type.size()-2).c_str());
            }
            else{
-               cout<<"Semantic error: dimensions do not match\n";
-               exit(1);
+                if($2 <= s->dim.size()){
+                        //  $$ = s->type.substr(0, s->type.size() - 2*$2).c_str();
+                        $$= strdup (s->type.substr(0, s->type.size() - 2*$2).c_str());
+                }
+                else{
+                    cout<<"Semantic error: dimensions do not match\n";
+                    exit(1);
+                }
            }
         }
         else{
@@ -1282,12 +1314,22 @@ expr : ID ASSGN rhs
     | ID access ASSGN rhs 
         {   
             symtab var;
+            string s;
             if((var=search_symtab($1.name,scope,func,0))){
-                if(var->dim.size()<$2){
-                    cout<<"Semantic Error: dimensions do not match\n";
-                    exit(1);
+                if(var->type[0]=='<'){
+                    if($2!=2){
+                        cout<<"Invalid Matrix access\n";
+                        exit(1);
+                    }
+                    s = var->type.substr(1,var->type.size()-2);
                 }
-                string s = var->type.substr(0, var->type.size() - 2*$2);
+                else {
+                    if(var->dim.size()<$2){
+                        cout<<"Semantic Error: dimensions do not match\n";
+                        exit(1);
+                    }
+                    s = var->type.substr(0, var->type.size() - 2*$2);
+                }
                 if(!coersible(s,$4)){
                     cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
                     exit(1);
@@ -1300,7 +1342,7 @@ expr : ID ASSGN rhs
             }
         }
     | ID access ARTHASSGN rhs 
-        {   symtab var;
+        {   symtab var; string s;
             if((var=search_symtab($1.name,scope,func,0))){
                 if(var->dim.size()<$2){
                     cout<<"Semantic Error: dimensions do not match\n";
@@ -1310,7 +1352,15 @@ expr : ID ASSGN rhs
                     cout<<"Semantic Error: Invalid RHS type expected int or float\n";
                     exit(1);
                 }
-                string s = var->type.substr(0, var->type.size() - 2*$2);
+                if(var->type[0]=='<'){
+                    if($2!=2){
+                        cout<<"Invalid Matrix access\n";
+                        exit(1);
+                    }
+                    s = var->type.substr(1,var->type.size()-2);
+                }
+                else 
+                s = var->type.substr(0, var->type.size() - 2*$2);
                 if(!coersible(s,$4)){
                     cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
                     exit(1);
@@ -1385,13 +1435,22 @@ expr : ID ASSGN rhs
                 cout<<"Semantic Error: Variable not accessible\n";
                 exit(1);
             }
-            string s="",s1=temp[0].substr( temp[0].size() - 2*$4,temp[0].size());
-            for(int j=0;j<$4;j++)s+="[]";
-            if(s1!=s){
-                cout<<"Semantic Error: dimensions do not match\n";
-                exit(1);
+            if(temp[0][0]=='<'){
+                if($4!=2){
+                    cout<<"Invalid Matrix access\n";
+                    exit(1);
+                }
+                temp[0] = temp[0].substr(1,temp[0].size()-2);
             }
-            temp[0] = temp[0].substr(0, temp[0].size() - 2*$4);
+            else{
+                string s="",s1=temp[0].substr( temp[0].size() - 2*$4, 2*$4);
+                for(int j=0;j<$4;j++)s+="[]";
+                if(s1!=s){
+                    cout<<"Semantic Error: dimensions do not match\n";
+                    exit(1);
+                }
+                temp[0] = temp[0].substr(0, temp[0].size() - 2*$4);
+            }
             if(!coersible(temp[0],$6)){
                 //error
                 cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
@@ -1412,13 +1471,22 @@ expr : ID ASSGN rhs
                 cout<<"Semantic Error: Variable not accessible\n";
                 exit(1);
             }
-            string s="",s1=temp[0].substr( temp[0].size() - 2*$4,temp[0].size());
-            for(int j=0;j<$4;j++)s+="[]";
-            if(s1!=s){
-                cout<<"Semantic Error: dimensions do not match\n";
-                exit(1);
+            if(temp[0][0]=='<'){
+                if($4!=2){
+                    cout<<"Invalid Matrix access\n";
+                    exit(1);
+                }
+                temp[0] = temp[0].substr(1,temp[0].size()-2);
             }
-            temp[0] = temp[0].substr(0, temp[0].size() - 2*$4);
+            else{
+                string s="",s1=temp[0].substr( temp[0].size() - 2*$4, 2*$4);
+                for(int j=0;j<$4;j++)s+="[]";
+                if(s1!=s){
+                    cout<<"Semantic Error: dimensions do not match\n";
+                    exit(1);
+                }
+                temp[0] = temp[0].substr(0, temp[0].size() - 2*$4);
+            }
             if(!coersible(temp[0],$6)){
                 //error
                 cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
@@ -1431,22 +1499,25 @@ exprstmt : expr SEMICOL
     ;
 
 // conditional statement
-condstmt : IF OBRAK pred CBRAK OBRACE open_marker stmt closing_marker CBRACE   elif_list
-    | IF OBRAK pred CBRAK OBRACE open_marker stmt closing_marker CBRACE  elif_list  ELSE OBRACE open_marker stmt closing_marker CBRACE 
+condstmt : IF OBRAK pred CBRAK OBRACE open_marker cond_open stmt cond_close closing_marker CBRACE   elif_list
+    | IF OBRAK pred CBRAK OBRACE open_marker cond_open stmt cond_close closing_marker CBRACE  elif_list  ELSE OBRACE open_marker cond_open stmt cond_close closing_marker CBRACE 
     ;
 
 elif_list : /* empty */
-    | elif_list ELIF OBRAK pred CBRAK OBRACE open_marker stmt closing_marker CBRACE 
+    | elif_list ELIF OBRAK pred CBRAK OBRACE open_marker cond_open stmt cond_close closing_marker CBRACE 
     ;
             
 // loop statements
-loop : FOR OBRAK declstmt  pred SEMICOL expr CBRAK OBRACE open_marker stmt closing_marker CBRACE 
-    | FOR OBRAK declstmt  pred SEMICOL  CBRAK  OBRACE open_marker stmt closing_marker CBRACE 
-    | FOR OBRAK   SEMICOL pred SEMICOL expr CBRAK  OBRACE open_marker stmt closing_marker CBRACE 
-    | FOR OBRAK   SEMICOL pred SEMICOL  CBRAK  OBRACE open_marker stmt closing_marker CBRACE 
-    | WHILE OBRAK pred CBRAK  OBRACE open_marker stmt closing_marker CBRACE 
+loop : FOR OBRAK declstmt  pred SEMICOL expr CBRAK OBRACE open_marker cond_open stmt cond_close closing_marker CBRACE 
+    | FOR OBRAK declstmt  pred SEMICOL  CBRAK  OBRACE open_marker cond_open stmt cond_close closing_marker CBRACE 
+    | FOR OBRAK   SEMICOL pred SEMICOL expr CBRAK  OBRACE open_marker cond_open stmt cond_close closing_marker CBRACE 
+    | FOR OBRAK   SEMICOL pred SEMICOL  CBRAK  OBRACE open_marker cond_open stmt cond_close closing_marker CBRACE 
+    | WHILE OBRAK pred CBRAK  OBRACE open_marker cond_open stmt cond_close closing_marker CBRACE 
     ;
-
+cond_open : {cond = true;}
+          ;
+cond_close: {cond = false;}
+          ;
 break:
   BREAK SEMICOL
   ;
@@ -1456,7 +1527,7 @@ continue:
   ;  
 
 // return statement
-returnstmt : RETURN pred SEMICOL
+returnstmt : RETURN pred SEMICOL {if(!cond) ret = true;}
     ;
 
 // print statement
