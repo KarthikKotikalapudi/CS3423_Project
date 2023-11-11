@@ -18,10 +18,10 @@ int insert_classtab(std::string name, std::pair<std::string,std::string>Inherite
 
 classtab search_classtab(std::string name);
 
-void insert_classvar(std::string name, std::string type, std::string access, classtab c);
+void insert_classvar(std::string name, std::string type, std::string access, classtab c, bool override);
 
-std::pair<std::string,std::string> search_classvar(std::string name, std::string class_name);
+std::vector<std::string> search_classvar(std::string name, std::string class_name);
 
-void insert_classfunc(std::string name, std::string return_type, std::string access, std::vector<std::string>params, classtab c);
+void insert_classfunc(std::string name, std::string return_type, std::string access, std::vector<std::string>params, classtab c, bool override);
 
 std::pair<functab,std::string> search_classfunc(std::string func_name, std::vector<std::string>params, std::string class_name);

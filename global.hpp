@@ -18,12 +18,13 @@ struct func_table
     std::string name;
     std::vector<std::string> params;
     std::string return_type;
+    int override = 0;
 };
 
 struct class_table
 {
     std::string name;
-    std::unordered_map<std::string,pair<std::string,std::string>> vars;
+    std::unordered_map<std::string,vector<std::string>> vars;
     std::unordered_map<std::string,vector<pair<functab,std::string>>> funcs;
     std::pair<std::string,std::string> inherited;
 };

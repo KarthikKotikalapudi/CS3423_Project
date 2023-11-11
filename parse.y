@@ -117,17 +117,18 @@ stmtD : declstmt
 declstmt : DATATYPE ID Multideclstmt SEMICOL
         {   
             if(active_class_ptr){
-                pair<string,string> var = search_classvar($2.name,active_class_ptr->name); //check this,can string be char * 
-                if(var.first != "")
+                vector<string> var = search_classvar($2.name,active_class_ptr->name); 
+                if(var[0] != "" && var[2] != "1")
                 {
                 cout<<"Semantic Error: variable already declared\n";
                     std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
                 } 
-                insert_classvar($2.name,$1,access_spec,active_class_ptr);
+                insert_classvar($2.name,$1,access_spec,active_class_ptr,0);
                 for(int i=0;i<var_list.size();i++){
-                    if(search_classvar(var_list[i].name,active_class_ptr->name).first!="")
+                    vector<string> temp = search_classvar(var_list[i].name,active_class_ptr->name);
+                    if(temp[0] !="" && temp[2] != "1")
                     {
                     cout<<"Semantic Error: variable already declared \n";
                         std::cout << "Error at line: " << __LINE__ << std::endl;
@@ -146,7 +147,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                             exit(1);
                         }
                     }
-                    insert_classvar(var_list[i].name,s,access_spec,active_class_ptr);
+                    insert_classvar(var_list[i].name,s,access_spec,active_class_ptr,0);
                 }
                 var_list.clear();
             }
@@ -195,7 +196,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             var_list.push_back(s2);
             if(active_class_ptr){
                 for(int i=0;i<var_list.size();i++){
-                    if(search_classvar(var_list[i].name,active_class_ptr->name).first!="")
+                    vector<string> temp = search_classvar(var_list[i].name,active_class_ptr->name);
+                    if(temp[0] !="" && temp[2] != "1")
                     {
                     cout<<"Semantic Error: variable already declared \n";
                         std::cout << "Error at line: " << __LINE__ << std::endl;
@@ -214,7 +216,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                             exit(1);
                         }
                     }
-                    insert_classvar(var_list[i].name,s,access_spec,active_class_ptr);
+                    insert_classvar(var_list[i].name,s,access_spec,active_class_ptr,0);
                 }
                 var_list.clear();
             }
@@ -247,8 +249,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
     | DATATYPE ID ASSGN rhs Multideclstmt SEMICOL 
         {   
             if(active_class_ptr){
-                pair<string,string> var = search_classvar($2.name,active_class_ptr->name); //check this,can string be char * 
-                if(var.first != "")
+                vector<string> var = search_classvar($2.name,active_class_ptr->name); //check this,can string be char * 
+                if(var[0] != "" && var[2] != "1")
                 {
                 cout<<"Semantic Error: variable already declared\n";
                     std::cout << "Error at line: " << __LINE__ << std::endl;
@@ -261,9 +263,10 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
 
                     exit(1);
                 } 
-                insert_classvar($2.name,$1,access_spec,active_class_ptr);
+                insert_classvar($2.name,$1,access_spec,active_class_ptr,0);
                 for(int i=0;i<var_list.size();i++){
-                    if(search_classvar(var_list[i].name,active_class_ptr->name).first!="")
+                    vector<string> temp = search_classvar(var_list[i].name,active_class_ptr->name);
+                    if(temp[0] !="" && temp[2] != "1")
                     {
                     cout<<"Semantic Error: variable already declared \n";
                         std::cout << "Error at line: " << __LINE__ << std::endl;
@@ -282,7 +285,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                             exit(1);
                         }
                     }
-                    insert_classvar(var_list[i].name,s,access_spec,active_class_ptr);
+                    insert_classvar(var_list[i].name,s,access_spec,active_class_ptr,0);
                 }
                 var_list.clear();
             }
@@ -345,7 +348,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             var_list.push_back(s2);
             if(active_class_ptr){
                 for(int i=0;i<var_list.size();i++){
-                    if(search_classvar(var_list[i].name,active_class_ptr->name).first!="")
+                    vector<string> temp = search_classvar(var_list[i].name,active_class_ptr->name);
+                    if(temp[0] !="" && temp[2] != "1")
                     {
                     cout<<"Semantic Error: variable already declared \n";
                         std::cout << "Error at line: " << __LINE__ << std::endl;
@@ -364,7 +368,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                             exit(1);
                         }
                     }
-                    insert_classvar(var_list[i].name,s,access_spec,active_class_ptr);
+                    insert_classvar(var_list[i].name,s,access_spec,active_class_ptr,0);
                 }
                 var_list.clear();
             }
@@ -778,14 +782,15 @@ FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker
     // inserting function in the class
     else 
     {
-        if(search_classfunc($1.name, params,active_class_ptr->name).first)
+        functab f = search_classfunc($1.name, params,active_class_ptr->name).first;
+        if(f && !f->override)
         {
-             cout<<"Semantic Error: function already declared in the class with same signature\n";
-                 std::cout << "Error at line: " << __LINE__ << std::endl;
+            cout<<"Semantic Error: function already declared in the class with same signature\n";
+                     std::cout << "Error at line: " << __LINE__ << std::endl;
 
         exit(1);
         }
-        insert_classfunc(active_class_ptr->name, $1.ret_type, access_spec, params, active_class_ptr);
+        insert_classfunc(active_class_ptr->name, $1.ret_type, access_spec, params, active_class_ptr,0);
     }
 }
     ;
@@ -947,12 +952,12 @@ callstmt: function_call SEMICOL {
 
 class_arg:
      ID DOT ID{
-        std::pair <std::string,std::string> M = search_classvar($3.name, $1.name); 
-        if(M.first==""){
+        vector<string> M = search_classvar($3.name, $1.name); 
+        if(M[0]==""){
               cout<<"Semantic Error: Variable is not declared in the class/n";
               exit(1);
         }
-        if(M.second=="private" || M.second=="protected"){
+        if(M[1]=="private" || M[1]=="protected"){
             cout<<"Semantic Error: Variable cannot be access witout a public method of the same class"<<endl;
             exit(1);
         }
@@ -1254,18 +1259,18 @@ expr : ID ASSGN rhs
     | ID DOT ID ASSGN rhs 
         {
             symtab var = search_symtab($1.name,scope,func,0);
-            pair<string,string> temp = search_classvar($3.name, var->type);
-            if(temp.first == ""){
+            vector<string> temp = search_classvar($3.name, var->type);
+            if(temp[0] == ""){
                 //error
                 cout<<"Semantic Error: A variable must be declared before use\n";
                 exit(1);
             }
-            if(temp.second != "public"){
+            if(temp[0] != "public"){
                 //error
                 cout<<"Semantic Error: Variable not accessible\n";
                 exit(1);
             }
-            if(!coersible(temp.first,$5)){
+            if(!coersible(temp[0],$5)){
                 //error
                 cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
                 exit(1);
@@ -1274,18 +1279,18 @@ expr : ID ASSGN rhs
     | ID DOT ID ARTHASSGN rhs 
         {
             symtab var = search_symtab($1.name,scope,func,0);
-            pair<string,string> temp = search_classvar($3.name, var->type);
-            if(temp.first == ""){
+            vector<string> temp = search_classvar($3.name, var->type);
+            if(temp[0] == ""){
                 //error
                 cout<<"Semantic Error: A variable must be declared before use\n";
                 exit(1);
             }
-            if(temp.second != "public"){
+            if(temp[1] != "public"){
                 //error
                 cout<<"Semantic Error: Variable not accessible\n";
                 exit(1);
             }
-            if(!coersible(temp.first,$5)){
+            if(!coersible(temp[0],$5)){
                 //error
                 cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
                 exit(1);
