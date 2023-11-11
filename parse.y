@@ -1764,8 +1764,8 @@ SORT_FUN    : SORT OBRAK start_end_pos COMMA start_end_pos CBRAK SEMICOL
             ;
 
 start_end_pos : ID
-              | ID ARTH rhs {if($3 != "int")
-              {
+              | ID ARTH rhs {if(strcmp($3,"int")!=0)
+              { 
                 cout<<"Semantic Error: array can be appended with only a number\n";
                 exit(1);
               }}
