@@ -3,7 +3,7 @@
 
 void insert_symtab(std::string name,std::string type,std::vector<int>dim,int level)
 {
-     if(sym_table_list.size()<level+1)
+     while(sym_table_list.size()<level+1)
       {
         std::unordered_map<std::string,symtab> newtab;
         sym_table_list.push_back(newtab); // inserting new symbol table for this level
@@ -28,14 +28,21 @@ void delete_symtab_level(int level)
        }
 }
 
-symtab search_symtab(std::string name,int level, bool func)
+symtab search_symtab(std::string name,int level, bool func, bool decl)
 {
        int i = level;
+       if(level > sym_table_list.size() && decl) return NULL;
+       else{
+              while(i > sym_table_list.size()){
+                     i--;
+              }
+       }
        while(i>=0)
        {
-            if(!sym_table_list[i][name]) return sym_table_list[i][name];
+            if(sym_table_list[i][name]) return sym_table_list[i][name];
             i--;
             if(func && i == 1)      i--;
+            if(decl) break;
        }
        return NULL;
 }
