@@ -344,6 +344,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             }
             for(int i=0;i<$3;i++){
                 s2.dim.push_back(-1);
+                s2.type+="[]";
             }
             var_list.push_back(s2);
             if(active_class_ptr){
@@ -433,6 +434,7 @@ Multideclstmt : COMMA ID Multideclstmt {
             exit(1);
         }
         for(int i=0;i<$3;i++){
+            s2.type+="[]";
             s2.dim.push_back(-1);
         }
         var_list.push_back(s2);
