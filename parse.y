@@ -51,7 +51,7 @@ unordered_map<std::string,classtab> class_table_list;
     }CL;
     struct number
     {
-        char * type;
+        char *type;
         int value;
     }number;
 }
@@ -389,23 +389,26 @@ Multideclstmt : COMMA ID Multideclstmt {
     ;
 
 numbers : NUM {
-          strcpy($$.type,"int");
+          $$.value = $1; 
+         cout<<1<<endl;
+         $$.type = strdup("int");
        }
      | MINUS NUM {
-          strcpy($$.type,"int");
+        $$.value = $2; 
+        $$.type = strdup("int");
      }
      ;
 
-constL : numbers COMMA constL { $$.len =   $3.len + 1; if(!strcmp($3.type,"int")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} strcpy($$.type,"int"); }
-    | FLOAT COMMA constL {  $$.len = $3.len +1 ;if(!strcmp($3.type,"float")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} strcpy($$.type,"float");}
-    | STRING COMMA constL { $$.len = $3.len +1; if(!strcmp($3.type,"string")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} strcpy($$.type,"string");}
-    | CHAR COMMA constL { $$.len = $3.len +1 ;if(!strcmp($3.type,"char")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} strcpy($$.type,"char");}
-    | BOOL COMMA constL { $$.len = $3.len +1 ;if(!strcmp($3.type,"bool")){cout<<"Semantic error:constants are not of same type\n"; exit(1);} strcpy($$.type,"bool");}
-    | numbers {$$.len = 1;strcpy($$.type,"int");}
-    | FLOAT { $$.len = 1;strcpy($$.type,"float");}
-    | STRING {$$.len = 1;strcpy($$.type,"string");}
-    | CHAR {$$.len = 1 ; strcpy($$.type,"char");}
-    | BOOL {$$.len = 1;strcpy($$.type,"bool");}
+constL : numbers COMMA constL { $$.len =   $3.len + 1; if(!strcmp($3.type,"int")){cout<<"Semantic error:constants are not of same type\n"; exit(1);}  $$.type = strdup("int"); }
+    | FLOAT COMMA constL {  $$.len = $3.len +1 ;if(!strcmp($3.type,"float")){cout<<"Semantic error:constants are not of same type\n"; exit(1);}  $$.type = strdup("float");}
+    | STRING COMMA constL { $$.len = $3.len +1; if(!strcmp($3.type,"string")){cout<<"Semantic error:constants are not of same type\n"; exit(1);}  $$.type = strdup("string");}
+    | CHAR COMMA constL { $$.len = $3.len +1 ;if(!strcmp($3.type,"char")){cout<<"Semantic error:constants are not of same type\n"; exit(1);}  $$.type = strdup("char");}
+    | BOOL COMMA constL { $$.len = $3.len +1 ;if(!strcmp($3.type,"bool")){cout<<"Semantic error:constants are not of same type\n"; exit(1);}  $$.type = strdup("bool");}
+    | numbers {$$.len = 1; $$.type = strdup("int");}
+    | FLOAT { $$.len = 1; $$.type = strdup("float");}
+    | STRING {$$.len = 1; $$.type = strdup("string");}
+    | CHAR {$$.len = 1 ;  $$.type = strdup("char");}
+    | BOOL {$$.len = 1; $$.type = strdup("bool");}
     ;
 
 
@@ -483,7 +486,8 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
          }
     
     }
-    | MATRIX ID MATRIX_TYPE OBRAK numL CBRAK{
+    | MATRIX  ID MATRIX_TYPE OBRAK numL CBRAK{
+       
              symtab var = search_symtab($2.name,scope,func,1); //check this,can string be char * 
            if(var)
            {
@@ -529,6 +533,7 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
 
     }
     ;
+
 
 MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
        //Assign type to ID , MultiMatrixDecl
@@ -632,6 +637,7 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
     ;
 
 numL : numbers COMMA numbers {
+                cout<<"y"<<endl;
             $$.row = $1.value;
             $$.col = $3.value;
       }
@@ -691,11 +697,11 @@ FuncHead : DATATYPE ID {$$.name = $2.name; $$.ret_type = $1;}
                }
                $$.name = $2.name; $$.ret_type = $1.name;
              }
-    | MATRIX MATRIX_TYPE ID {string s = "matrix"; s = s + $2; strcpy($$.ret_type,s.c_str()); $$.name = $3.name; }
-    | DF ID {$$.name = $2.name; strcpy($$.ret_type,"dataframe");}
+    | MATRIX MATRIX_TYPE ID {string s = "matrix"; s = s + $2; $$.ret_type = strdup(s.c_str()); $$.name = $3.name; }
+    | DF ID {$$.name = $2.name; $$.ret_type =$$.name = strdup("dataframe");}
     | DATATYPE access_retn ID {string s = $1; 
               for(int i=0;i<$2;i++) s = s + "[]";  
-              $$.name = $3.name; strcpy($$.ret_type,s.c_str());      
+              $$.name = $3.name; $$.ret_type =strdup(s.c_str());      
               }
     | ID access_retn ID {
         if(!search_classtab($1.name))
@@ -705,7 +711,7 @@ FuncHead : DATATYPE ID {$$.name = $2.name; $$.ret_type = $1;}
                }
               string s = $1.name; 
               for(int i=0;i<$2;i++) s = s + "[]";  
-              $$.name = $3.name; strcpy($$.ret_type,s.c_str());
+              $$.name = $3.name; $$.ret_type =strdup(s.c_str());
                 }
     ;
 
@@ -724,7 +730,7 @@ parameter : DATATYPE ID
             exit(1);
             } 
 }
-    | MATRIX ID MATRIX_TYPE {string s = "matrix"; s = s + $3; strcpy($$,s.c_str());
+    | MATRIX ID MATRIX_TYPE {string s = "matrix"; s = s + $3;  $$ = strdup(s.c_str());
                           symtab par = search_symtab($2.name,scope+1,func,1);
             if(par)
             {
@@ -764,7 +770,7 @@ parameter : DATATYPE ID
                 exit(1);
                }
             string s = $1.name; s =s+"[]";
-            strcpy($$,s.c_str()); 
+            $$ = strdup(s.c_str()); 
             symtab par = search_symtab($2.name,scope+1,func,1);
             if(par)
             {
@@ -787,7 +793,7 @@ function_call:ID OBRAK varL CBRAK  { functab fun = search_functab($1.name,params
                 cout<<"Semantic Error: This function doesn't exist\n";
                 exit(1);
                }
-               $$.name = $1.name; strcpy($$.ret_type,(fun->return_type).c_str());}
+               $$.name = $1.name; $$.ret_type =strdup((fun->return_type).c_str());}
     | ID OBRAK CBRAK {
           functab fun = search_functab($1.name,params);
                if(!fun)
@@ -795,10 +801,11 @@ function_call:ID OBRAK varL CBRAK  { functab fun = search_functab($1.name,params
                 cout<<"Semantic Error: This function doesn't exist\n";
                 exit(1);
                }
-        $$.name = $1.name; strcpy($$.ret_type,(fun->return_type).c_str());}
-    | DF_UPDATECOL { strcpy($$.name,"update");strcpy($$.ret_type,"dataframe");}
-    | DF_SELECT {strcpy($$.name,"update");strcpy($$.ret_type,"dataframe");}
-    | DF_DELETEROW {strcpy($$.name,"update");strcpy($$.ret_type,"dataframe");}
+        $$.name = $1.name ; $$.ret_type =  strdup((fun->return_type).c_str());
+        }
+    | DF_UPDATECOL { $$.name = strdup("update"); $$.ret_type = strdup("dataframe");}
+    | DF_SELECT {$$.name = strdup("select");$$.ret_type = strdup("dataframe");}
+    | DF_DELETEROW {$$.name = strdup("delete");$$.ret_type = strdup("dataframe");;}
     ;
 call_expression: function_call {
     functab fun = search_functab($1.name,params);
@@ -808,7 +815,7 @@ call_expression: function_call {
             exit(1);
      }
      params.clear();
-     strcpy($$,(fun->return_type).c_str());
+     $$=strdup(fun->return_type.c_str());
 }
 callstmt: function_call SEMICOL {
      functab fun = search_functab($1.name,params);
@@ -834,7 +841,7 @@ class_arg:
             cout<<"Semantic Error: Variable cannot be access witout a public method of the same class"<<endl;
             exit(1);
         }
-        strcpy($$ , M.first.c_str());
+        $$ =strdup( M.first.c_str());
 
      }
     | ID DOT function_call{
@@ -848,7 +855,7 @@ class_arg:
             cout<<"Semantic Error:this method cannot be used outside of the class"<<endl;
             exit(1);
         }
-        strcpy($$, M.first->return_type.c_str());
+        $$ =strdup( M.first->return_type.c_str());
     }
     ;
 
@@ -859,10 +866,10 @@ rhs : pred { $$ = $1;}
 // pred rules produces all valid predicates
 pred : pred LOG pred 
         {
-            strcpy($$,"bool"); // $$ ="bool";
+            $$ =strdup("bool"); // $$ ="bool";
         }
     | OBRAK pred CBRAK { $$ = $2; }
-    | NEG pred { strcpy($$,"bool"); /* $$ = "bool";*/ }
+    | NEG pred { $$ = strdup("bool"); /* $$ = "bool";*/ }
     | arg { $$ = $1; }
     | pred COMP pred 
     {
@@ -870,7 +877,7 @@ pred : pred LOG pred
             cout<<"Semantic Error: Both sides of the Comparator operation must be same"<<endl;
             exit(1);
         }
-       strcpy($$,"bool");  // $$ = "bool";
+       $$ = strdup("bool");  // $$ = "bool";
     }
     | pred SHIFT pred 
     {
@@ -903,7 +910,7 @@ pred : pred LOG pred
             exit(1);
         }
       //  $$ = dominate($1,$3).c_str();
-        strcpy($$,dominate($1,$3).c_str());
+        $$ = strdup(dominate($1,$3).c_str());
     }
     | pred MINUS pred 
     {   
@@ -915,7 +922,7 @@ pred : pred LOG pred
             cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible"<<endl;
             exit(1);
         }
-        strcpy($$,dominate($1,$3).c_str()); // $$ = dominate($1,$3).c_str();
+        $$= strdup(dominate($1,$3).c_str()); // $$ = dominate($1,$3).c_str();
     }
     ;
 
@@ -939,7 +946,7 @@ arg : ID { //use after declaration check
            exit(1);
         } 
         // $$ = var->type.c_str();
-        strcpy($$,var->type.c_str());
+        $$= strdup(var->type.c_str());
         }
     | uni {$$ = $1;}
     | call_expression{$$ = $1;}
@@ -948,23 +955,23 @@ arg : ID { //use after declaration check
         $$ = $1.type;
     }
     | FLOAT {
-        strcpy($$,"float"); // $$ = "float";
+        $$= strdup("float"); // $$ = "float";
     }
     | BOOL{
-        strcpy($$,"bool"); // $$ = "bool";
+        $$ = strdup("bool"); // $$ = "bool";
     }
     | CHAR{
-        strcpy($$,"char"); // $$ = "char";
+        $$ = strdup("char"); // $$ = "char";
     } 
     | STRING{
-        strcpy($$,"string");        // $$ = "string";
+        $$ = strdup("string");        // $$ = "string";
     }
     | ID access{  
         symtab s;
         if((s=search_symtab($1.name,scope,func,0))){
            if($2 <= s->dim.size()){
                  //  $$ = s->type.substr(0, s->type.size() - 2*$2).c_str();
-                 strcpy($$,s->type.substr(0, s->type.size() - 2*$2).c_str());
+                 $$= strdup (s->type.substr(0, s->type.size() - 2*$2).c_str());
            }
            else{
                cout<<"Semantic error: dimensions do not match\n";
@@ -1016,7 +1023,7 @@ uni : ID POST {
                 exit(1);
             }
            // $$ = s->type.c_str();
-          strcpy($$,s->type.c_str());
+          $$= strdup(s->type.c_str());
         }
       else{
         //error
@@ -1034,7 +1041,7 @@ uni : ID POST {
             }
            if($2 <= s->dim.size()){
                //    $$ = s->type.substr(0, s->type.size() - 2*$2).c_str();
-               strcpy($$,s->type.substr(0, s->type.size() - 2*$2).c_str());
+               $$=strdup(s->type.substr(0, s->type.size() - 2*$2).c_str());
            }
            else{
                cout<<"Semantic error: dimensions do not match\n";
