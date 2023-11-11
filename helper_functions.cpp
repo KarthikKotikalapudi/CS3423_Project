@@ -29,9 +29,9 @@ void delete_symtab_level(int level)
 }
 
 symtab search_symtab(std::string name,int level, bool func, bool decl)
-{
+{      
        int i = level;
-       if(level > sym_table_list.size() && decl) return NULL;
+       if(level >= sym_table_list.size() && decl) return NULL;
        else{
               while(i > sym_table_list.size()){
                      i--;
