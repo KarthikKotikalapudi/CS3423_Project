@@ -531,7 +531,7 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
               //find dimension of $3 and insert the dimesion for $2
                insert_symtab($2.name,$3,{},scope);
             
-               symtab var = search_symtab($2.name,scope,func,0); //check this,can string be char * 
+               symtab var = search_symtab($5.name,scope,func,0); //check this,can string be char * 
               if(var)
                {
                 //compare the rhs matrix type
@@ -655,7 +655,7 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
               //add matrix with type int or float
                insert_symtab($2.name,$3,{},scope);
             
-               symtab var = search_symtab($2.name,scope,func,0); //check this,can string be char * 
+               symtab var = search_symtab($5.name,scope,func,0); //check this,can string be char * 
               if(var)
                {
                 //compare the rhs matrix type
@@ -961,7 +961,7 @@ class_arg:
             cout<<"Semantic Error: Variable cannot be access witout a public method of the same class"<<endl;
             exit(1);
         }
-        $$ =strdup( M.first.c_str());
+        $$ =strdup( M[0].c_str());
 
      }
     | ID DOT function_call{
