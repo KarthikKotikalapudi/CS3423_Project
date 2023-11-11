@@ -1538,7 +1538,7 @@ printstmt : PRINT OBRAK STRING CBRAK SEMICOL
 
 //class related syntax
 
-class_decl:  class_head OBRACE class_body CBRACE  SEMICOL{active_class_ptr = NULL;}
+class_decl:  class_head OBRACE open_marker class_body closing_marker CBRACE  SEMICOL{active_class_ptr = NULL;}
    ;
 
 class_head : CLASS ID{
