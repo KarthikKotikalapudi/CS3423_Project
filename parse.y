@@ -882,7 +882,7 @@ parameter : DATATYPE ID
             vector<int>dim(2,-1);
             insert_symtab($2.name,$3,dim,scope+1);
     }
-    | DATATYPE ID access {string dt = $1;
+    | DATATYPE ID access2 {string dt = $1;
        for(int i = 0; i < $3; i++)  dt = dt+"[]";
        char* temp = new char[dt.length()+1]; strcpy(temp,dt.c_str());
        $$ = temp;
@@ -917,7 +917,7 @@ parameter : DATATYPE ID
             vector<int>dim(2,-1);
             insert_symtab($2.name,$1.name,dim,scope+1);
             }
-    | ID ID access {
+    | ID ID access2 {
                  if(!search_classtab($1.name))
                {
                 cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist\n";
