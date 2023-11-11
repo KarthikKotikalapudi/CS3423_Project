@@ -956,7 +956,7 @@ class_arg:
      ID DOT ID{
         vector<string> M = search_classvar($3.name, $1.name); 
         if(M[0]==""){
-              cout<<"Semantic Error: Variable is not declared in the class/n";
+              cout<<"Semantic Error: Variable is not declared in the class\n";
               exit(1);
         }
         if(M[1]=="private" || M[1]=="protected"){
@@ -966,6 +966,26 @@ class_arg:
         $$ =strdup( M[0].c_str());
 
      }
+    | ID DOT ID access 
+    {
+        vector<string> M = search_classvar($3.name, $1.name); 
+        if(M[0]==""){
+              cout<<"Semantic Error: Variable is not declared in the class\n";
+              exit(1);
+        }
+        if(M[1]=="private" || M[1]=="protected"){
+            cout<<"Semantic Error: Variable cannot be access witout a public method of the same class"<<endl;
+            exit(1);
+        }
+        string s="",s1=M[0].substr( M.size() - 2*$4,M.size());
+        for(int j=0;j<$4;j++)s+="[]";
+        if(s1!=s){
+            cout<<"Semantic Error: dimensions do not match\n";
+            exit(1);
+        }
+        M[0] = M[0].substr(0, M[0].size() - 2*$4);
+        $$ =strdup( M[0].c_str());
+    }
     | ID DOT function_call{
         string temp = $1.name;
         pair <functab,string> M = search_classfunc($3.name,params,temp); 
@@ -1267,7 +1287,7 @@ expr : ID ASSGN rhs
                 cout<<"Semantic Error: A variable must be declared before use\n";
                 exit(1);
             }
-            if(temp[0] != "public"){
+            if(temp[1] != "public"){
                 //error
                 cout<<"Semantic Error: Variable not accessible\n";
                 exit(1);
@@ -1287,6 +1307,10 @@ expr : ID ASSGN rhs
                 cout<<"Semantic Error: A variable must be declared before use\n";
                 exit(1);
             }
+            if(!($5=="int" || $5=="float")){
+                cout<<"Semantic Error: Invalid RHS type expected int or float\n";
+                exit(1);
+            }
             if(temp[1] != "public"){
                 //error
                 cout<<"Semantic Error: Variable not accessible\n";
@@ -1298,6 +1322,64 @@ expr : ID ASSGN rhs
                 exit(1);
             }
         }
+    | ID DOT ID access ARTHASSGN rhs 
+    {
+        symtab var = search_symtab($1.name,scope,func,0);
+            vector<string> temp = search_classvar($3.name, var->type);
+            if(temp[0] == ""){
+                //error
+                cout<<"Semantic Error: A variable must be declared before use\n";
+                exit(1);
+            }
+            if(!($6=="int" || $6=="float")){
+                cout<<"Semantic Error: Invalid RHS type expected int or float\n";
+                exit(1);
+            }
+            if(temp[1] != "public"){
+                //error
+                cout<<"Semantic Error: Variable not accessible\n";
+                exit(1);
+            }
+            string s="",s1=temp[0].substr( temp[0].size() - 2*$4,temp[0].size());
+            for(int j=0;j<$4;j++)s+="[]";
+            if(s1!=s){
+                cout<<"Semantic Error: dimensions do not match\n";
+                exit(1);
+            }
+            temp[0] = temp[0].substr(0, temp[0].size() - 2*$4);
+            if(!coersible(temp[0],$6)){
+                //error
+                cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                exit(1);
+            }
+    }
+    | ID DOT ID access ASSGN rhs 
+    {
+        symtab var = search_symtab($1.name,scope,func,0);
+            vector<string> temp = search_classvar($3.name, var->type);
+            if(temp[0] == ""){
+                //error
+                cout<<"Semantic Error: A variable must be declared before use\n";
+                exit(1);
+            }
+            if(temp[1] != "public"){
+                //error
+                cout<<"Semantic Error: Variable not accessible\n";
+                exit(1);
+            }
+            string s="",s1=temp[0].substr( temp[0].size() - 2*$4,temp[0].size());
+            for(int j=0;j<$4;j++)s+="[]";
+            if(s1!=s){
+                cout<<"Semantic Error: dimensions do not match\n";
+                exit(1);
+            }
+            temp[0] = temp[0].substr(0, temp[0].size() - 2*$4);
+            if(!coersible(temp[0],$6)){
+                //error
+                cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                exit(1);
+            }
+    }
     ;
 
 exprstmt : expr SEMICOL
