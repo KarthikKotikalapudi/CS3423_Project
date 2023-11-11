@@ -444,7 +444,6 @@ Multideclstmt : COMMA ID Multideclstmt {
 
 numbers : NUM {
           $$.value = $1; 
-         
          $$.type = strdup("int");
        }
      | MINUS NUM {
@@ -740,7 +739,6 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
     ;
 
 numL : numbers COMMA numbers {
-                cout<<"y"<<endl;
             $$.row = $1.value;
             $$.col = $3.value;
       }
@@ -768,7 +766,7 @@ MatrixL : OBRACE open_marker constL closing_marker CBRACE  COMMA MatrixL {
 FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker CBRACE  
 {
     //search if this function already exists
- if(!active_class_ptr)
+    if(!active_class_ptr)
     {   // here we store parameter types in params global variable
         if(search_functab($1.name,params))
     {
@@ -793,6 +791,30 @@ FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker
         exit(1);
         }
         insert_classfunc(active_class_ptr->name, $1.ret_type, access_spec, params, active_class_ptr,0);
+    }
+}
+| FuncHead OBRAK CBRAK OBRACE open_marker FuncBody closing_marker CBRACE{
+    //search if this function already exists
+    if(!active_class_ptr)
+    {   // here we store parameter types in params global variable
+        if(search_functab($1.name,{}))
+    {
+        cout<<"Semantic Error: function already declared\n";
+        exit(1);
+    }
+    //inserting function to function table
+    insert_functab($1.name,{},$1.ret_type);
+    }
+    // inserting function in the class
+    else 
+    {
+        functab f = search_classfunc($1.name, {},active_class_ptr->name).first;
+        if(f && !f->override)
+        {
+            cout<<"Semantic Error: function already declared in the class with same signature\n";
+            exit(1);
+        }
+        insert_classfunc(active_class_ptr->name, $1.ret_type, access_spec, {}, active_class_ptr,0);
     }
 }
     ;
@@ -954,13 +976,19 @@ callstmt: function_call SEMICOL {
 
 class_arg:
      ID DOT ID{
-        vector<string> M = search_classvar($3.name, $1.name); 
+        symtab x = search_symtab($1.name,scope,func,0);
+        if(!x){
+            cout<<"Semantic Error: Variable is not declared in this scope\n";
+            exit(1);
+        }
+        string class_name = x->type;
+        vector<string> M = search_classvar($3.name, class_name);
         if(M[0]==""){
               cout<<"Semantic Error: Variable is not declared in the class\n";
               exit(1);
         }
         if(M[1]=="private" || M[1]=="protected"){
-            cout<<"Semantic Error: Variable cannot be access witout a public method of the same class"<<endl;
+            cout<<"Semantic Error: Variable cannot be access witout a public method of the same class\n";
             exit(1);
         }
         $$ =strdup( M[0].c_str());
@@ -987,14 +1015,19 @@ class_arg:
         $$ =strdup( M[0].c_str());
     }
     | ID DOT function_call{
-        string temp = $1.name;
-        pair <functab,string> M = search_classfunc($3.name,params,temp); 
+        symtab x = search_symtab($1.name,scope,func,0);
+        if(!x){
+            cout<<"Semantic Error: Variable is not declared in this scope\n";
+            exit(1);
+        }
+        string class_name = x->type;
+        pair <functab,string> M = search_classfunc($3.name,params,class_name); 
         if(M.first==NULL){
-              cout<<"Semantic Error: Method is not declared in the class/n";
+              cout<<"Semantic Error: Method is not declared in the class\n";
               exit(1);
         }
         if(M.second=="private" || M.second=="protected"){
-            cout<<"Semantic Error:this method cannot be used outside of the class"<<endl;
+            cout<<"Semantic Error:this method cannot be used outside of the class\n";
             exit(1);
         }
         $$ =strdup( M.first->return_type.c_str());
