@@ -70,7 +70,7 @@ sort {return SORT;}
 }
 
 
-"<int>"|"<float>" {/*printf("%s",yytext);*/  return MATRIX_TYPE;}
+"<int>"|"<float>" {yylval.type =strdup( yytext);  return MATRIX_TYPE;}
 "true"|"false"  {/*printf("%s",yytext);*/  return BOOL;}
 "NULL"  {/*printf("%s",yytext);*/  return NUL;}
 "++"|"--"	{/*printf("%s",yytext);*/  return POST;}

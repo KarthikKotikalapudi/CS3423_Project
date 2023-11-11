@@ -121,6 +121,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 if(var.first != "")
                 {
                 cout<<"Semantic Error: variable already declared\n";
+                    std::cout << "Error at line: " << __LINE__ << std::endl;
+
                 exit(1);
                 } 
                 insert_classvar($2.name,$1,access_spec,active_class_ptr);
@@ -128,6 +130,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(search_classvar(var_list[i].name,active_class_ptr->name).first!="")
                     {
                     cout<<"Semantic Error: variable already declared \n";
+                        std::cout << "Error at line: " << __LINE__ << std::endl;
+
                     exit(1);
                     }
                     string s=$1;
@@ -137,6 +141,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
                             cout<<"Semantic Error: Type Mismatch\n";
+                                std::cout << "Error at line: " << __LINE__ << std::endl;
+
                             exit(1);
                         }
                     }
@@ -149,6 +155,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 if(var)
                 {
                 cout<<"Semantic Error: variable already declared\n";
+                    std::cout << "Error at line: " << __LINE__ << std::endl;
+
                 exit(1);
                 } 
                 insert_symtab($2.name,$1,{},scope);
@@ -156,6 +164,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(search_symtab(var_list[i].name,scope,func,1))
                     {
                     cout<<"Semantic Error: variable already declared \n";
+                        std::cout << "Error at line: " << __LINE__ << std::endl;
+
                     exit(1);
                     }
                     string s=$1;
@@ -165,6 +175,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
                             cout<<"Semantic Error: Type Mismatch\n";
+                                std::cout << "Error at line: " << __LINE__ << std::endl;
+
                             exit(1);
                         }
                     }
@@ -186,6 +198,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(search_classvar(var_list[i].name,active_class_ptr->name).first!="")
                     {
                     cout<<"Semantic Error: variable already declared \n";
+                        std::cout << "Error at line: " << __LINE__ << std::endl;
+
                     exit(1);
                     }
                     string s=$1;
@@ -195,6 +209,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
                             cout<<"Semantic Error: Type Mismatch\n";
+                                std::cout << "Error at line: " << __LINE__ << std::endl;
+
                             exit(1);
                         }
                     }
@@ -207,6 +223,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(search_symtab(var_list[i].name,scope,func,1))
                     {
                     cout<<"Semantic Error: variable already declared\n";
+                        std::cout << "Error at line: " << __LINE__ << std::endl;
+
                     exit(1);
                     }
                     string s=$1;
@@ -216,6 +234,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
                             cout<<"Semantic Error: Type Mismatch\n";
+                                std::cout << "Error at line: " << __LINE__ << std::endl;
+
                             exit(1);
                         }
                     }
@@ -231,10 +251,14 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 if(var.first != "")
                 {
                 cout<<"Semantic Error: variable already declared\n";
+                    std::cout << "Error at line: " << __LINE__ << std::endl;
+
                 exit(1);
                 }
                 if(!coersible($1,$4)){
                     cout<<"Semantic Error: Type Mismatch\n";
+                        std::cout << "Error at line: " << __LINE__ << std::endl;
+
                     exit(1);
                 } 
                 insert_classvar($2.name,$1,access_spec,active_class_ptr);
@@ -242,6 +266,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(search_classvar(var_list[i].name,active_class_ptr->name).first!="")
                     {
                     cout<<"Semantic Error: variable already declared \n";
+                        std::cout << "Error at line: " << __LINE__ << std::endl;
+
                     exit(1);
                     }
                     string s=$1;
@@ -251,6 +277,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
                             cout<<"Semantic Error: Type Mismatch\n";
+                                std::cout << "Error at line: " << __LINE__ << std::endl;
+
                             exit(1);
                         }
                     }
@@ -263,10 +291,14 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 if(var)
                 {
                 cout<<"Semantic Error: variable already declared\n";
+                    std::cout << "Error at line: " << __LINE__ << std::endl;
+
                 exit(1);
                 }
                 if(!coersible($1,$4)){
                     cout<<"Semantic Error: Type Mismatch\n";
+                        std::cout << "Error at line: " << __LINE__ << std::endl;
+
                     exit(1);
                 } 
                 insert_symtab($2.name,$1,{},scope);
@@ -274,6 +306,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(search_symtab(var_list[i].name,scope,func,1))
                     {
                     cout<<"Semantic Error: variable already declared\n";
+                        std::cout << "Error at line: " << __LINE__ << std::endl;
+
                     exit(1);
                     }
                     string s=$1;
@@ -283,6 +317,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
                             cout<<"Semantic Error: Type Mismatch\n";
+                                std::cout << "Error at line: " << __LINE__ << std::endl;
+
                             exit(1);
                         }
                     }
@@ -299,6 +335,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             s2.type = $5.type;
             if($3!=$5.len){
                 cout<<"Semantic Error: Diminsions on LHS and RHS are not same \n";
+                    std::cout << "Error at line: " << __LINE__ << std::endl;
+
                 exit(1);
             }
             for(int i=0;i<$3;i++){
@@ -310,6 +348,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(search_classvar(var_list[i].name,active_class_ptr->name).first!="")
                     {
                     cout<<"Semantic Error: variable already declared \n";
+                        std::cout << "Error at line: " << __LINE__ << std::endl;
+
                     exit(1);
                     }
                     string s=$1;
@@ -319,6 +359,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
                             cout<<"Semantic Error: Type Mismatch\n";
+                                std::cout << "Error at line: " << __LINE__ << std::endl;
+
                             exit(1);
                         }
                     }
@@ -331,6 +373,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(search_symtab(var_list[i].name,scope,func,1))
                     {
                     cout<<"Semantic Error: variable already declared\n";
+                        std::cout << "Error at line: " << __LINE__ << std::endl;
+
                     exit(1);
                     }
                     string s=$1;
@@ -340,6 +384,8 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
                             cout<<"Semantic Error: Type Mismatch\n";
+                                std::cout << "Error at line: " << __LINE__ << std::endl;
+
                             exit(1);
                         }
                     }
@@ -378,6 +424,8 @@ Multideclstmt : COMMA ID Multideclstmt {
         s2.type = $5.type;
         if($3!=$5.len){
             cout<<"Semantic Error: Diminsions on LHS and RHS are not same \n";
+                std::cout << "Error at line: " << __LINE__ << std::endl;
+
             exit(1);
         }
         for(int i=0;i<$3;i++){
@@ -390,7 +438,7 @@ Multideclstmt : COMMA ID Multideclstmt {
 
 numbers : NUM {
           $$.value = $1; 
-         cout<<1<<endl;
+         
          $$.type = strdup("int");
        }
      | MINUS NUM {
@@ -399,11 +447,16 @@ numbers : NUM {
      }
      ;
 
-constL : numbers COMMA constL { $$.len =   $3.len + 1; if(!strcmp($3.type,"int")){cout<<"Semantic error:constants are not of same type\n"; exit(1);}  $$.type = strdup("int"); }
-    | FLOAT COMMA constL {  $$.len = $3.len +1 ;if(!strcmp($3.type,"float")){cout<<"Semantic error:constants are not of same type\n"; exit(1);}  $$.type = strdup("float");}
-    | STRING COMMA constL { $$.len = $3.len +1; if(!strcmp($3.type,"string")){cout<<"Semantic error:constants are not of same type\n"; exit(1);}  $$.type = strdup("string");}
-    | CHAR COMMA constL { $$.len = $3.len +1 ;if(!strcmp($3.type,"char")){cout<<"Semantic error:constants are not of same type\n"; exit(1);}  $$.type = strdup("char");}
-    | BOOL COMMA constL { $$.len = $3.len +1 ;if(!strcmp($3.type,"bool")){cout<<"Semantic error:constants are not of same type\n"; exit(1);}  $$.type = strdup("bool");}
+constL : numbers COMMA constL { $$.len =   $3.len + 1; if(strcmp($3.type,"int")){cout<<"Semantic error:constants are not of same type\n";    std::cout << "Error at line: " << __LINE__ << std::endl;
+ exit(1);}  $$.type = strdup("int"); }
+    | FLOAT COMMA constL {  $$.len = $3.len +1 ;if(strcmp($3.type,"float")){cout<<"Semantic error:constants are not of same type\n";     std::cout << "Error at line: " << __LINE__ << std::endl;
+exit(1);}  $$.type = strdup("float");}
+    | STRING COMMA constL { $$.len = $3.len +1; if(strcmp($3.type,"string")){cout<<"Semantic error:constants are not of same type\n";    std::cout << "Error at line: " << __LINE__ << std::endl;
+ exit(1);}  $$.type = strdup("string");}
+    | CHAR COMMA constL { $$.len = $3.len +1 ;if(strcmp($3.type,"char")){cout<<"Semantic error:constants are not of same type\n";     std::cout << "Error at line: " << __LINE__ << std::endl;
+exit(1);}  $$.type = strdup("char");}
+    | BOOL COMMA constL { $$.len = $3.len +1 ;if(strcmp($3.type,"bool")){cout<<"Semantic error:constants are not of same type\n";    std::cout << "Error at line: " << __LINE__ << std::endl;
+ exit(1);}  $$.type = strdup("bool");}
     | numbers {$$.len = 1; $$.type = strdup("int");}
     | FLOAT { $$.len = 1; $$.type = strdup("float");}
     | STRING {$$.len = 1; $$.type = strdup("string");}
@@ -419,6 +472,8 @@ MultiDimL : OBRACE MultiDimL CBRACE {
     | MultiDimL COMMA MultiDimL{
             if($1.type!=$3.type || $1.len != $3.len){
                 cout<<"Semantic Error: All lists in the RHS should have same characteristics\n";
+                    std::cout << "Error at line: " << __LINE__ << std::endl;
+
                 exit(1);
             }
             $$.len = $1.len;
@@ -436,17 +491,22 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
            if(var)
            {
             cout<<"Semantic Error: variable already declared\n";
+                std::cout << "Error at line: " << __LINE__ << std::endl;
+
             exit(1);
            } 
          
          char mtype[] = "<int>";
          char mtype1[] = "<float>";
-         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+         if(!strcmp(mtype,$3) || !strcmp(mtype1,$3)){
             //add matrix with type int or float
             insert_symtab($2.name,$3,{},scope);
          }
          else{
              cout<<"Semantic Error: Matrix can only have int or float\n";
+                 std::cout << "Error at line: " << __LINE__ << std::endl;
+
+             exit(1);
          }
 
     }
@@ -455,12 +515,14 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
            if(var)
            {
             cout<<"Semantic Error: variable already declared\n";
+                std::cout << "Error at line: " << __LINE__ << std::endl;
+
             exit(1);
            } 
          
          char mtype[] = "<int>";
          char mtype1[] = "<float>";
-         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+         if(!strcmp(mtype,$3) || !strcmp(mtype1,$3)){
               //add matrix with type int or float
               //find dimension of $3 and insert the dimesion for $2
                insert_symtab($2.name,$3,{},scope);
@@ -469,20 +531,26 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
               if(var)
                {
                 //compare the rhs matrix type
-                if(strcmp(var->type.c_str(),$3)){
+                if(!strcmp(var->type.c_str(),$3)){
                     //do nothing
                 }
                 else{
                     cout<<"Semantic Error: Martices are of different types\n";
+                        std::cout << "Error at line: " << __LINE__ << std::endl;
+
                 }
                } 
                else{
                 cout<<"Semantic Error: variable already declared\n";
+                    std::cout << "Error at line: " << __LINE__ << std::endl;
+
                 exit(1);
                }
          }
          else{
              cout<<"Semantic Error: Matrix can only have int or float\n";
+                 std::cout << "Error at line: " << __LINE__ << std::endl;
+
          }
     
     }
@@ -492,18 +560,22 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
            if(var)
            {
             cout<<"Semantic Error: variable already declared\n";
+                std::cout << "Error at line: " << __LINE__ << std::endl;
+
             exit(1);
            } 
          
          char mtype[] = "<int>";
          char mtype1[] = "<float>";
-         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+         if(!strcmp(mtype,$3) || !strcmp(mtype1,$3)){
             //add matrix with type int or float
             // also patch the dimensions from numL
             insert_symtab($2.name,$3,{$5.row,$5.col},scope);
          }
          else{
              cout<<"Semantic Error: Matrix can only have int or float\n";
+                 std::cout << "Error at line: " << __LINE__ << std::endl;
+
          }
 
     }
@@ -512,12 +584,15 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
            if(var)
            {
             cout<<"Semantic Error: variable already declared\n";
+                std::cout << "Error at line: " << __LINE__ << std::endl;
+
             exit(1);
            } 
          
          char mtype[] = "<int>";
          char mtype1[] = "<float>";
-         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+         cout<<$3<<endl;
+         if(!strcmp(mtype,$3) || !strcmp(mtype1,$3)){
             //add matrix with type int or float
             // also patch the dimensions from MAtrixL
             if(!strcmp($3,$7.type)){
@@ -529,6 +604,8 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
          }
          else{
              cout<<"Semantic Error: Matrix can only have int or float\n";
+                 std::cout << "Error at line: " << __LINE__ << std::endl;
+
          }      
 
     }
@@ -541,17 +618,21 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
            if(var)
            {
             cout<<"Semantic Error: variable already declared\n";
+                std::cout << "Error at line: " << __LINE__ << std::endl;
+
             exit(1);
            } 
          
          char mtype[] = "<int>";
          char mtype1[] = "<float>";
-         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+         if(!strcmp(mtype,$3) || !strcmp(mtype1,$3)){
             //add matrix with type int or float
             insert_symtab($2.name,$3,{},scope);
          }
          else{
              cout<<"Semantic Error: Matrix can only have int or float\n";
+                 std::cout << "Error at line: " << __LINE__ << std::endl;
+
          }
 }
     | COMMA ID MATRIX_TYPE ASSGN ID MultiMatrixDecl {
@@ -559,12 +640,14 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
            if(var)
            {
             cout<<"Semantic Error: variable already declared\n";
+                std::cout << "Error at line: " << __LINE__ << std::endl;
+
             exit(1);
            } 
          
          char mtype[] = "<int>";
          char mtype1[] = "<float>";
-         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+         if(!strcmp(mtype,$3) || !strcmp(mtype1,$3)){
               //add matrix with type int or float
                insert_symtab($2.name,$3,{},scope);
             
@@ -572,20 +655,26 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
               if(var)
                {
                 //compare the rhs matrix type
-                if(strcmp(var->type.c_str(),$3)){
+                if(!strcmp(var->type.c_str(),$3)){
                     //do nothing
                 }
                 else{
                     cout<<"Semantic Error: Martices are of different types\n";
+                        std::cout << "Error at line: " << __LINE__ << std::endl;
+
                 }
                } 
                else{
                 cout<<"Semantic Error: variable already declared\n";
+                    std::cout << "Error at line: " << __LINE__ << std::endl;
+
                 exit(1);
                }
          }
          else{
              cout<<"Semantic Error: Matrix can only have int or float\n";
+                 std::cout << "Error at line: " << __LINE__ << std::endl;
+
          }
     }
     | COMMA ID MATRIX_TYPE OBRAK numL CBRAK MultiMatrixDecl {
@@ -593,18 +682,22 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
            if(var)
            {
             cout<<"Semantic Error: variable already declared\n";
+                std::cout << "Error at line: " << __LINE__ << std::endl;
+
             exit(1);
            } 
          
          char mtype[] = "<int>";
          char mtype1[] = "<float>";
-         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+         if(!strcmp(mtype,$3) || !strcmp(mtype1,$3)){
             //add matrix with type int or float
             // also patch the dimensions from numL
             insert_symtab($2.name,$3,{$5.row,$5.col},scope);
          }
          else{
              cout<<"Semantic Error: Matrix can only have int or float\n";
+                 std::cout << "Error at line: " << __LINE__ << std::endl;
+
          }
     }
     | COMMA ID MATRIX_TYPE ASSGN OBRACE open_marker MatrixL closing_marker CBRACE  MultiMatrixDecl {
@@ -612,15 +705,17 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
            if(var)
            {
             cout<<"Semantic Error: variable already declared\n";
+                std::cout << "Error at line: " << __LINE__ << std::endl;
+
             exit(1);
            } 
          
          char mtype[] = "<int>";
          char mtype1[] = "<float>";
-         if(strcmp(mtype,$3) || strcmp(mtype1,$3)){
+         if(!strcmp(mtype,$3) || !strcmp(mtype1,$3)){
             //add matrix with type int or float
             // also patch the dimensions from MAtrixL
-            if(!strcmp($3,$7.type)){
+            if(strcmp($3,$7.type)){
                  cout<<"The assigned constant matrix is different from the variable matrix declared here\n";
                  exit(1);  
             }
@@ -629,6 +724,8 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
          }
          else{
              cout<<"Semantic Error: Matrix can only have int or float\n";
+                 std::cout << "Error at line: " << __LINE__ << std::endl;
+
          }      
 
     }
@@ -670,6 +767,8 @@ FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker
         if(search_functab($1.name,params))
     {
         cout<<"Semantic Error: function already declared\n";
+            std::cout << "Error at line: " << __LINE__ << std::endl;
+
         exit(1);
     }
     //inserting function to function table
@@ -682,6 +781,8 @@ FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker
         if(search_classfunc($1.name, params,active_class_ptr->name).first)
         {
              cout<<"Semantic Error: function already declared in the class with same signature\n";
+                 std::cout << "Error at line: " << __LINE__ << std::endl;
+
         exit(1);
         }
         insert_classfunc(active_class_ptr->name, $1.ret_type, access_spec, params, active_class_ptr);
@@ -693,6 +794,8 @@ FuncHead : DATATYPE ID {$$.name = $2.name; $$.ret_type = $1;}
     | ID ID { if(!search_classtab($1.name))
                {
                 cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist\n";
+                    std::cout << "Error at line: " << __LINE__ << std::endl;
+
                 exit(1);
                }
                $$.name = $2.name; $$.ret_type = $1.name;
@@ -707,6 +810,8 @@ FuncHead : DATATYPE ID {$$.name = $2.name; $$.ret_type = $1;}
         if(!search_classtab($1.name))
                {
                 cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist\n";
+                    std::cout << "Error at line: " << __LINE__ << std::endl;
+
                 exit(1);
                }
               string s = $1.name; 
@@ -727,6 +832,8 @@ parameter : DATATYPE ID
  if(par)
             {
             cout<<"Semantic Error: two parameters cannot have same name\n Parameter name "<<$2.name<<" is already used\n";
+                std::cout << "Error at line: " << __LINE__ << std::endl;
+
             exit(1);
             } 
 }
@@ -735,6 +842,8 @@ parameter : DATATYPE ID
             if(par)
             {
             cout<<"Semantic Error: two parameters cannot have same name\n Parameter name "<<$2.name<<" is already used\n";
+                std::cout << "Error at line: " << __LINE__ << std::endl;
+
             exit(1);
             }  
              }
@@ -746,6 +855,8 @@ parameter : DATATYPE ID
         if(par)
             {
             cout<<"Semantic Error: two parameters cannot have same name\n Parameter name "<<$2.name<<" is already used\n";
+                std::cout << "Error at line: " << __LINE__ << std::endl;
+
             exit(1);
             } 
        }
@@ -753,6 +864,8 @@ parameter : DATATYPE ID
             if(!search_classtab($1.name))
                {
                 cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist\n";
+                    std::cout << "Error at line: " << __LINE__ << std::endl;
+
                 exit(1);
                }
             $$ = $1.name; 
@@ -760,6 +873,8 @@ parameter : DATATYPE ID
             if(par)
             {
             cout<<"Semantic Error: two parameters cannot have same name\n Parameter name "<<$2.name<<" is already used\n";
+                std::cout << "Error at line: " << __LINE__ << std::endl;
+
             exit(1);
             } 
             }
