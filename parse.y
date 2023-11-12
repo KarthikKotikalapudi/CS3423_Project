@@ -60,7 +60,7 @@ unordered_map<std::string,classtab> class_table_list;
 
 %token <type> DATATYPE MATRIX_TYPE 
 %token <val> NUM
-%type <type> parameter access_specifier class_arg call_expression start_end_pos
+%type <type> parameter access_specifier class_arg call_expression start_end_pos class_function_call
 %type <dim_len> access access2 access_assgn access_retn
 %type <type> uni arg rhs pred
 %type <number> numbers
@@ -982,9 +982,11 @@ function_call:ID OBRAK varL CBRAK  { functab fun = search_functab($1.name,params
                 cout<<"Semantic Error: This function doesn't exist\n";
                 exit(1);
                }
-               $$.name = $1.name; $$.ret_type =strdup((fun->return_type).c_str());}
+               $$.name = $1.name; $$.ret_type =strdup((fun->return_type).c_str());
+               params.clear();               
+               }
     | ID OBRAK CBRAK {
-          functab fun = search_functab($1.name,params);
+          functab fun = search_functab($1.name,{});
                if(!fun)
                {
                 cout<<"Semantic Error: This function doesn't exist\n";
@@ -997,23 +999,9 @@ function_call:ID OBRAK varL CBRAK  { functab fun = search_functab($1.name,params
     | DF_DELETEROW {$$.name = strdup("delete");$$.ret_type = strdup("dataframe[][]");;}
     ;
 call_expression: function_call {
-    functab fun = search_functab($1.name,params);
-     if(!fun)
-     {
-            cout<<"Semantic Error: This function is not declared\n";
-            exit(1);
-     }
-     params.clear();
-     $$=strdup(fun->return_type.c_str());
+    $$=strdup(($1.ret_type));
 }
 callstmt: function_call SEMICOL {
-     functab fun = search_functab($1.name,params);
-     if(!fun)
-     {
-            cout<<"Semantic Error: This function is not declared\n";
-            exit(1);
-     }
-     params.clear();
      }
     | class_arg SEMICOL
     | SORT_FUN
@@ -1074,14 +1062,14 @@ class_arg:
         }
         $$ =strdup( M[0].c_str());
     }
-    | ID DOT function_call{
+    | ID DOT class_function_call{
         symtab x = search_symtab($1.name,scope,func,0);
         if(!x){
             cout<<"Semantic Error: Variable is not declared in this scope\n";
             exit(1);
         }
         string class_name = x->type;
-        pair <functab,string> M = search_classfunc($3.name,params,class_name); 
+        pair <functab,string> M = search_classfunc($3,params,class_name); 
         if(M.first==NULL){
               cout<<"Semantic Error: Method is not declared in the class\n";
               exit(1);
@@ -1090,7 +1078,16 @@ class_arg:
             cout<<"Semantic Error:this method cannot be used outside of the class\n";
             exit(1);
         }
+        params.clear();
         $$ =strdup( M.first->return_type.c_str());
+    }
+    ;
+
+class_function_call: ID OBRAK varL CBRAK{
+        $$ = $1.name;
+    }
+    | ID OBRAK CBRAK{
+        $$ = $1.name;
     }
     ;
 
