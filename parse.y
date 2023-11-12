@@ -1186,6 +1186,18 @@ arg : ID { //use after declaration check
             }
             $$ = strdup(s->type.substr(1,s->type.size()-2).c_str());
            }
+           if(s->type=="dataframe[][]"){
+            if($2==1){
+                $$ =strdup("dataframe[]");
+            }
+            else if($2==2){
+                $$=strdup("dataframe");
+            }
+            else{
+                cout<<"Invalid df access\n";
+                exit(1)
+            }
+           }
            else{
                 if($2 <= s->dim.size()){
                         //  $$ = s->type.substr(0, s->type.size() - 2*$2).c_str();
@@ -1237,7 +1249,7 @@ access_retn : OSQA CSQA access_retn{ $$ = $3+1;}
 uni : ID POST {
       symtab s;
        if((s=search_symtab($1.name,scope,func,0))){
-            if(s->type!="int" && s->type!="float"){
+            if(s->type!="int" && s->type!="float" && s->type!="dataframe"){
                 cout<<"Semantic Error: Invalid datatype for Unary operator Expected int or float\n";
                 exit(1);
             }
@@ -1254,7 +1266,7 @@ uni : ID POST {
       symtab s;
        if((s=search_symtab($1.name,scope,func,0))){
 
-            if(s->type!="int" && s->type!="float"){
+            if(s->type.substr(0, s->type.size() - 2*$2)!="int" && s->type.substr(0, s->type.size() - 2*$2)!="float" && s->type.substr(0, s->type.size() - 2*$2)!="dataframe"){
                 cout<<"Semantic Error: Invalid datatype for Unary operator Expected int or float\n";
                 exit(1);
             }
@@ -1296,7 +1308,7 @@ expr : ID ASSGN rhs
         {   symtab var;
             if((var=search_symtab($1.name,scope,func,0))){
 
-                if(!($3=="int" || $3=="float")){
+                if(!($3=="int" || $3=="float"|| $3=="dataframe")){
                     cout<<"Semantic Error: Invalid RHS type expected int or float\n";
                     exit(1);
                 }
@@ -1348,7 +1360,7 @@ expr : ID ASSGN rhs
                     cout<<"Semantic Error: dimensions do not match\n";
                     exit(1);
                 }
-                if(!($4=="int" || $4=="float")){
+                if(!($4=="int" || $4=="float" || $4=="dataframe")){
                     cout<<"Semantic Error: Invalid RHS type expected int or float\n";
                     exit(1);
                 }
@@ -1402,7 +1414,7 @@ expr : ID ASSGN rhs
                 cout<<"Semantic Error: A variable must be declared before use\n";
                 exit(1);
             }
-            if(!($5=="int" || $5=="float")){
+            if(!($5=="int" || $5=="float" || $5=="dataframe")){
                 cout<<"Semantic Error: Invalid RHS type expected int or float\n";
                 exit(1);
             }
@@ -1426,7 +1438,7 @@ expr : ID ASSGN rhs
                 cout<<"Semantic Error: A variable must be declared before use\n";
                 exit(1);
             }
-            if(!($6=="int" || $6=="float")){
+            if(!($6=="int" || $6=="float"|| $6=="dataframe")){
                 cout<<"Semantic Error: Invalid RHS type expected int or float\n";
                 exit(1);
             }
@@ -1779,7 +1791,7 @@ DF_DECL: DF ID ASSGN DF OBRAK CBRAK SEMICOL { if(search_symtab($2.name,scope,fun
  cout<<"Semantic Error: variable already declared\n";
  exit(1);
 }
-  insert_symtab($2.name,"dataframe",{},0);
+  insert_symtab($2.name,"dataframe[][]",{-1,-1},scope);
  }
         ;
 
@@ -1789,7 +1801,7 @@ DF_DELETEROW : DELETE OBRAK ID COMMA pred1 CBRAK {   symtab var = search_symtab(
     cout<<"Semantic Eroor: The variable has to be declared before use\n";
     exit(1);
   }
-  if( var->type != "dataframe" )
+  if( var->type != "dataframe[][]" )
   {
     cout<<"Semantic Eroor: The variable is not of type datarame\n";
     exit(1);
@@ -1803,7 +1815,7 @@ DF_UPDATECOL : UPDATE OBRAK ID COMMA ID COMMA pred1 COMMA rhs CBRAK {   symtab v
                         cout<<"Semantic Eroor: The variable has to be declared before use\n";
                         exit(1);
                     }
-                    if( var->type != "dataframe" )
+                    if( var->type != "dataframe[][]" )
                     {
                         cout<<"Semantic Eroor: The variable is not of type datarame\n";
                         exit(1);
@@ -1815,7 +1827,7 @@ DF_UPDATECOL : UPDATE OBRAK ID COMMA ID COMMA pred1 COMMA rhs CBRAK {   symtab v
                         cout<<"Semantic Eroor: The variable has to be declared before use\n";
                         exit(1);
                     }
-                    if( var->type != "dataframe" )
+                    if( var->type != "dataframe[][]" )
                     {
                         cout<<"Semantic Eroor: The variable is not of type datarame\n";
                         exit(1);
@@ -1829,7 +1841,7 @@ DF_SELECT   : SELECT OBRAK ID COMMA ID COMMA pred1 CBRAK{   symtab var = search_
                     cout<<"Semantic Eroor: The variable has to be declared before use\n";
                     exit(1);
                 }
-                if( var->type != "dataframe" )
+                if( var->type != "dataframe[][]" )
                 {
                     cout<<"Semantic Eroor: The variable is not of type datarame\n";
                     exit(1);

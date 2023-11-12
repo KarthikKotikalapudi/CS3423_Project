@@ -69,6 +69,7 @@ functab search_functab(std::string name, std::vector<std::string>args){
 }
 
 bool coersible(string a, string b){
+       if(a=="dataframe" || b == "dataframe") return true;
        if (a==b) return true;
        if(a =="int" && b=="float" || a=="float" && b=="int" || a=="int" && b=="bool" || a=="bool" && b=="int" || a=="float" && b=="bool" || a=="bool" && b=="float"){
               return true;
@@ -78,6 +79,8 @@ bool coersible(string a, string b){
 
 string dominate(string a, string b){
        if (a==b) return a;
+       if(a=="dataframe") return b;
+       if(b=="dataframe") return a;
        else if(a=="float" || b=="float"){
               if(a=="float") return a;
               return b;
