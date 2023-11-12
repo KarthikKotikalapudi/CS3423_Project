@@ -22,7 +22,7 @@ vector<std::unordered_map<std::string,symtab>> sym_table_list;
 unordered_map<std::string,vector<functab>> func_table_list;
 unordered_map<std::string,classtab> class_table_list;
 %}
-%token FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST
+%token FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST VOID
 %token COMMA STRING CHAR ASSGN ARTHASSGN  FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
 %token BOOL NUL SORT SELECT UPDATE DELETE
 %left NEG LOG ARTH BIT_OP SHIFT COMP COMMA MINUS
@@ -857,6 +857,7 @@ FuncHead : DATATYPE ID {$$.name = $2.name; $$.ret_type = $1;}
               for(int i=0;i<$2;i++) s = s + "[]";  
               $$.name = $3.name; $$.ret_type =strdup(s.c_str());
                 }
+    | VOID ID {$$.name = $2.name; $$.ret_type = strdup("void");}
     ;
 
 params : parameter COMMA params {params.push_back($1);}
@@ -1565,6 +1566,7 @@ continue:
 returnstmt : RETURN pred SEMICOL 
     {
         if(!cond) ret = true;
+        //cout<<$2<<rettype<<endl;
         if(func==false){
             if(!coersible($2,rettype)){
                 cout<<"Semantic Error: Return type mismatch\n";
@@ -1576,6 +1578,14 @@ returnstmt : RETURN pred SEMICOL
                 cout<<"Semantic Error: Return type mismatch\n";
                 exit(1);
             }
+        }
+    }
+    | RETURN SEMICOL
+    {   
+        if(!cond) ret = true;
+        if(rettype!="void"){
+            cout<<"Semantic Error: Return type mismatch\n";
+            exit(1);
         }
     }
     ;
@@ -1820,7 +1830,7 @@ SORT_FUN    : SORT OBRAK start_end_pos COMMA start_end_pos CBRAK SEMICOL{
                     cout<<"Semantic Error: invalid 3rd argument for sort\n";
                     exit(1);
                 }
-                if($3 != $5){
+                if(strcmp($3,$5)!=0){
                     cout<<"Semantic Error: Both the arguments should be of the same array\n";
                     exit(1);
                 }
