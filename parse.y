@@ -1125,7 +1125,7 @@ pred : pred LOG pred
     }
     | pred BIT_OP pred 
     {
-        if($1 != $3){
+        if(strcmp($1,$3)){
             cout<<"Semantic Error: Both sides of the Bitwise operation must be same"<<endl;
             exit(1);
         }
@@ -1863,7 +1863,7 @@ start_end_pos : ID{
                 }
                 if(var->type[var->type.size()-1] != ']' || var->type[var->type.size()-3] == ']')
                 { 
-                    cout<<"Semantic Error: Variable type should be 1-D array\n";
+                    cout<<"Semantic Error: Variable type should be 1D array\n";
                     exit(1);
                 }
                 $$ = $1.name;
