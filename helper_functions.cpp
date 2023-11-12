@@ -172,7 +172,7 @@ void insert_classfunc(std::string name, std::string return_type, std::string acc
        temp.first = function_table;
        auto it = c->funcs.find(name);
        if(it != c->funcs.end()){
-              for(auto it = c->funcs[name].begin(); it != c->funcs[name].end(); ++it){
+              for(auto it = c->funcs[name].begin(); it < c->funcs[name].end(); ++it){
                      auto i = *it;
                      if(i.first->params == params){
                             c->funcs[name].erase(it);

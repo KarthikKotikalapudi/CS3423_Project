@@ -765,71 +765,68 @@ MatrixL : OBRACE open_marker constL closing_marker CBRACE  COMMA MatrixL {
     ;
 
 //function declaration
-FuncDecl :FuncHead_dup  OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker CBRACE
-{
-    //search if this function already exists
-    rettype ="int";
-    if(!active_class_ptr)
-    {   // here we store parameter types in params global variable
-        if(search_functab($1.name,params))
-    {
-        cout<<"Semantic Error: function already declared\n";
-            std::cout << "Error at line: " << __LINE__ << std::endl;
-
-        exit(1);
-    }
-    //inserting function to function table
-    insert_functab($1.name,params,$1.ret_type);
-    params.clear();
-    }
-    // inserting function in the class
-    else 
-    {
-        functab f = search_classfunc($1.name, params,active_class_ptr->name).first;
-        if(f && !f->override)
-        {
-            cout<<"Semantic Error: function already declared in the class with same signature\n";
-                     std::cout << "Error at line: " << __LINE__ << std::endl;
-
-        exit(1);
-        }
-        insert_classfunc(active_class_ptr->name, $1.ret_type, access_spec, params, active_class_ptr,0);
-        params.clear();
-    }
+FuncDecl : FuncHead_dup OBRACE open_marker FuncBody closing_marker CBRACE{
+    rettype = "int";
 }
-| FuncHead_dup OBRAK CBRAK OBRACE open_marker FuncBody closing_marker CBRACE {
-    rettype="int";
-    //search if this function already exists
-    if(!active_class_ptr)
-    {   // here we store parameter types in params global variable
-        if(search_functab($1.name,{}))
+FuncHead_dup :FuncHead  OBRAK params CBRAK 
     {
-        cout<<"Semantic Error: function already declared\n";
-        exit(1);
-    }
-    //inserting function to function table
-    insert_functab($1.name,{},$1.ret_type);
-    }
-    // inserting function in the class
-    else 
-    {
-        functab f = search_classfunc($1.name, {},active_class_ptr->name).first;
-        if(f && !f->override)
+        //search if this function already exists
+        rettype =$1.ret_type;
+        if(!active_class_ptr)
+        {   // here we store parameter types in params global variable
+            if(search_functab($1.name,params))
         {
-            cout<<"Semantic Error: function already declared in the class with same signature\n";
+            cout<<"Semantic Error: function already declared\n";
+                std::cout << "Error at line: " << __LINE__ << std::endl;
+
             exit(1);
         }
-        insert_classfunc(active_class_ptr->name, $1.ret_type, access_spec, {}, active_class_ptr,0);
+        //inserting function to function table
+        insert_functab($1.name,params,$1.ret_type);
+        params.clear();
+        }
+        // inserting function in the class
+        else 
+        {
+            functab f = search_classfunc($1.name, params,active_class_ptr->name).first;
+            if(f && !f->override)
+            {
+                cout<<"Semantic Error: function already declared in the class with same signature\n";
+                        std::cout << "Error at line: " << __LINE__ << std::endl;
+
+            exit(1);
+            }
+            insert_classfunc($1.name, $1.ret_type, access_spec, params, active_class_ptr,0);
+            params.clear();
+        }
     }
-}
+    | FuncHead OBRAK CBRAK{
+        rettype =$1.ret_type;
+        //search if this function already exists
+        if(!active_class_ptr)
+        {   // here we store parameter types in params global variable
+            if(search_functab($1.name,{}))
+        {
+            cout<<"Semantic Error: function already declared\n";
+            exit(1);
+        }
+        //inserting function to function table
+        insert_functab($1.name,{},$1.ret_type);
+        }
+        // inserting function in the class
+        else 
+        {
+            functab f = search_classfunc($1.name, {},active_class_ptr->name).first;
+            if(f && !f->override)
+            {
+                cout<<"Semantic Error: function already declared in the class with same signature\n";
+                exit(1);
+            }
+            insert_classfunc(active_class_ptr->name, $1.ret_type, access_spec, {}, active_class_ptr,0);
+        }
+        }
     ;
 
-FuncHead_dup : FuncHead 
-    {
-        $$=$1;
-        rettype=$1.ret_type;
-    }
-             ;
 FuncHead : DATATYPE ID {$$.name = $2.name; $$.ret_type = $1;}
     | ID ID { if(!search_classtab($1.name))
                {
