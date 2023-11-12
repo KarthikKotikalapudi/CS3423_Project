@@ -12,6 +12,7 @@
 //global variables
 int scope = 0;
 bool ret=false, cond=false;
+string rettype="int";
 vector<string> params; 
 bool func = true;
 classtab active_class_ptr = NULL;
@@ -64,7 +65,7 @@ unordered_map<std::string,classtab> class_table_list;
 %type <type> uni arg rhs pred
 %type <number> numbers
 %type <funcattr> function_call
-%type <funcattr> FuncHead 
+%type <funcattr> FuncHead FuncHead_dup
 %token <datatype> ID 
 %type <MD> numL MatrixL
 %type <CL> constL MultiDimL
@@ -764,9 +765,10 @@ MatrixL : OBRACE open_marker constL closing_marker CBRACE  COMMA MatrixL {
     ;
 
 //function declaration
-FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker CBRACE  
+FuncDecl :FuncHead_dup  OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker CBRACE
 {
     //search if this function already exists
+    rettype ="int";
     if(!active_class_ptr)
     {   // here we store parameter types in params global variable
         if(search_functab($1.name,params))
@@ -794,7 +796,8 @@ FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker
         insert_classfunc(active_class_ptr->name, $1.ret_type, access_spec, params, active_class_ptr,0);
     }
 }
-| FuncHead OBRAK CBRAK OBRACE open_marker FuncBody closing_marker CBRACE{
+| FuncHead_dup OBRAK CBRAK OBRACE open_marker FuncBody closing_marker CBRACE {
+    rettype="int";
     //search if this function already exists
     if(!active_class_ptr)
     {   // here we store parameter types in params global variable
@@ -820,6 +823,12 @@ FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker
 }
     ;
 
+FuncHead_dup : FuncHead 
+    {
+        $$=$1;
+        rettype=$1.ret_type;
+    }
+             ;
 FuncHead : DATATYPE ID {$$.name = $2.name; $$.ret_type = $1;}
     | ID ID { if(!search_classtab($1.name))
                {
@@ -1195,7 +1204,7 @@ arg : ID { //use after declaration check
             }
             else{
                 cout<<"Invalid df access\n";
-                exit(1)
+                exit(1);
             }
            }
            else{
@@ -1539,7 +1548,22 @@ continue:
   ;  
 
 // return statement
-returnstmt : RETURN pred SEMICOL {if(!cond) ret = true;}
+returnstmt : RETURN pred SEMICOL 
+    {
+        if(!cond) ret = true;
+        if(func==false){
+            if(!coersible($2,rettype)){
+                cout<<"Semantic Error: Return type mismatch\n";
+                exit(1);
+            }
+        }
+        else{
+            if(!coersible($2,"int")){
+                cout<<"Semantic Error: Return type mismatch\n";
+                exit(1);
+            }
+        }
+    }
     ;
 
 // print statement
