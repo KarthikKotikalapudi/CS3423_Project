@@ -18,11 +18,12 @@ beta  [0-9A-Za-z_]
     if(yytext[i] == '\n')   yylineno++;
     i++;
 }}
-int|char|float|string|void|bool   { //printf("Datatype: %s\n", yytext);
+int|char|float|string|bool   { //printf("Datatype: %s\n", yytext);
                                 yylval.type = strdup(yytext); 
                                 return DATATYPE; }
 matrix                          {return MATRIX;}
 dataframe                       {return DF;}
+void                            {return VOID;}
 
 select {return SELECT;}
 delete {return DELETE;}

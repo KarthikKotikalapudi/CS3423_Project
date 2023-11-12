@@ -12,6 +12,7 @@
 //global variables
 int scope = 0;
 bool ret=false, cond=false;
+string rettype="int";
 vector<string> params; 
 bool func = true;
 classtab active_class_ptr = NULL;
@@ -21,7 +22,7 @@ vector<std::unordered_map<std::string,symtab>> sym_table_list;
 unordered_map<std::string,vector<functab>> func_table_list;
 unordered_map<std::string,classtab> class_table_list;
 %}
-%token FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST
+%token FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST VOID
 %token COMMA STRING CHAR ASSGN ARTHASSGN  FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
 %token BOOL NUL SORT SELECT UPDATE DELETE
 %left NEG LOG ARTH BIT_OP SHIFT COMP COMMA MINUS
@@ -64,7 +65,7 @@ unordered_map<std::string,classtab> class_table_list;
 %type <type> uni arg rhs pred
 %type <number> numbers
 %type <funcattr> function_call
-%type <funcattr> FuncHead 
+%type <funcattr> FuncHead FuncHead_dup
 %token <datatype> ID 
 %type <MD> numL MatrixL
 %type <CL> constL MultiDimL
@@ -764,9 +765,10 @@ MatrixL : OBRACE open_marker constL closing_marker CBRACE  COMMA MatrixL {
     ;
 
 //function declaration
-FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker CBRACE  
+FuncDecl :FuncHead_dup  OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker CBRACE
 {
     //search if this function already exists
+    rettype ="int";
     if(!active_class_ptr)
     {   // here we store parameter types in params global variable
         if(search_functab($1.name,params))
@@ -795,7 +797,8 @@ FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker
         params.clear();
     }
 }
-| FuncHead OBRAK CBRAK OBRACE open_marker FuncBody closing_marker CBRACE{
+| FuncHead_dup OBRAK CBRAK OBRACE open_marker FuncBody closing_marker CBRACE {
+    rettype="int";
     //search if this function already exists
     if(!active_class_ptr)
     {   // here we store parameter types in params global variable
@@ -821,6 +824,12 @@ FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker
 }
     ;
 
+FuncHead_dup : FuncHead 
+    {
+        $$=$1;
+        rettype=$1.ret_type;
+    }
+             ;
 FuncHead : DATATYPE ID {$$.name = $2.name; $$.ret_type = $1;}
     | ID ID { if(!search_classtab($1.name))
                {
@@ -831,8 +840,8 @@ FuncHead : DATATYPE ID {$$.name = $2.name; $$.ret_type = $1;}
                }
                $$.name = $2.name; $$.ret_type = $1.name;
              }
-    | MATRIX MATRIX_TYPE ID {string s = "matrix"; s = s + $2; $$.ret_type = strdup(s.c_str()); $$.name = $3.name; }
-    | DF ID {$$.name = $2.name; $$.ret_type =$$.name = strdup("dataframe");}
+    | MATRIX MATRIX_TYPE ID {string s = $2; $$.ret_type = strdup(s.c_str()); $$.name = $3.name; }
+    | DF ID {$$.name = $2.name; $$.ret_type =$$.name = strdup("dataframe[][]");}
     | DATATYPE access_retn ID {string s = $1; 
               for(int i=0;i<$2;i++) s = s + "[]";  
               $$.name = $3.name; $$.ret_type =strdup(s.c_str());      
@@ -849,6 +858,7 @@ FuncHead : DATATYPE ID {$$.name = $2.name; $$.ret_type = $1;}
               for(int i=0;i<$2;i++) s = s + "[]";  
               $$.name = $3.name; $$.ret_type =strdup(s.c_str());
                 }
+    | VOID ID {$$.name = $2.name; $$.ret_type = strdup("void");}
     ;
 
 params : parameter COMMA params {params.push_back($1);}
@@ -982,9 +992,9 @@ function_call:ID OBRAK varL CBRAK  { functab fun = search_functab($1.name,params
                }
         $$.name = $1.name ; $$.ret_type =  strdup((fun->return_type).c_str());
         }
-    | DF_UPDATECOL { $$.name = strdup("update"); $$.ret_type = strdup("dataframe");}
-    | DF_SELECT {$$.name = strdup("select");$$.ret_type = strdup("dataframe");}
-    | DF_DELETEROW {$$.name = strdup("delete");$$.ret_type = strdup("dataframe");;}
+    | DF_UPDATECOL { $$.name = strdup("update"); $$.ret_type = strdup("dataframe[][]");}
+    | DF_SELECT {$$.name = strdup("select");$$.ret_type = strdup("dataframe[][]");}
+    | DF_DELETEROW {$$.name = strdup("delete");$$.ret_type = strdup("dataframe[][]");;}
     ;
 call_expression: function_call {
     functab fun = search_functab($1.name,params);
@@ -1554,7 +1564,31 @@ continue:
   ;  
 
 // return statement
-returnstmt : RETURN pred SEMICOL {if(!cond) ret = true;}
+returnstmt : RETURN pred SEMICOL 
+    {
+        if(!cond) ret = true;
+        //cout<<$2<<rettype<<endl;
+        if(func==false){
+            if(!coersible($2,rettype)){
+                cout<<"Semantic Error: Return type mismatch\n";
+                exit(1);
+            }
+        }
+        else{
+            if(!coersible($2,"int")){
+                cout<<"Semantic Error: Return type mismatch\n";
+                exit(1);
+            }
+        }
+    }
+    | RETURN SEMICOL
+    {   
+        if(!cond) ret = true;
+        if(rettype!="void"){
+            cout<<"Semantic Error: Return type mismatch\n";
+            exit(1);
+        }
+    }
     ;
 
 // print statement
@@ -1797,7 +1831,7 @@ SORT_FUN    : SORT OBRAK start_end_pos COMMA start_end_pos CBRAK SEMICOL{
                     cout<<"Semantic Error: invalid 3rd argument for sort\n";
                     exit(1);
                 }
-                if($3 != $5){
+                if(strcmp($3,$5)!=0){
                     cout<<"Semantic Error: Both the arguments should be of the same array\n";
                     exit(1);
                 }
