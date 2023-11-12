@@ -839,8 +839,8 @@ FuncHead : DATATYPE ID {$$.name = $2.name; $$.ret_type = $1;}
                }
                $$.name = $2.name; $$.ret_type = $1.name;
              }
-    | MATRIX MATRIX_TYPE ID {string s = "matrix"; s = s + $2; $$.ret_type = strdup(s.c_str()); $$.name = $3.name; }
-    | DF ID {$$.name = $2.name; $$.ret_type =$$.name = strdup("dataframe");}
+    | MATRIX MATRIX_TYPE ID {string s = $2; $$.ret_type = strdup(s.c_str()); $$.name = $3.name; }
+    | DF ID {$$.name = $2.name; $$.ret_type =$$.name = strdup("dataframe[][]");}
     | DATATYPE access_retn ID {string s = $1; 
               for(int i=0;i<$2;i++) s = s + "[]";  
               $$.name = $3.name; $$.ret_type =strdup(s.c_str());      
@@ -990,9 +990,9 @@ function_call:ID OBRAK varL CBRAK  { functab fun = search_functab($1.name,params
                }
         $$.name = $1.name ; $$.ret_type =  strdup((fun->return_type).c_str());
         }
-    | DF_UPDATECOL { $$.name = strdup("update"); $$.ret_type = strdup("dataframe");}
-    | DF_SELECT {$$.name = strdup("select");$$.ret_type = strdup("dataframe");}
-    | DF_DELETEROW {$$.name = strdup("delete");$$.ret_type = strdup("dataframe");;}
+    | DF_UPDATECOL { $$.name = strdup("update"); $$.ret_type = strdup("dataframe[][]");}
+    | DF_SELECT {$$.name = strdup("select");$$.ret_type = strdup("dataframe[][]");}
+    | DF_DELETEROW {$$.name = strdup("delete");$$.ret_type = strdup("dataframe[][]");;}
     ;
 call_expression: function_call {
     functab fun = search_functab($1.name,params);
