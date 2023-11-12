@@ -792,6 +792,7 @@ FuncDecl :FuncHead OBRAK params CBRAK OBRACE open_marker FuncBody closing_marker
         exit(1);
         }
         insert_classfunc(active_class_ptr->name, $1.ret_type, access_spec, params, active_class_ptr,0);
+        params.clear();
     }
 }
 | FuncHead OBRAK CBRAK OBRACE open_marker FuncBody closing_marker CBRACE{

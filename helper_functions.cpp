@@ -52,14 +52,22 @@ void insert_functab(std::string name, std::vector<std::string>params, std::strin
        function_table->name = name;
        function_table->params = params;
        function_table->return_type = return_type;
+       auto it = func_table_list.find(name);
+       if (it == func_table_list.end()) {
+              vector<functab> temp;
+              func_table_list[name] = temp;
+       }
        func_table_list[name].push_back(function_table);
 }
 
 functab search_functab(std::string name, std::vector<std::string>args){
        for(auto i : func_table_list[name]){
+              if(i->params.size() != args.size()){
+                     continue;
+              }
               int j = 0;
-              for(; j < i->params.size(); i++){
-                     if((i->params[j] != args[j]) && (i->params[j] == "float" && args[j] == "int")){
+              for(; j < i->params.size(); j++){
+                     if((i->params[j] != args[j])){
                             break;
                      }
               }
