@@ -59,7 +59,7 @@ unordered_map<std::string,classtab> class_table_list;
 
 %token <type> DATATYPE MATRIX_TYPE 
 %token <val> NUM
-%type <type> parameter access_specifier class_arg call_expression
+%type <type> parameter access_specifier class_arg call_expression start_end_pos
 %type <dim_len> access access2 access_assgn access_retn
 %type <type> uni arg rhs pred
 %type <number> numbers
@@ -868,7 +868,7 @@ parameter : DATATYPE ID
             } 
             $$ = $1;
             insert_symtab($2.name,$1,{},scope+1);
-}
+    }
     | MATRIX ID MATRIX_TYPE {string s = "matrix"; s = s + $3;  $$ = strdup(s.c_str());
             symtab par = search_symtab($2.name,scope+1,func,1);
             if(par)
@@ -935,6 +935,20 @@ parameter : DATATYPE ID
         vector<int>dim($3,-1);
         insert_symtab($2.name,$1.name,dim,scope+1); 
            }
+    | DF ID {
+            string temp = "dataframe[][]";
+            $$ = strdup(temp.c_str()); 
+            symtab par = search_symtab($2.name,scope+1,func,1);
+            if(par)
+            {
+                cout<<"Semantic Error: two parameters cannot have same name\n Parameter name "<<$2.name<<" is already used\n";
+                std::cout << "Error at line: " << __LINE__ << std::endl;
+
+            exit(1);
+            }
+            vector<int>dim(2,-1);
+            insert_symtab($2.name,"dataframe[][]",dim,scope+1);
+    }
     ;
 
 FuncBody : stmt 
@@ -1195,7 +1209,7 @@ arg : ID { //use after declaration check
             }
             else{
                 cout<<"Invalid df access\n";
-                exit(1)
+                exit(1);
             }
            }
            else{
@@ -1610,7 +1624,7 @@ object_decl : ID ID Multiobj SEMICOL{
         } 
         insert_symtab($2.name,$1.name,{},scope);
         for(int i=0;i<var_list.size();i++){
-            if(var_list[i].type != $1.name)
+            if(var_list[i].type != $1.name && var_list[i].type != "")
             {
                 cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
                 exit(1);
@@ -1648,7 +1662,7 @@ object_decl : ID ID Multiobj SEMICOL{
         }
         insert_symtab($2.name,$1.name,{},scope);
         for(int i=0;i<var_list.size();i++){
-            if(var_list[i].type != $1.name)
+            if(var_list[i].type != $1.name && var_list[i].type != "")
             {
                 cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
                 exit(1);
@@ -1687,7 +1701,7 @@ object_decl : ID ID Multiobj SEMICOL{
         }
         insert_symtab($2.name,$1.name,{},scope);
         for(int i=0;i<var_list.size();i++){
-            if(var_list[i].type != $1.name)
+            if(var_list[i].type != $1.name && var_list[i].type != "")
             {
                 cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
                 exit(1);
@@ -1771,16 +1785,77 @@ Multiobj : /* empty */
 
            
 //SORT FUNC
-SORT_FUN    : SORT OBRAK start_end_pos COMMA start_end_pos CBRAK SEMICOL
-            | SORT OBRAK start_end_pos COMMA start_end_pos COMMA MINUS NUM CBRAK SEMICOL
+SORT_FUN    : SORT OBRAK start_end_pos COMMA start_end_pos CBRAK SEMICOL{
+                if(strcmp($3,$5)!=0){
+                    cout<<"Semantic Error: Both the arguments should be of the same array\n";
+                    exit(1);
+                }
+            }
+            | SORT OBRAK start_end_pos COMMA start_end_pos COMMA MINUS NUM CBRAK SEMICOL{
+                if($8 != 1){
+                    cout<<"Semantic Error: invalid 3rd argument for sort\n";
+                    exit(1);
+                }
+                if($3 != $5){
+                    cout<<"Semantic Error: Both the arguments should be of the same array\n";
+                    exit(1);
+                }
+            }
             ;
 
-start_end_pos : ID
-              | ID ARTH rhs {if(strcmp($3,"int")!=0)
-              { 
-                cout<<"Semantic Error: array can be appended with only a number\n";
-                exit(1);
-              }}
+start_end_pos : ID{
+    symtab var = search_symtab($1.name,scope,func,0);
+    if(!var)
+    { 
+        cout<<"Semantic Error: array must be declared before use\n";
+        exit(1);
+    }
+    if(var->type[var->type.size()-1] != ']' || var->type[var->type.size()-3] == ']')
+    { 
+        cout<<"Semantic Error: Variable type should be 1-D array\n";
+        exit(1);
+    }
+    $$ = $1.name;
+}
+            | ID ARTH rhs {
+                if(strcmp($3,"int")!=0)
+                { 
+                    cout<<"Semantic Error: array can be appended with only a number\n";
+                    exit(1);
+                }
+                symtab var = search_symtab($1.name,scope,func,0);
+                if(!var)
+                { 
+                    cout<<"Semantic Error: array must be declared before use\n";
+                    exit(1);
+                }
+                if(var->type[var->type.size()-1] != ']' || var->type[var->type.size()-3] == ']')
+                { 
+                    cout<<"Semantic Error: Variable type should be 1-D array\n";
+                    exit(1);
+                }
+                $$ = $1.name;
+            }
+              | ID MINUS rhs {
+                if(strcmp($3,"int")!=0)
+                { 
+                    cout<<"Semantic Error: array can be appended with only a number\n";
+                    exit(1);
+                }
+                symtab var = search_symtab($1.name,scope,func,0);
+                if(!var)
+                { 
+                    cout<<"Semantic Error: array must be declared before use\n";
+                    exit(1);
+                }
+                if(var->type[var->type.size()-1] != ']' || var->type[var->type.size()-3] == ']')
+                { 
+                    cout<<"Semantic Error: Variable type should be 1-D array\n";
+                    exit(1);
+                }
+                $$ = $1.name;
+            }
+            ;
 
 
 //decl, select, update, delete 
@@ -1795,7 +1870,7 @@ DF_DECL: DF ID ASSGN DF OBRAK CBRAK SEMICOL { if(search_symtab($2.name,scope,fun
  }
         ;
 
-DF_DELETEROW : DELETE OBRAK ID COMMA pred1 CBRAK {   symtab var = search_symtab($3.name,scope,func,1);
+DF_DELETEROW : DELETE OBRAK ID COMMA pred1 CBRAK {   symtab var = search_symtab($3.name,scope,func,0);
   if(!var )
   {
     cout<<"Semantic Eroor: The variable has to be declared before use\n";
@@ -1809,7 +1884,7 @@ DF_DELETEROW : DELETE OBRAK ID COMMA pred1 CBRAK {   symtab var = search_symtab(
 }
              ;
             
-DF_UPDATECOL : UPDATE OBRAK ID COMMA ID COMMA pred1 COMMA rhs CBRAK {   symtab var = search_symtab($3.name,scope,func,1);
+DF_UPDATECOL : UPDATE OBRAK ID COMMA ID COMMA pred1 COMMA rhs CBRAK {   symtab var = search_symtab($3.name,scope,func,0);
                     if(!var )
                     {
                         cout<<"Semantic Eroor: The variable has to be declared before use\n";
@@ -1821,7 +1896,7 @@ DF_UPDATECOL : UPDATE OBRAK ID COMMA ID COMMA pred1 COMMA rhs CBRAK {   symtab v
                         exit(1);
                     }
                     }
-             | UPDATE OBRAK ID COMMA ID COMMA NUL COMMA rhs CBRAK {   symtab var = search_symtab($3.name,scope,func,1);
+             | UPDATE OBRAK ID COMMA ID COMMA NUL COMMA rhs CBRAK {   symtab var = search_symtab($3.name,scope,func,0);
                     if(!var )
                     {
                         cout<<"Semantic Eroor: The variable has to be declared before use\n";
@@ -1835,7 +1910,7 @@ DF_UPDATECOL : UPDATE OBRAK ID COMMA ID COMMA pred1 COMMA rhs CBRAK {   symtab v
                     }
              ;
 
-DF_SELECT   : SELECT OBRAK ID COMMA ID COMMA pred1 CBRAK{   symtab var = search_symtab($3.name,scope,func,1);
+DF_SELECT   : SELECT OBRAK ID COMMA ID COMMA pred1 CBRAK{   symtab var = search_symtab($3.name,scope,func,0);
                 if(!var )
                 {
                     cout<<"Semantic Eroor: The variable has to be declared before use\n";
@@ -1851,6 +1926,7 @@ DF_SELECT   : SELECT OBRAK ID COMMA ID COMMA pred1 CBRAK{   symtab var = search_
             ;
 
 pred1 : STRING
+    ;
 
 %%
 int main(int argc,char** argv)
