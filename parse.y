@@ -598,7 +598,6 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
          
          char mtype[] = "<int>";
          char mtype1[] = "<float>";
-         cout<<$3<<endl;
          if(!strcmp(mtype,$3) || !strcmp(mtype1,$3)){
             //add matrix with type int or float
             // also patch the dimensions from MAtrixL
