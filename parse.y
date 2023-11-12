@@ -477,7 +477,7 @@ MultiDimL : OBRACE MultiDimL CBRACE {
             $$.type = $2.type;
         }
     | MultiDimL COMMA MultiDimL{
-            if($1.type!=$3.type || $1.len != $3.len){
+            if(strcmp($1.type,$3.type)!=0 || $1.len != $3.len){
                 cout<<"Semantic Error: All lists in the RHS should have same characteristics\n";
                     std::cout << "Error at line: " << __LINE__ << std::endl;
 
