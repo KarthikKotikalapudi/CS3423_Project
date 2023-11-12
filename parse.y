@@ -122,7 +122,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 vector<string> var = search_classvar($2.name,active_class_ptr->name); 
                 if(var[0] != "" && var[2] != "1")
                 {
-                cout<<"Semantic Error: variable already declared\n";
+                cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
                     std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
@@ -132,7 +132,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     vector<string> temp = search_classvar(var_list[i].name,active_class_ptr->name);
                     if(temp[0] !="" && temp[2] != "1")
                     {
-                    cout<<"Semantic Error: variable already declared \n";
+                    cout<<"Semantic Error: variable already declared  at line no: "<<yylineno<<"\n";
                         std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
@@ -143,7 +143,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     }
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
-                            cout<<"Semantic Error: Type Mismatch\n";
+                            cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
                                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
                             exit(1);
@@ -157,7 +157,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 symtab var = search_symtab($2.name,scope,func,1); //check this,can string be char * 
                 if(var)
                 {
-                cout<<"Semantic Error: variable already declared\n";
+                cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
                     std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
@@ -166,7 +166,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 for(int i=0;i<var_list.size();i++){
                     if(search_symtab(var_list[i].name,scope,func,1))
                     {
-                    cout<<"Semantic Error: variable already declared \n";
+                    cout<<"Semantic Error: variable already declared  at line no: "<<yylineno<<"\n";
                         std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
@@ -177,7 +177,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     }
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
-                            cout<<"Semantic Error: Type Mismatch\n";
+                            cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
                                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
                             exit(1);
@@ -201,7 +201,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     vector<string> temp = search_classvar(var_list[i].name,active_class_ptr->name);
                     if(temp[0] !="" && temp[2] != "1")
                     {
-                    cout<<"Semantic Error: variable already declared \n";
+                    cout<<"Semantic Error: variable already declared  at line no: "<<yylineno<<"\n";
                         std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
@@ -212,7 +212,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     }
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
-                            cout<<"Semantic Error: Type Mismatch\n";
+                            cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
                                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
                             exit(1);
@@ -226,7 +226,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 for(int i=0;i<var_list.size();i++){
                     if(search_symtab(var_list[i].name,scope,func,1))
                     {
-                    cout<<"Semantic Error: variable already declared\n";
+                    cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
                         std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
@@ -237,7 +237,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     }
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
-                            cout<<"Semantic Error: Type Mismatch\n";
+                            cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
                                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
                             exit(1);
@@ -254,13 +254,13 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 vector<string> var = search_classvar($2.name,active_class_ptr->name); //check this,can string be char * 
                 if(var[0] != "" && var[2] != "1")
                 {
-                cout<<"Semantic Error: variable already declared\n";
+                cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
                     std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
                 }
                 if(!coersible($1,$4)){
-                    cout<<"Semantic Error: Type Mismatch\n";
+                    cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
                         std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
@@ -270,7 +270,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     vector<string> temp = search_classvar(var_list[i].name,active_class_ptr->name);
                     if(temp[0] !="" && temp[2] != "1")
                     {
-                    cout<<"Semantic Error: variable already declared \n";
+                    cout<<"Semantic Error: variable already declared  at line no: "<<yylineno<<"\n";
                         std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
@@ -281,7 +281,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     }
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
-                            cout<<"Semantic Error: Type Mismatch\n";
+                            cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
                                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
                             exit(1);
@@ -295,13 +295,13 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 symtab var = search_symtab($2.name,scope,func,1); //check this,can string be char * 
                 if(var)
                 {
-                cout<<"Semantic Error: variable already declared\n";
+                cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
                     std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
                 }
                 if(!coersible($1,$4)){
-                    cout<<"Semantic Error: Type Mismatch\n";
+                    cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
                         std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
@@ -310,7 +310,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 for(int i=0;i<var_list.size();i++){
                     if(search_symtab(var_list[i].name,scope,func,1))
                     {
-                    cout<<"Semantic Error: variable already declared\n";
+                    cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
                         std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
@@ -321,7 +321,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     }
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
-                            cout<<"Semantic Error: Type Mismatch\n";
+                            cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
                                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
                             exit(1);
@@ -339,7 +339,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             s2.name= $2.name;
             s2.type = $5.type;
             if($3!=$5.len){
-                cout<<"Semantic Error: Diminsions on LHS and RHS are not same \n";
+                cout<<"Semantic Error: Diminsions on LHS and RHS are not same  at line no: "<<yylineno<<"\n";
                     std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
@@ -354,7 +354,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     vector<string> temp = search_classvar(var_list[i].name,active_class_ptr->name);
                     if(temp[0] !="" && temp[2] != "1")
                     {
-                    cout<<"Semantic Error: variable already declared \n";
+                    cout<<"Semantic Error: variable already declared  at line no: "<<yylineno<<"\n";
                         std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
@@ -365,7 +365,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     }
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
-                            cout<<"Semantic Error: Type Mismatch\n";
+                            cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
                                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
                             exit(1);
@@ -379,7 +379,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 for(int i=0;i<var_list.size();i++){
                     if(search_symtab(var_list[i].name,scope,func,1))
                     {
-                    cout<<"Semantic Error: variable already declared\n";
+                    cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
                         std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
@@ -390,7 +390,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     }
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
-                            cout<<"Semantic Error: Type Mismatch\n";
+                            cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
                                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
                             exit(1);
@@ -430,7 +430,7 @@ Multideclstmt : COMMA ID Multideclstmt {
         s2.name= $2.name;
         s2.type = $5.type;
         if($3!=$5.len){
-            cout<<"Semantic Error: Diminsions on LHS and RHS are not same \n";
+            cout<<"Semantic Error: Diminsions on LHS and RHS are not same  at line no: "<<yylineno<<"\n";
                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
@@ -454,15 +454,15 @@ numbers : NUM {
      }
      ;
 
-constL : numbers COMMA constL { $$.len =   $3.len + 1; if(strcmp($3.type,"int")){cout<<"Semantic error:constants are not of same type\n";    std::cout << "Error at line: " << __LINE__ << std::endl;
+constL : numbers COMMA constL { $$.len =   $3.len + 1; if(strcmp($3.type,"int")){cout<<"Semantic error:constants are not of same type at line no: "<<yylineno<<"\n";    std::cout << "Error at line: " << __LINE__ << std::endl;
  exit(1);}  $$.type = strdup("int"); }
-    | FLOAT COMMA constL {  $$.len = $3.len +1 ;if(strcmp($3.type,"float")){cout<<"Semantic error:constants are not of same type\n";     std::cout << "Error at line: " << __LINE__ << std::endl;
+    | FLOAT COMMA constL {  $$.len = $3.len +1 ;if(strcmp($3.type,"float")){cout<<"Semantic error:constants are not of same type at line no: "<<yylineno<<"\n";     std::cout << "Error at line: " << __LINE__ << std::endl;
 exit(1);}  $$.type = strdup("float");}
-    | STRING COMMA constL { $$.len = $3.len +1; if(strcmp($3.type,"string")){cout<<"Semantic error:constants are not of same type\n";    std::cout << "Error at line: " << __LINE__ << std::endl;
+    | STRING COMMA constL { $$.len = $3.len +1; if(strcmp($3.type,"string")){cout<<"Semantic error:constants are not of same type at line no: "<<yylineno<<"\n";    std::cout << "Error at line: " << __LINE__ << std::endl;
  exit(1);}  $$.type = strdup("string");}
-    | CHAR COMMA constL { $$.len = $3.len +1 ;if(strcmp($3.type,"char")){cout<<"Semantic error:constants are not of same type\n";     std::cout << "Error at line: " << __LINE__ << std::endl;
+    | CHAR COMMA constL { $$.len = $3.len +1 ;if(strcmp($3.type,"char")){cout<<"Semantic error:constants are not of same type at line no: "<<yylineno<<"\n";     std::cout << "Error at line: " << __LINE__ << std::endl;
 exit(1);}  $$.type = strdup("char");}
-    | BOOL COMMA constL { $$.len = $3.len +1 ;if(strcmp($3.type,"bool")){cout<<"Semantic error:constants are not of same type\n";    std::cout << "Error at line: " << __LINE__ << std::endl;
+    | BOOL COMMA constL { $$.len = $3.len +1 ;if(strcmp($3.type,"bool")){cout<<"Semantic error:constants are not of same type at line no: "<<yylineno<<"\n";    std::cout << "Error at line: " << __LINE__ << std::endl;
  exit(1);}  $$.type = strdup("bool");}
     | numbers {$$.len = 1; $$.type = strdup("int");}
     | FLOAT { $$.len = 1; $$.type = strdup("float");}
@@ -478,7 +478,7 @@ MultiDimL : OBRACE MultiDimL CBRACE {
         }
     | MultiDimL COMMA MultiDimL{
             if(strcmp($1.type,$3.type)!=0 || $1.len != $3.len){
-                cout<<"Semantic Error: All lists in the RHS should have same characteristics\n";
+                cout<<"Semantic Error: All lists in the RHS should have same characteristics at line no: "<<yylineno<<"\n";
                     std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
@@ -497,7 +497,7 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
            symtab var = search_symtab($2.name,scope,func,1); //check this,can string be char * 
            if(var)
            {
-            cout<<"Semantic Error: variable already declared\n";
+            cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
@@ -510,7 +510,7 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
             insert_symtab($2.name,$3,{},scope);
          }
          else{
-             cout<<"Semantic Error: Matrix can only have int or float\n";
+             cout<<"Semantic Error: Matrix can only have int or float at line no: "<<yylineno<<"\n";
                  std::cout << "Error at line: " << __LINE__ << std::endl;
 
              exit(1);
@@ -521,7 +521,7 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
         symtab var = search_symtab($2.name,scope,func,1); //check this,can string be char * 
            if(var)
            {
-            cout<<"Semantic Error: variable already declared\n";
+            cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
@@ -542,20 +542,20 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
                     //do nothing
                 }
                 else{
-                    cout<<"Semantic Error: Martices are of different types\n";
+                    cout<<"Semantic Error: Martices are of different types at line no: "<<yylineno<<"\n";
                         std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 }
                } 
                else{
-                cout<<"Semantic Error: variable already declared\n";
+                cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
                     std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
                }
          }
          else{
-             cout<<"Semantic Error: Matrix can only have int or float\n";
+             cout<<"Semantic Error: Matrix can only have int or float at line no: "<<yylineno<<"\n";
                  std::cout << "Error at line: " << __LINE__ << std::endl;
 
          }
@@ -566,7 +566,7 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
              symtab var = search_symtab($2.name,scope,func,1); //check this,can string be char * 
            if(var)
            {
-            cout<<"Semantic Error: variable already declared\n";
+            cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
@@ -580,7 +580,7 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
             insert_symtab($2.name,$3,{$5.row,$5.col},scope);
          }
          else{
-             cout<<"Semantic Error: Matrix can only have int or float\n";
+             cout<<"Semantic Error: Matrix can only have int or float at line no: "<<yylineno<<"\n";
                  std::cout << "Error at line: " << __LINE__ << std::endl;
 
          }
@@ -590,7 +590,7 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
                         symtab var = search_symtab($2.name,scope,func,1); //check this,can string be char * 
            if(var)
            {
-            cout<<"Semantic Error: variable already declared\n";
+            cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
@@ -602,14 +602,14 @@ MatrixDecl : MATRIX ID MATRIX_TYPE {
             //add matrix with type int or float
             // also patch the dimensions from MAtrixL
             if(!strcmp($3,$7.type)){
-                 cout<<"The assigned constant matrix is different from the variable matrix declared here\n";
+                 cout<<"The assigned constant matrix is different from the variable matrix declared here at line no: "<<yylineno<<"\n";
                  exit(1);  
             }
             insert_symtab($2.name,$3,{$7.row,$7.col},scope);
 
          }
          else{
-             cout<<"Semantic Error: Matrix can only have int or float\n";
+             cout<<"Semantic Error: Matrix can only have int or float at line no: "<<yylineno<<"\n";
                  std::cout << "Error at line: " << __LINE__ << std::endl;
 
          }      
@@ -623,7 +623,7 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
        symtab var = search_symtab($2.name,scope,func,1); //check this,can string be char * 
            if(var)
            {
-            cout<<"Semantic Error: variable already declared\n";
+            cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
@@ -636,7 +636,7 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
             insert_symtab($2.name,$3,{},scope);
          }
          else{
-             cout<<"Semantic Error: Matrix can only have int or float\n";
+             cout<<"Semantic Error: Matrix can only have int or float at line no: "<<yylineno<<"\n";
                  std::cout << "Error at line: " << __LINE__ << std::endl;
 
          }
@@ -645,7 +645,7 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
             symtab var = search_symtab($2.name,scope,func,1); //check this,can string be char * 
            if(var)
            {
-            cout<<"Semantic Error: variable already declared\n";
+            cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
@@ -665,20 +665,20 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
                     //do nothing
                 }
                 else{
-                    cout<<"Semantic Error: Martices are of different types\n";
+                    cout<<"Semantic Error: Martices are of different types at line no: "<<yylineno<<"\n";
                         std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 }
                } 
                else{
-                cout<<"Semantic Error: variable already declared\n";
+                cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
                     std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
                }
          }
          else{
-             cout<<"Semantic Error: Matrix can only have int or float\n";
+             cout<<"Semantic Error: Matrix can only have int or float at line no: "<<yylineno<<"\n";
                  std::cout << "Error at line: " << __LINE__ << std::endl;
 
          }
@@ -687,7 +687,7 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
            symtab var = search_symtab($2.name,scope,func,1); //check this,can string be char * 
            if(var)
            {
-            cout<<"Semantic Error: variable already declared\n";
+            cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
@@ -701,7 +701,7 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
             insert_symtab($2.name,$3,{$5.row,$5.col},scope);
          }
          else{
-             cout<<"Semantic Error: Matrix can only have int or float\n";
+             cout<<"Semantic Error: Matrix can only have int or float at line no: "<<yylineno<<"\n";
                  std::cout << "Error at line: " << __LINE__ << std::endl;
 
          }
@@ -710,7 +710,7 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
          symtab var = search_symtab($2.name,scope,func,1); //check this,can string be char * 
            if(var)
            {
-            cout<<"Semantic Error: variable already declared\n";
+            cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
@@ -722,14 +722,14 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
             //add matrix with type int or float
             // also patch the dimensions from MAtrixL
             if(strcmp($3,$7.type)){
-                 cout<<"The assigned constant matrix is different from the variable matrix declared here\n";
+                 cout<<"The assigned constant matrix is different from the variable matrix declared here at line no: "<<yylineno<<"\n";
                  exit(1);  
             }
             insert_symtab($2.name,$3,{$7.row,$7.col},scope);
 
          }
          else{
-             cout<<"Semantic Error: Matrix can only have int or float\n";
+             cout<<"Semantic Error: Matrix can only have int or float at line no: "<<yylineno<<"\n";
                  std::cout << "Error at line: " << __LINE__ << std::endl;
 
          }      
@@ -775,7 +775,7 @@ FuncHead_dup :FuncHead  OBRAK params CBRAK
         {   // here we store parameter types in params global variable
             if(search_functab($1.name,params))
         {
-            cout<<"Semantic Error: function already declared\n";
+            cout<<"Semantic Error: function already declared at line no: "<<yylineno<<"\n";
                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
@@ -790,7 +790,7 @@ FuncHead_dup :FuncHead  OBRAK params CBRAK
             functab f = search_classfunc($1.name, params,active_class_ptr->name).first;
             if(f && !f->override)
             {
-                cout<<"Semantic Error: function already declared in the class with same signature\n";
+                cout<<"Semantic Error: function already declared in the class with same signature at line no: "<<yylineno<<"\n";
                         std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
@@ -806,7 +806,7 @@ FuncHead_dup :FuncHead  OBRAK params CBRAK
         {   // here we store parameter types in params global variable
             if(search_functab($1.name,{}))
         {
-            cout<<"Semantic Error: function already declared\n";
+            cout<<"Semantic Error: function already declared at line no: "<<yylineno<<"\n";
             exit(1);
         }
         //inserting function to function table
@@ -818,7 +818,7 @@ FuncHead_dup :FuncHead  OBRAK params CBRAK
             functab f = search_classfunc($1.name, {},active_class_ptr->name).first;
             if(f && !f->override)
             {
-                cout<<"Semantic Error: function already declared in the class with same signature\n";
+                cout<<"Semantic Error: function already declared in the class with same signature at line no: "<<yylineno<<"\n";
                 exit(1);
             }
             insert_classfunc(active_class_ptr->name, $1.ret_type, access_spec, {}, active_class_ptr,0);
@@ -829,7 +829,7 @@ FuncHead_dup :FuncHead  OBRAK params CBRAK
 FuncHead : DATATYPE ID {$$.name = $2.name; $$.ret_type = $1;}
     | ID ID { if(!search_classtab($1.name))
                {
-                cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist\n";
+                cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist at line no: "<<yylineno<<"\n";
                     std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
@@ -845,7 +845,7 @@ FuncHead : DATATYPE ID {$$.name = $2.name; $$.ret_type = $1;}
     | ID access_retn ID {
         if(!search_classtab($1.name))
                {
-                cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist\n";
+                cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist at line no: "<<yylineno<<"\n";
                     std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
@@ -868,7 +868,7 @@ parameter : DATATYPE ID
     symtab par = search_symtab($2.name,scope+1,func,1);
     if(par)
                 {
-                cout<<"Semantic Error: two parameters cannot have same name\n Parameter name "<<$2.name<<" is already used\n";
+                cout<<"Semantic Error: two parameters cannot have same name at line no: "<<yylineno<<"\n Parameter name "<<$2.name<<" is already used at line no: "<<yylineno<<"\n";
                     std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
@@ -880,7 +880,7 @@ parameter : DATATYPE ID
             symtab par = search_symtab($2.name,scope+1,func,1);
             if(par)
             {
-            cout<<"Semantic Error: two parameters cannot have same name\n Parameter name "<<$2.name<<" is already used\n";
+            cout<<"Semantic Error: two parameters cannot have same name at line no: "<<yylineno<<"\n Parameter name "<<$2.name<<" is already used at line no: "<<yylineno<<"\n";
                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
@@ -896,7 +896,7 @@ parameter : DATATYPE ID
         symtab par = search_symtab($2.name,scope+1,func,1);
         if(par)
             {
-            cout<<"Semantic Error: two parameters cannot have same name\n Parameter name "<<$2.name<<" is already used\n";
+            cout<<"Semantic Error: two parameters cannot have same name at line no: "<<yylineno<<"\n Parameter name "<<$2.name<<" is already used at line no: "<<yylineno<<"\n";
                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
@@ -907,7 +907,7 @@ parameter : DATATYPE ID
     | ID ID {
             if(!search_classtab($1.name))
                {
-                cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist\n";
+                cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist at line no: "<<yylineno<<"\n";
                     std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
@@ -916,7 +916,7 @@ parameter : DATATYPE ID
              symtab par = search_symtab($2.name,scope+1,func,1);
             if(par)
             {
-            cout<<"Semantic Error: two parameters cannot have same name\n Parameter name "<<$2.name<<" is already used\n";
+            cout<<"Semantic Error: two parameters cannot have same name at line no: "<<yylineno<<"\n Parameter name "<<$2.name<<" is already used at line no: "<<yylineno<<"\n";
                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
@@ -927,7 +927,7 @@ parameter : DATATYPE ID
     | ID ID access2 {
                  if(!search_classtab($1.name))
                {
-                cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist\n";
+                cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist at line no: "<<yylineno<<"\n";
                 exit(1);
                }
             string s = $1.name;
@@ -936,7 +936,7 @@ parameter : DATATYPE ID
             symtab par = search_symtab($2.name,scope+1,func,1);
             if(par)
             {
-            cout<<"Semantic Error: two parameters cannot have same name\n Parameter name "<<$2.name<<" is already used\n";
+            cout<<"Semantic Error: two parameters cannot have same name at line no: "<<yylineno<<"\n Parameter name "<<$2.name<<" is already used at line no: "<<yylineno<<"\n";
             exit(1);
             } 
         vector<int>dim($3,-1);
@@ -948,7 +948,7 @@ parameter : DATATYPE ID
             symtab par = search_symtab($2.name,scope+1,func,1);
             if(par)
             {
-                cout<<"Semantic Error: two parameters cannot have same name\n Parameter name "<<$2.name<<" is already used\n";
+                cout<<"Semantic Error: two parameters cannot have same name at line no: "<<yylineno<<"\n Parameter name "<<$2.name<<" is already used at line no: "<<yylineno<<"\n";
                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
@@ -961,7 +961,7 @@ parameter : DATATYPE ID
 FuncBody : stmt 
         {
             if(!ret){
-                cout<<"Semantic Error: Function must have atleast one return satement\n";
+                cout<<"Semantic Error: Function must have atleast one return satement at line no: "<<yylineno<<"\n";
                 exit(1);
             }
             ret = false;
@@ -975,7 +975,7 @@ varL: rhs {params.push_back($1);}
 function_call:ID OBRAK varL CBRAK  { functab fun = search_functab($1.name,params);
                if(!fun)
                {
-                cout<<"Semantic Error: This function doesn't exist\n";
+                cout<<"Semantic Error: This function doesn't exist at line no: "<<yylineno<<"\n";
                 exit(1);
                }
                $$.name = $1.name; $$.ret_type =strdup((fun->return_type).c_str());
@@ -985,7 +985,7 @@ function_call:ID OBRAK varL CBRAK  { functab fun = search_functab($1.name,params
           functab fun = search_functab($1.name,{});
                if(!fun)
                {
-                cout<<"Semantic Error: This function doesn't exist\n";
+                cout<<"Semantic Error: This function doesn't exist at line no: "<<yylineno<<"\n";
                 exit(1);
                }
         $$.name = $1.name ; $$.ret_type =  strdup((fun->return_type).c_str());
@@ -1007,17 +1007,17 @@ class_arg:
      ID DOT ID{
         symtab x = search_symtab($1.name,scope,func,0);
         if(!x){
-            cout<<"Semantic Error: Variable is not declared in this scope\n";
+            cout<<"Semantic Error: Variable is not declared in this scope at line no: "<<yylineno<<"\n";
             exit(1);
         }
         string class_name = x->type;
         vector<string> M = search_classvar($3.name, class_name);
         if(M[0]==""){
-              cout<<"Semantic Error: Variable is not declared in the class\n";
+              cout<<"Semantic Error: Variable is not declared in the class at line no: "<<yylineno<<"\n";
               exit(1);
         }
         if(M[1]=="private" || M[1]=="protected"){
-            cout<<"Semantic Error: Variable cannot be access witout a public method of the same class\n";
+            cout<<"Semantic Error: Variable cannot be access witout a public method of the same class at line no: "<<yylineno<<"\n";
             exit(1);
         }
         $$ =strdup( M[0].c_str());
@@ -1026,13 +1026,13 @@ class_arg:
     | ID DOT ID access 
     {   symtab x = search_symtab($1.name,scope,func,0);
         if(!x){
-            cout<<"Semantic Error: Variable is not declared in this scope\n";
+            cout<<"Semantic Error: Variable is not declared in this scope at line no: "<<yylineno<<"\n";
             exit(1);
         }
         string class_name = x->type;
         vector<string> M = search_classvar($3.name, class_name); 
         if(M[0]==""){
-              cout<<"Semantic Error: Variable is not declared in the class\n";
+              cout<<"Semantic Error: Variable is not declared in the class at line no: "<<yylineno<<"\n";
               exit(1);
         }
         if(M[1]=="private" || M[1]=="protected"){
@@ -1042,7 +1042,7 @@ class_arg:
         string s="",s1=M[0].substr( M.size() - 2*$4,M.size());
         if(M[0][0]=='<'){
             if($4!=2){
-                cout<<"Invalid Matrix access\n";
+                cout<<"Invalid Matrix access at line no: "<<yylineno<<"\n";
                 exit(1);
             }
             M[0] = M[0].substr(1,M[0].size()-2);
@@ -1051,7 +1051,7 @@ class_arg:
             string s="",s1=M[0].substr( M[0].size() - 2*$4, 2*$4);
             for(int j=0;j<$4;j++)s+="[]";
             if(s1!=s){
-                cout<<"Semantic Error: dimensions do not match\n";
+                cout<<"Semantic Error: dimensions do not match at line no: "<<yylineno<<"\n";
                 exit(1);
             }
             M[0] = M[0].substr(0, M[0].size() - 2*$4);
@@ -1061,17 +1061,17 @@ class_arg:
     | ID DOT class_function_call{
         symtab x = search_symtab($1.name,scope,func,0);
         if(!x){
-            cout<<"Semantic Error: Variable is not declared in this scope\n";
+            cout<<"Semantic Error: Variable is not declared in this scope at line no: "<<yylineno<<"\n";
             exit(1);
         }
         string class_name = x->type;
         pair <functab,string> M = search_classfunc($3,params,class_name); 
         if(M.first==NULL){
-              cout<<"Semantic Error: Method is not declared in the class\n";
+              cout<<"Semantic Error: Method is not declared in the class at line no: "<<yylineno<<"\n";
               exit(1);
         }
         if(M.second=="private" || M.second=="protected"){
-            cout<<"Semantic Error:this method cannot be used outside of the class\n";
+            cout<<"Semantic Error:this method cannot be used outside of the class at line no: "<<yylineno<<"\n";
             exit(1);
         }
         params.clear();
@@ -1170,7 +1170,7 @@ arg : ID { //use after declaration check
         symtab var = search_symtab($1.name,scope,func,0); //check this,can string be char * 
         if(!var)
         {
-           cout<<"Semantic Error: A variable must be declared before use\n";
+           cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
            exit(1);
         } 
         // $$ = var->type.c_str();
@@ -1199,7 +1199,7 @@ arg : ID { //use after declaration check
         if((s=search_symtab($1.name,scope,func,0))){
            if(s->type[0]=='<'){
             if($2!=2){
-                cout<<"Invalid Matrix access\n";
+                cout<<"Invalid Matrix access at line no: "<<yylineno<<"\n";
                 exit(1);
             }
             $$ = strdup(s->type.substr(1,s->type.size()-2).c_str());
@@ -1212,7 +1212,7 @@ arg : ID { //use after declaration check
                 $$=strdup("dataframe");
             }
             else{
-                cout<<"Invalid df access\n";
+                cout<<"Invalid df access at line no: "<<yylineno<<"\n";
                 exit(1);
             }
            }
@@ -1222,14 +1222,14 @@ arg : ID { //use after declaration check
                         $$= strdup (s->type.substr(0, s->type.size() - 2*$2).c_str());
                 }
                 else{
-                    cout<<"Semantic error: dimensions do not match\n";
+                    cout<<"Semantic error: dimensions do not match at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
            }
         }
         else{
         //error
-        cout<<"Semantic Error: A variable must be declared before use\n";
+        cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
         exit(1);
       }
     }
@@ -1268,7 +1268,7 @@ uni : ID POST {
       symtab s;
        if((s=search_symtab($1.name,scope,func,0))){
             if(s->type!="int" && s->type!="float" && s->type!="dataframe"){
-                cout<<"Semantic Error: Invalid datatype for Unary operator Expected int or float\n";
+                cout<<"Semantic Error: Invalid datatype for Unary operator Expected int or float at line no: "<<yylineno<<"\n";
                 exit(1);
             }
            // $$ = s->type.c_str();
@@ -1276,7 +1276,7 @@ uni : ID POST {
         }
       else{
         //error
-        cout<<"Semantic Error: A variable must be declared before use\n";
+        cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
         exit(1);
       }
     }
@@ -1285,7 +1285,7 @@ uni : ID POST {
        if((s=search_symtab($1.name,scope,func,0))){
 
             if(s->type.substr(0, s->type.size() - 2*$2)!="int" && s->type.substr(0, s->type.size() - 2*$2)!="float" && s->type.substr(0, s->type.size() - 2*$2)!="dataframe"){
-                cout<<"Semantic Error: Invalid datatype for Unary operator Expected int or float\n";
+                cout<<"Semantic Error: Invalid datatype for Unary operator Expected int or float at line no: "<<yylineno<<"\n";
                 exit(1);
             }
            if($2 <= s->dim.size()){
@@ -1293,13 +1293,13 @@ uni : ID POST {
                $$=strdup(s->type.substr(0, s->type.size() - 2*$2).c_str());
            }
            else{
-               cout<<"Semantic error: dimensions do not match\n";
+               cout<<"Semantic error: dimensions do not match at line no: "<<yylineno<<"\n";
                exit(1);
            }
         }
       else{
         //error
-        cout<<"Semantic Error: A variable must be declared before use\n";
+        cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
         exit(1);
       }
     }
@@ -1312,13 +1312,13 @@ expr : ID ASSGN rhs
         {   symtab var;
             if((var=search_symtab($1.name,scope,func,0))){
                 if(!coersible(var->type,$3)){
-                    cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                    cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
             }
             else{
                 //error
-                cout<<"Semantic Error: A variable must be declared before use\n";
+                cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
                 exit(1);
             }
         }
@@ -1327,17 +1327,17 @@ expr : ID ASSGN rhs
             if((var=search_symtab($1.name,scope,func,0))){
 
                 if(!($3=="int" || $3=="float"|| $3=="dataframe")){
-                    cout<<"Semantic Error: Invalid RHS type expected int or float\n";
+                    cout<<"Semantic Error: Invalid RHS type expected int or float at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
                 if(!coersible(var->type,$3)){
-                    cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                    cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
             }
             else{
                 //error
-                cout<<"Semantic Error: A variable must be declared before use\n";
+                cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
                 exit(1);
             }
         }
@@ -1348,26 +1348,26 @@ expr : ID ASSGN rhs
             if((var=search_symtab($1.name,scope,func,0))){
                 if(var->type[0]=='<'){
                     if($2!=2){
-                        cout<<"Invalid Matrix access\n";
+                        cout<<"Invalid Matrix access at line no: "<<yylineno<<"\n";
                         exit(1);
                     }
                     s = var->type.substr(1,var->type.size()-2);
                 }
                 else {
                     if(var->dim.size()<$2){
-                        cout<<"Semantic Error: dimensions do not match\n";
+                        cout<<"Semantic Error: dimensions do not match at line no: "<<yylineno<<"\n";
                         exit(1);
                     }
                     s = var->type.substr(0, var->type.size() - 2*$2);
                 }
                 if(!coersible(s,$4)){
-                    cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                    cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
             }
             else{
                 //error
-                cout<<"Semantic Error: A variable must be declared before use\n";
+                cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
                 exit(1);
             }
         }
@@ -1375,16 +1375,16 @@ expr : ID ASSGN rhs
         {   symtab var; string s;
             if((var=search_symtab($1.name,scope,func,0))){
                 if(var->dim.size()<$2){
-                    cout<<"Semantic Error: dimensions do not match\n";
+                    cout<<"Semantic Error: dimensions do not match at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
                 if(!($4=="int" || $4=="float" || $4=="dataframe")){
-                    cout<<"Semantic Error: Invalid RHS type expected int or float\n";
+                    cout<<"Semantic Error: Invalid RHS type expected int or float at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
                 if(var->type[0]=='<'){
                     if($2!=2){
-                        cout<<"Invalid Matrix access\n";
+                        cout<<"Invalid Matrix access at line no: "<<yylineno<<"\n";
                         exit(1);
                     }
                     s = var->type.substr(1,var->type.size()-2);
@@ -1392,13 +1392,13 @@ expr : ID ASSGN rhs
                 else 
                 s = var->type.substr(0, var->type.size() - 2*$2);
                 if(!coersible(s,$4)){
-                    cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                    cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
             }
             else{
                 //error
-                cout<<"Semantic Error: A variable must be declared before use\n";
+                cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
                 exit(1);
             }
         }
@@ -1409,17 +1409,17 @@ expr : ID ASSGN rhs
             vector<string> temp = search_classvar($3.name, var->type);
             if(temp[0] == ""){
                 //error
-                cout<<"Semantic Error: A variable must be declared before use\n";
+                cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
                 exit(1);
             }
             if(temp[1] != "public"){
                 //error
-                cout<<"Semantic Error: Variable not accessible\n";
+                cout<<"Semantic Error: Variable not accessible at line no: "<<yylineno<<"\n";
                 exit(1);
             }
             if(!coersible(temp[0],$5)){
                 //error
-                cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
                 exit(1);
             }
         }
@@ -1429,21 +1429,21 @@ expr : ID ASSGN rhs
             vector<string> temp = search_classvar($3.name, var->type);
             if(temp[0] == ""){
                 //error
-                cout<<"Semantic Error: A variable must be declared before use\n";
+                cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
                 exit(1);
             }
             if(!($5=="int" || $5=="float" || $5=="dataframe")){
-                cout<<"Semantic Error: Invalid RHS type expected int or float\n";
+                cout<<"Semantic Error: Invalid RHS type expected int or float at line no: "<<yylineno<<"\n";
                 exit(1);
             }
             if(temp[1] != "public"){
                 //error
-                cout<<"Semantic Error: Variable not accessible\n";
+                cout<<"Semantic Error: Variable not accessible at line no: "<<yylineno<<"\n";
                 exit(1);
             }
             if(!coersible(temp[0],$5)){
                 //error
-                cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
                 exit(1);
             }
         }
@@ -1453,21 +1453,21 @@ expr : ID ASSGN rhs
             vector<string> temp = search_classvar($3.name, var->type);
             if(temp[0] == ""){
                 //error
-                cout<<"Semantic Error: A variable must be declared before use\n";
+                cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
                 exit(1);
             }
             if(!($6=="int" || $6=="float"|| $6=="dataframe")){
-                cout<<"Semantic Error: Invalid RHS type expected int or float\n";
+                cout<<"Semantic Error: Invalid RHS type expected int or float at line no: "<<yylineno<<"\n";
                 exit(1);
             }
             if(temp[1] != "public"){
                 //error
-                cout<<"Semantic Error: Variable not accessible\n";
+                cout<<"Semantic Error: Variable not accessible at line no: "<<yylineno<<"\n";
                 exit(1);
             }
             if(temp[0][0]=='<'){
                 if($4!=2){
-                    cout<<"Invalid Matrix access\n";
+                    cout<<"Invalid Matrix access at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
                 temp[0] = temp[0].substr(1,temp[0].size()-2);
@@ -1476,14 +1476,14 @@ expr : ID ASSGN rhs
                 string s="",s1=temp[0].substr( temp[0].size() - 2*$4, 2*$4);
                 for(int j=0;j<$4;j++)s+="[]";
                 if(s1!=s){
-                    cout<<"Semantic Error: dimensions do not match\n";
+                    cout<<"Semantic Error: dimensions do not match at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
                 temp[0] = temp[0].substr(0, temp[0].size() - 2*$4);
             }
             if(!coersible(temp[0],$6)){
                 //error
-                cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
                 exit(1);
             }
     }
@@ -1493,17 +1493,17 @@ expr : ID ASSGN rhs
             vector<string> temp = search_classvar($3.name, var->type);
             if(temp[0] == ""){
                 //error
-                cout<<"Semantic Error: A variable must be declared before use\n";
+                cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
                 exit(1);
             }
             if(temp[1] != "public"){
                 //error
-                cout<<"Semantic Error: Variable not accessible\n";
+                cout<<"Semantic Error: Variable not accessible at line no: "<<yylineno<<"\n";
                 exit(1);
             }
             if(temp[0][0]=='<'){
                 if($4!=2){
-                    cout<<"Invalid Matrix access\n";
+                    cout<<"Invalid Matrix access at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
                 temp[0] = temp[0].substr(1,temp[0].size()-2);
@@ -1512,14 +1512,14 @@ expr : ID ASSGN rhs
                 string s="",s1=temp[0].substr( temp[0].size() - 2*$4, 2*$4);
                 for(int j=0;j<$4;j++)s+="[]";
                 if(s1!=s){
-                    cout<<"Semantic Error: dimensions do not match\n";
+                    cout<<"Semantic Error: dimensions do not match at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
                 temp[0] = temp[0].substr(0, temp[0].size() - 2*$4);
             }
             if(!coersible(temp[0],$6)){
                 //error
-                cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
                 exit(1);
             }
     }
@@ -1563,13 +1563,13 @@ returnstmt : RETURN pred SEMICOL
         //cout<<$2<<rettype<<endl;
         if(func==false){
             if(!coersible($2,rettype)){
-                cout<<"Semantic Error: Return type mismatch\n";
+                cout<<"Semantic Error: Return type mismatch at line no: "<<yylineno<<"\n";
                 exit(1);
             }
         }
         else{
             if(!coersible($2,"int")){
-                cout<<"Semantic Error: Return type mismatch\n";
+                cout<<"Semantic Error: Return type mismatch at line no: "<<yylineno<<"\n";
                 exit(1);
             }
         }
@@ -1578,7 +1578,7 @@ returnstmt : RETURN pred SEMICOL
     {   
         if(!cond) ret = true;
         if(rettype!="void"){
-            cout<<"Semantic Error: Return type mismatch\n";
+            cout<<"Semantic Error: Return type mismatch at line no: "<<yylineno<<"\n";
             exit(1);
         }
     }
@@ -1597,7 +1597,7 @@ class_decl:  class_head OBRACE open_marker class_body closing_marker CBRACE  SEM
 
 class_head : CLASS ID{
         if(search_classtab($2.name)){
-            cout<<"Semantic Error: Class already declared\n";
+            cout<<"Semantic Error: Class already declared at line no: "<<yylineno<<"\n";
             exit(1);
         }
         pair<string,string> temp;
@@ -1608,7 +1608,7 @@ class_head : CLASS ID{
         //Inheritance
 
         if(search_classtab($2.name)){
-            cout<<"Semantic Error: Class already declared\n";
+            cout<<"Semantic Error: Class already declared at line no: "<<yylineno<<"\n";
             exit(1);
         }
         pair<string,string> temp;
@@ -1641,25 +1641,25 @@ object_decl : ID ID Multiobj SEMICOL{
     classtab c = search_classtab($1.name);
     if(!c)
     {
-        cout<<"Semantic Error: class "<<$1.name<<" not found\n";
+        cout<<"Semantic Error: class "<<$1.name<<" not found at line no: "<<yylineno<<"\n";
         exit(1);
     } 
     symtab var = search_symtab($2.name,scope,func,1);
         if(var)
         {
-        cout<<"Semantic Error: variable already declared\n";
+        cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
         exit(1);
         } 
         insert_symtab($2.name,$1.name,{},scope);
         for(int i=0;i<var_list.size();i++){
             if(var_list[i].type != $1.name && var_list[i].type != "")
             {
-                cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
                 exit(1);
             }
             if(search_symtab(var_list[i].name,scope,func,1))
             {
-            cout<<"Semantic Error: variable already declared \n";
+            cout<<"Semantic Error: variable already declared  at line no: "<<yylineno<<"\n";
             exit(1);
             }
             string s=$1.name;
@@ -1674,30 +1674,30 @@ object_decl : ID ID Multiobj SEMICOL{
         classtab c = search_classtab($1.name);
         if(!c)
         {
-            cout<<"Semantic Error: class "<<$1.name<<" not found\n";
+            cout<<"Semantic Error: class "<<$1.name<<" not found at line no: "<<yylineno<<"\n";
             exit(1);
         } 
         symtab var = search_symtab($2.name,scope,func,1);
         if(var)
         {
-            cout<<"Semantic Error: variable already declared\n";
+            cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
             exit(1);
         }
         if(!strcmp(var->type.c_str(),$4.ret_type))
         {
-            cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+            cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
             exit(1);
         }
         insert_symtab($2.name,$1.name,{},scope);
         for(int i=0;i<var_list.size();i++){
             if(var_list[i].type != $1.name && var_list[i].type != "")
             {
-                cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
                 exit(1);
             }
             if(search_symtab(var_list[i].name,scope,func,1))
             {
-            cout<<"Semantic Error: variable already declared \n";
+            cout<<"Semantic Error: variable already declared  at line no: "<<yylineno<<"\n";
             exit(1);
             }
             string s=$1.name;
@@ -1712,31 +1712,31 @@ object_decl : ID ID Multiobj SEMICOL{
         classtab c = search_classtab($1.name);
         if(!c)
         {
-            cout<<"Semantic Error: class "<<$1.name<<" not found\n";
+            cout<<"Semantic Error: class "<<$1.name<<" not found at line no: "<<yylineno<<"\n";
             exit(1);
         } 
         symtab var = search_symtab($2.name,scope,func,1);
         if(var)
         {
-            cout<<"Semantic Error: variable already declared\n";
+            cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
             exit(1);
         }
         symtab var1 = search_symtab($4.name,scope,func,0);
         if(var1->type != $1.name)
         {
-            cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+            cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
             exit(1);
         }
         insert_symtab($2.name,$1.name,{},scope);
         for(int i=0;i<var_list.size();i++){
             if(var_list[i].type != $1.name && var_list[i].type != "")
             {
-                cout<<"Semantic Error: Types on LHS and RHS are not coersible\n";
+                cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
                 exit(1);
             }
             if(search_symtab(var_list[i].name,scope,func,1))
             {
-            cout<<"Semantic Error: variable already declared \n";
+            cout<<"Semantic Error: variable already declared  at line no: "<<yylineno<<"\n";
             exit(1);
             }
             string s=$1.name;
@@ -1757,13 +1757,13 @@ object_decl : ID ID Multiobj SEMICOL{
             classtab c = search_classtab($1.name);
             if(!c)
             {
-                cout<<"Semantic Error: class "<<$1.name<<" not found\n";
+                cout<<"Semantic Error: class "<<$1.name<<" not found at line no: "<<yylineno<<"\n";
                 exit(1);
             } 
             for(int i=0;i<var_list.size();i++){
                 if(search_symtab(var_list[i].name,scope,func,1))
                 {
-                cout<<"Semantic Error: variable already declared\n";
+                cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
                 exit(1);
                 }
                 string s=$1.name;
@@ -1772,7 +1772,7 @@ object_decl : ID ID Multiobj SEMICOL{
                 }
                 if(var_list[i].type!=""){
                     if(s != var_list[i].type){
-                        cout<<"Semantic Error: Type Mismatch\n";
+                        cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
                         exit(1);
                     }
                 }
@@ -1815,17 +1815,17 @@ Multiobj : /* empty */
 //SORT FUNC
 SORT_FUN    : SORT OBRAK start_end_pos COMMA start_end_pos CBRAK SEMICOL{
                 if(strcmp($3,$5)!=0){
-                    cout<<"Semantic Error: Both the arguments should be of the same array\n";
+                    cout<<"Semantic Error: Both the arguments should be of the same array at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
             }
             | SORT OBRAK start_end_pos COMMA start_end_pos COMMA MINUS NUM CBRAK SEMICOL{
                 if($8 != 1){
-                    cout<<"Semantic Error: invalid 3rd argument for sort\n";
+                    cout<<"Semantic Error: invalid 3rd argument for sort at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
                 if(strcmp($3,$5)!=0){
-                    cout<<"Semantic Error: Both the arguments should be of the same array\n";
+                    cout<<"Semantic Error: Both the arguments should be of the same array at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
             }
@@ -1835,12 +1835,12 @@ start_end_pos : ID{
     symtab var = search_symtab($1.name,scope,func,0);
     if(!var)
     { 
-        cout<<"Semantic Error: array must be declared before use\n";
+        cout<<"Semantic Error: array must be declared before use at line no: "<<yylineno<<"\n";
         exit(1);
     }
     if(var->type[var->type.size()-1] != ']' || var->type[var->type.size()-3] == ']')
     { 
-        cout<<"Semantic Error: Variable type should be 1-D array\n";
+        cout<<"Semantic Error: Variable type should be 1-D array at line no: "<<yylineno<<"\n";
         exit(1);
     }
     $$ = $1.name;
@@ -1848,18 +1848,18 @@ start_end_pos : ID{
             | ID ARTH rhs {
                 if(strcmp($3,"int")!=0)
                 { 
-                    cout<<"Semantic Error: array can be appended with only a number\n";
+                    cout<<"Semantic Error: array can be appended with only a number at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
                 symtab var = search_symtab($1.name,scope,func,0);
                 if(!var)
                 { 
-                    cout<<"Semantic Error: array must be declared before use\n";
+                    cout<<"Semantic Error: array must be declared before use at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
                 if(var->type[var->type.size()-1] != ']' || var->type[var->type.size()-3] == ']')
                 { 
-                    cout<<"Semantic Error: Variable type should be 1D array\n";
+                    cout<<"Semantic Error: Variable type should be 1D array at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
                 $$ = $1.name;
@@ -1867,18 +1867,18 @@ start_end_pos : ID{
               | ID MINUS rhs {
                 if(strcmp($3,"int")!=0)
                 { 
-                    cout<<"Semantic Error: array can be appended with only a number\n";
+                    cout<<"Semantic Error: array can be appended with only a number at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
                 symtab var = search_symtab($1.name,scope,func,0);
                 if(!var)
                 { 
-                    cout<<"Semantic Error: array must be declared before use\n";
+                    cout<<"Semantic Error: array must be declared before use at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
                 if(var->type[var->type.size()-1] != ']' || var->type[var->type.size()-3] == ']')
                 { 
-                    cout<<"Semantic Error: Variable type should be 1-D array\n";
+                    cout<<"Semantic Error: Variable type should be 1-D array at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
                 $$ = $1.name;
@@ -1891,7 +1891,7 @@ start_end_pos : ID{
 DF_DECL: DF ID ASSGN DF OBRAK CBRAK SEMICOL { if(search_symtab($2.name,scope,func,1))
 
 {
- cout<<"Semantic Error: variable already declared\n";
+ cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
  exit(1);
 }
   insert_symtab($2.name,"dataframe[][]",{-1,-1},scope);
@@ -1901,12 +1901,12 @@ DF_DECL: DF ID ASSGN DF OBRAK CBRAK SEMICOL { if(search_symtab($2.name,scope,fun
 DF_DELETEROW : DELETE OBRAK ID COMMA pred1 CBRAK {   symtab var = search_symtab($3.name,scope,func,0);
   if(!var )
   {
-    cout<<"Semantic Eroor: The variable has to be declared before use\n";
+    cout<<"Semantic Eroor: The variable has to be declared before use at line no: "<<yylineno<<"\n";
     exit(1);
   }
   if( var->type != "dataframe[][]" )
   {
-    cout<<"Semantic Eroor: The variable is not of type datarame\n";
+    cout<<"Semantic Eroor: The variable is not of type datarame at line no: "<<yylineno<<"\n";
     exit(1);
   }
 }
@@ -1915,24 +1915,24 @@ DF_DELETEROW : DELETE OBRAK ID COMMA pred1 CBRAK {   symtab var = search_symtab(
 DF_UPDATECOL : UPDATE OBRAK ID COMMA ID COMMA pred1 COMMA rhs CBRAK {   symtab var = search_symtab($3.name,scope,func,0);
                     if(!var )
                     {
-                        cout<<"Semantic Eroor: The variable has to be declared before use\n";
+                        cout<<"Semantic Eroor: The variable has to be declared before use at line no: "<<yylineno<<"\n";
                         exit(1);
                     }
                     if( var->type != "dataframe[][]" )
                     {
-                        cout<<"Semantic Eroor: The variable is not of type datarame\n";
+                        cout<<"Semantic Eroor: The variable is not of type datarame at line no: "<<yylineno<<"\n";
                         exit(1);
                     }
                     }
              | UPDATE OBRAK ID COMMA ID COMMA NUL COMMA rhs CBRAK {   symtab var = search_symtab($3.name,scope,func,0);
                     if(!var )
                     {
-                        cout<<"Semantic Eroor: The variable has to be declared before use\n";
+                        cout<<"Semantic Eroor: The variable has to be declared before use at line no: "<<yylineno<<"\n";
                         exit(1);
                     }
                     if( var->type != "dataframe[][]" )
                     {
-                        cout<<"Semantic Eroor: The variable is not of type datarame\n";
+                        cout<<"Semantic Eroor: The variable is not of type datarame at line no: "<<yylineno<<"\n";
                         exit(1);
                     }
                     }
@@ -1941,12 +1941,12 @@ DF_UPDATECOL : UPDATE OBRAK ID COMMA ID COMMA pred1 COMMA rhs CBRAK {   symtab v
 DF_SELECT   : SELECT OBRAK ID COMMA ID COMMA pred1 CBRAK{   symtab var = search_symtab($3.name,scope,func,0);
                 if(!var )
                 {
-                    cout<<"Semantic Eroor: The variable has to be declared before use\n";
+                    cout<<"Semantic Eroor: The variable has to be declared before use at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
                 if( var->type != "dataframe[][]" )
                 {
-                    cout<<"Semantic Eroor: The variable is not of type datarame\n";
+                    cout<<"Semantic Eroor: The variable is not of type datarame at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
                 // check what second ID is for, if doesn't have special semantics, just copy above block
@@ -1986,7 +1986,7 @@ int main(int argc,char** argv)
 
    if(!yyparse())
    {
-     printf("The parsing was successful\n");
+     printf("No errors detected\n");
    }
    fclose(out); 
    return 1;
@@ -1994,6 +1994,6 @@ int main(int argc,char** argv)
 
 void yyerror(const char* s)
 {
-    printf("Error: %s at line %d\n",s,yylineno);
+    printf("Error: %s at line %d at line no: ",s,yylineno);
     //fprintf(fp," : invalid statement");
 }
