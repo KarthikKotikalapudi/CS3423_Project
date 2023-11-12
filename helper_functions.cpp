@@ -141,9 +141,9 @@ void insert_classvar(std::string name, std::string type, std::string access, cla
        c->vars[name] = temp;
        int i;
        for(i = 0; i < type.size(); i++){
-              if(i == '[')  break;
+              if(type[i] == '[')  break;
        }
-       vector<int>dim(type.size()-i,-1);
+       vector<int>dim((type.size()-i)/2,-1);
        insert_symtab(name,type,dim,1);
 }
 

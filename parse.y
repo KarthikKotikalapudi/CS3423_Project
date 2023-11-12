@@ -1211,7 +1211,7 @@ arg : ID { //use after declaration check
             }
             $$ = strdup(s->type.substr(1,s->type.size()-2).c_str());
            }
-           if(s->type=="dataframe[][]"){
+           else if(s->type=="dataframe[][]"){
             if($2==1){
                 $$ =strdup("dataframe[]");
             }
