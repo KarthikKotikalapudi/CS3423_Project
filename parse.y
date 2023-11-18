@@ -10,6 +10,7 @@
     extern FILE* out;
     using namespace std;
 //global variables
+
 int scope = 0;
 bool ret=false, cond=false;
 string rettype="int";
@@ -1981,7 +1982,7 @@ int main(int argc,char** argv)
          }
     }
     char tokf[50];
-    snprintf(tokf,sizeof(tokf), "out_%s.txt", argv[1]);
+    snprintf(tokf,sizeof(tokf), "out_%s.cpp", argv[1]);
     out = fopen(tokf,"w");   //opeing the output seq tokens file
 
    if(!yyparse())
