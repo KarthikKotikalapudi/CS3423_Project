@@ -1984,7 +1984,7 @@ int main(int argc,char** argv)
     char tokf[50];
     snprintf(tokf,sizeof(tokf), "out_%s.cpp", argv[1]);
     out = fopen(tokf,"w");   //opeing the output seq tokens file
-
+    fprintf(out,"#include\"inbuilt.hpp\"\n#include<bits/stdc++.h>\nusing namespace std;\n");
    if(!yyparse())
    {
      printf("No errors detected\n");
