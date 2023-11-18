@@ -93,8 +93,8 @@ Inherits {return INHERITS;}
     return ID;}
 
 
-[ \t]  { /*Ignore whitespace and tabs*/ }
-\n      { yylineno++; }
+[ \t]+  { /*Ignore whitespace and tabs*/ fprintf(out,"%s",yytext); }
+\n      { yylineno++; fprintf(out,"\n"); }
 .   {
     /*Error*/
     printf("Error at line %d: invalid token: %s\n", yylineno, yytext);
