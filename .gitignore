@@ -1,6 +1,8 @@
 .gitignore
 .vscode/
+inp.txt
 a.out
+*.txt
 lex.yy*
 y.tab.c
 y.tab.h
