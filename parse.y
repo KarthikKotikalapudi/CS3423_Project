@@ -672,7 +672,7 @@ MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl {
                 }
                } 
                else{
-                cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
+                cout<<"Semantic Error: variable not declared at line no: "<<yylineno<<"\n";
                     std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
@@ -1983,11 +1983,11 @@ int main(int argc,char** argv)
     }
     char tokf[50];
     snprintf(tokf,sizeof(tokf), "out_%s.cpp", argv[1]);
-    out = fopen(tokf,"w");   //opeing the output c++ file
+    out = fopen(tokf,"w");   //opening the output c++ file
     fprintf(out,"#include\"inbuilt.hpp\"\n#include<bits/stdc++.h>\nusing namespace std;\n");
    if(!yyparse())
    {
-     printf("No errors detected\n");
+     //printf("No errors detected\n");
    }
    fclose(out); 
    return 1;
