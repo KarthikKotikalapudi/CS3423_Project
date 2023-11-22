@@ -29,7 +29,13 @@ public:
       exit(1);
     }
  } 
+
  int get_as_int(int i, int j) ;
+ int get_as_float(int i, int j) ;
+ std::vector<std::string> columns();
+ void add_row(std::vector<std::string>row);
+ dataframe get(std::vector<std::string>cols);
+ dataframe get(std::vector<int>cols);
 dataframe& operator=(const dataframe& other) {
     if (this != &other) { // Avoid self-assignment
         nrows = other.nrows;
@@ -99,11 +105,58 @@ void dataframe::real_read(std::string f,std::vector<std::string>dtypes,char deli
 
 int dataframe::get_as_int(int i, int j)
 {
+   if(col_types[j]!="int" )
+   {
+      std::cout<<"Warning, coltype declared to a type and requesting as another type\n";
+   }
+
    if((i>=0 && i<nrows)&&(j>=0 && j <ncols))
      return std::stoi(data[i-1][j-1]);
     else 
     {
       std::cout<<"Index or Column out of bounds";
       exit(1);
+    } 
+}
+
+int dataframe::get_as_float(int i, int j)
+{
+   if(col_types[j]!="float" )
+   {
+      std::cout<<"Warning, coltype declared to a type and requesting as another type\n";
+   }
+   if((i>=0 && i<nrows)&&(j>=0 && j <ncols))
+     return std::stof(data[i-1][j-1]);
+    else 
+    {
+      std::cout<<"Index or Column out of bounds";
+      exit(1);
+    } 
+}
+
+std::vector<std::string> dataframe::columns()
+{
+    return col_names;
+}
+
+void dataframe::add_row(std::vector<std::string>row)
+{
+    if(row.size()!= col_types.size())
+    {
+        std::cout<<"Number of fields given to add a row are less than number of columns\n";
+        exit(1);
+    }
+    data.push_back(row);
+}
+
+dataframe dataframe::get(std::vector<int>cols)
+{
+    dataframe n;
+    n.nrows = nrows;
+    n.ncols = ncols - cols.size();
+
+    for(int i=0;i<nrows;i++)
+    {
+        
     } 
 }
