@@ -29,7 +29,11 @@ public:
       exit(1);
     }
  } 
+
+
  int get_as_int(int i, int j) ;
+
+
 dataframe& operator=(const dataframe& other) {
     if (this != &other) { // Avoid self-assignment
         nrows = other.nrows;
@@ -40,6 +44,22 @@ dataframe& operator=(const dataframe& other) {
     }
     return *this;
 }
+
+  //get columns
+  vector<string> get_columns(){
+      return col_names;
+  }
+
+  //write a data frame to csv file
+  void write(string filename,vector<string>cols,char delim);
+
+
+  //drop columns
+  void drop(vector<string>cols);
+  void drop(vector<int>cols);
+
+
+
  private:
    void real_read(std::string s,std::vector<std::string>dtypes,char delim);
 };
@@ -51,6 +71,69 @@ dataframe::dataframe(/* args */)
 dataframe::~dataframe()
 {
 }
+
+dataframe::write(string filename,vector<string>cols,char delim){
+    ofstream out(filename);
+    if(!out.is_open()){
+        cout<<"Error opening file"<<endl;
+        return;
+    }
+    //write column names
+    if(cols.size()){
+       for(int i=0;i<cols.size();i++){
+        out<<cols[i];
+        if(i!=cols.size()-1)
+            out<<delim;
+        }
+        out<<endl;
+    }
+    //write data
+    for(int i=0;i<data.size();i++){
+        for(int j=0;j<data[0].size();j++){
+            out<<data[i][j];
+            if(j!=data[0].size()-1)
+                out<<delim;
+        }
+        out<<endl;
+    }
+    out.close();
+}
+
+void dataframe::drop(vector<string>cols){
+    vector<int>indices;
+    for(int i=0;i<cols.size();i++){
+        for(int j=0;j<col_names.size();j++){
+            if(cols[i]==col_names[j]){
+                indices.push_back(j);
+                break;
+            }
+        }
+    }
+    sort(indices.begin(),indices.end());
+    for(int i=0;i<indices.size();i++){
+        col_names.erase(col_names.begin()+indices[i]-i);
+        col_types.erase(col_types.begin()+indices[i]-i);
+        for(int j=0;j<data.size();j++){
+            data[j].erase(data[j].begin()+indices[i]-i);
+        }
+    }
+    ncols=col_names.size();
+}
+
+
+void dataframe::drop(vector<int>cols){
+    sort(cols.begin(),cols.end());
+    for(int i=0;i<cols.size();i++){
+        col_names.erase(col_names.begin()+cols[i]-i);
+        col_types.erase(col_types.begin()+cols[i]-i);
+        for(int j=0;j<data.size();j++){
+            data[j].erase(data[j].begin()+cols[i]-i);
+        }
+    }
+    ncols=col_names.size();
+}
+
+
 
 void dataframe::real_read(std::string f,std::vector<std::string>dtypes,char delim)
 {
