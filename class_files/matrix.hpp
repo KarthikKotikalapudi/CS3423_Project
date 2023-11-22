@@ -31,9 +31,24 @@ class matrix{
         return temp;
     }
 
+    //matrix get order
+    vector<int> get_order(){
+        vector<int>temp;
+        temp.push_back(M.size());
+        temp.push_back(M[0].size());
+        return temp;
+    }
+
     //addition of matrix
     matrix operator+(matrix<T> m){
+        // check if both matrix have same order (use above get_order function)
+        if(get_order()!=m.get_order()){
+            cout<<"Matrix order not same"<<endl;
+            return *this;
+        }
+
         matrix<T>temp(M.size(),M[0].size());
+        
         for(int i=0;i<M.size();i++){
             for(int j=0;j<M[0].size();j++){
                 temp.M[i][j]=M[i][j]+m.M[i][j];
@@ -44,6 +59,12 @@ class matrix{
 
     //subtraction of matrix
     matrix operator-(matrix<T> m){
+        // check if both matrix have same order (use above get_order function)
+        if(get_order()!=m.get_order()){
+            cout<<"Matrix order not same"<<endl;
+            return *this;
+        }
+
         matrix<T>temp(M.size(),M[0].size());
         for(int i=0;i<M.size();i++){
             for(int j=0;j<M[0].size();j++){
@@ -55,12 +76,22 @@ class matrix{
 
     //assignment of matrix
     matrix operator=(matrix<T> m){
+        //check if not intilized use get_order function
+        if(get_order()!=m.get_order()){
+            cout<<"Matrix order not same"<<endl;
+            return *this;
+        }
         M=m.M;
         return *this;
     }
 
     //multiplication of matrix
     matrix operator*(matrix<T> m){
+             //check if both are multiplication compatible (use get_order function)
+             if(get_order()[1]!=m.get_order()[0]){
+                cout<<"Matrix order not same"<<endl;
+                return *this;
+             }
         matrix<T>temp(M.size(),m.M[0].size());
         for(int i=0;i<M.size();i++){
             for(int j=0;j<m.M[0].size();j++){
@@ -85,6 +116,7 @@ class matrix{
 
     //division of matrix with scalar
     matrix operator/(T x){
+        
         matrix<T>temp(M.size(),M[0].size());
         for(int i=0;i<M.size();i++){
             for(int j=0;j<M[0].size();j++){
@@ -97,6 +129,14 @@ class matrix{
     //determinant of matrix
     T determinant(){
         T det=0;
+
+        //check if matrix is square (use get_order function)
+        vector<int>temp=get_order();
+        if(temp[0]!=temp[1]){
+            cout<<"Matrix is not square"<<endl;
+            return 0;
+        }
+
         if(M.size()==1){
             return M[0][0];
         }
