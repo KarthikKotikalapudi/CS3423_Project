@@ -39,7 +39,7 @@ main{
     x = x^x;
     dataframe df = dataframe();
     df[0][0] = (z+y)*3;
-    matrix m1<int> = {{1,2},{2,3}}, m3<int> = m7, m2<float>(4,5), m5<int> = m1;
+    matrix m1<int> = {{1,2},{2,3}}, m3<int> = m, m2<float>(4,5), m5<int> = m1;
     int r = m1[0][0];
     string s[10];
     sort(arr,arr+5);
