@@ -105,7 +105,7 @@ sort {fprintf(out,"%s",yytext); return SORT;}
 "=" {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext);
     return ASSGN;}
 "+="|"*="|"-="|"/="|"%="	{/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return ARTHASSGN;}
-"^"|"&"|"|"|"~"  {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return BIT_OP;}
+"^"|"&"|"|"  {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return BIT_OP;}
 
 Private {fprintf(out,"private"); return PRIVATE;}
 Public {fprintf(out,"public"); return PUBLIC;}
