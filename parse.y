@@ -129,7 +129,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 exit(1);
                 } 
                 insert_classvar($2.name,$1,access_spec,active_class_ptr,0);
-                for(int i=0;i<var_list.size();i++){
+                for(int i=var_list.size()-1;i>=0;i--){
                     vector<string> temp = search_classvar(var_list[i].name,active_class_ptr->name);
                     if(temp[0] !="" && temp[2] != "1")
                     {
@@ -164,7 +164,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 exit(1);
                 } 
                 insert_symtab($2.name,$1,{},scope);
-                for(int i=0;i<var_list.size();i++){
+                for(int i=var_list.size()-1;i>=0;i--){
                     if(search_symtab(var_list[i].name,scope,func,1))
                     {
                     cout<<"Semantic Error: variable already declared  at line no: "<<yylineno<<"\n";
@@ -198,7 +198,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             }
             var_list.push_back(s2);
             if(active_class_ptr){
-                for(int i=0;i<var_list.size();i++){
+                for(int i=var_list.size()-1;i>=0;i--){
                     vector<string> temp = search_classvar(var_list[i].name,active_class_ptr->name);
                     if(temp[0] !="" && temp[2] != "1")
                     {
@@ -224,7 +224,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 var_list.clear();
             }
             else{
-                for(int i=0;i<var_list.size();i++){
+                for(int i=var_list.size()-1;i>=0;i--){
                     if(search_symtab(var_list[i].name,scope,func,1))
                     {
                     cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
@@ -267,7 +267,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     exit(1);
                 } 
                 insert_classvar($2.name,$1,access_spec,active_class_ptr,0);
-                for(int i=0;i<var_list.size();i++){
+                for(int i=var_list.size()-1;i>=0;i--){
                     vector<string> temp = search_classvar(var_list[i].name,active_class_ptr->name);
                     if(temp[0] !="" && temp[2] != "1")
                     {
@@ -308,7 +308,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     exit(1);
                 } 
                 insert_symtab($2.name,$1,{},scope);
-                for(int i=0;i<var_list.size();i++){
+                for(int i=var_list.size()-1;i>=0;i--){
                     if(search_symtab(var_list[i].name,scope,func,1))
                     {
                     cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
@@ -351,7 +351,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             }
             var_list.push_back(s2);
             if(active_class_ptr){
-                for(int i=0;i<var_list.size();i++){
+                for(int i=var_list.size()-1;i>=0;i--){
                     vector<string> temp = search_classvar(var_list[i].name,active_class_ptr->name);
                     if(temp[0] !="" && temp[2] != "1")
                     {
@@ -377,7 +377,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 var_list.clear();
             }
             else{
-                for(int i=0;i<var_list.size();i++){
+                for(int i=var_list.size()-1;i>=0;i--){
                     if(search_symtab(var_list[i].name,scope,func,1))
                     {
                     cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
@@ -1630,7 +1630,7 @@ access_specifier: PRIVATE COL
                 {access_spec = "public";   }  
               | PROTECTED COL
                 {access_spec = "protected"; }
-              | {access_spec = "public";   } 
+              | {access_spec = "private";   } 
               ;
 
 
@@ -1652,7 +1652,7 @@ object_decl : ID ID Multiobj SEMICOL{
         exit(1);
         } 
         insert_symtab($2.name,$1.name,{},scope);
-        for(int i=0;i<var_list.size();i++){
+        for(int i=var_list.size()-1;i>=0;i--){
             if(var_list[i].type != $1.name && var_list[i].type != "")
             {
                 cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
@@ -1690,7 +1690,7 @@ object_decl : ID ID Multiobj SEMICOL{
             exit(1);
         }
         insert_symtab($2.name,$1.name,{},scope);
-        for(int i=0;i<var_list.size();i++){
+        for(int i=var_list.size()-1;i>=0;i--){
             if(var_list[i].type != $1.name && var_list[i].type != "")
             {
                 cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
@@ -1729,7 +1729,7 @@ object_decl : ID ID Multiobj SEMICOL{
             exit(1);
         }
         insert_symtab($2.name,$1.name,{},scope);
-        for(int i=0;i<var_list.size();i++){
+        for(int i=var_list.size()-1;i>=0;i--){
             if(var_list[i].type != $1.name && var_list[i].type != "")
             {
                 cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
@@ -1761,7 +1761,7 @@ object_decl : ID ID Multiobj SEMICOL{
                 cout<<"Semantic Error: class "<<$1.name<<" not found at line no: "<<yylineno<<"\n";
                 exit(1);
             } 
-            for(int i=0;i<var_list.size();i++){
+            for(int i=var_list.size()-1;i>=0;i--){
                 if(search_symtab(var_list[i].name,scope,func,1))
                 {
                 cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
