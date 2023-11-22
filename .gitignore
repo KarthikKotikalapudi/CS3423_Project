@@ -6,7 +6,6 @@ a.out
 lex.yy*
 y.tab.c
 y.tab.h
-parse.tab.cpp
-parse.tab.hpp
-compile.sh
+parse.tab*
 1.sh
+out_inp*
