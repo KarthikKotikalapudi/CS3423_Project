@@ -166,6 +166,10 @@ class matrix{
     matrix inverse(){
         matrix<T>temp(M.size(),M.size());
         T det=determinant();
+        if(det==0){
+            cout<<"Inverse not possible"<<endl;
+            return *this;
+        }
         if(M.size()==1){
             temp.M[0][0]=1/M[0][0];
             return temp;

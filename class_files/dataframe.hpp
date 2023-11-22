@@ -1,6 +1,4 @@
 #include<bits/stdc++.h>
-
-
 class dataframe
 {
 private:
@@ -31,6 +29,17 @@ public:
       exit(1);
     }
  } 
+ int get_as_int(int i, int j) ;
+dataframe& operator=(const dataframe& other) {
+    if (this != &other) { // Avoid self-assignment
+        nrows = other.nrows;
+        ncols = other.ncols;
+        col_names = other.col_names;
+        col_types = other.col_types;
+        data = other.data;
+    }
+    return *this;
+}
  private:
    void real_read(std::string s,std::vector<std::string>dtypes,char delim);
 };
@@ -43,9 +52,9 @@ dataframe::~dataframe()
 {
 }
 
-void dataframe::real_read(std::string s,std::vector<std::string>dtypes,char delim)
+void dataframe::real_read(std::string f,std::vector<std::string>dtypes,char delim)
 {
-    std::ifstream inp(s);
+    std::ifstream inp(f);
     if(!inp.is_open())
     {
       std::cout<<"Error opening the file. Check if the file exists in the directory or try again\n";
@@ -59,12 +68,12 @@ void dataframe::real_read(std::string s,std::vector<std::string>dtypes,char deli
     {
       if(ch!=delim)
       {
-         if(ch!='\n')
+         if(ch=='\n')
          {
-             row.push_back(s); s = "";
+             row.push_back(s); s = ""; std::cout<<row.size()<<std::endl;
              if(row.size()!=dtypes.size())
              {
-               std::cout<<"This CSV file is ill structured. Structure properly and re-read\n";
+               std::cout<<"This CSV file is ill structured. Structure properly and re-read. Remove tailing new line if present\n";
                exit(1);
              }
              nrows++; data.push_back(row);
@@ -88,6 +97,13 @@ void dataframe::real_read(std::string s,std::vector<std::string>dtypes,char deli
 
 }
 
-
-
-
+int dataframe::get_as_int(int i, int j)
+{
+   if((i>=0 && i<nrows)&&(j>=0 && j <ncols))
+     return std::stoi(data[i-1][j-1]);
+    else 
+    {
+      std::cout<<"Index or Column out of bounds";
+      exit(1);
+    } 
+}
