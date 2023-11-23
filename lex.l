@@ -67,7 +67,10 @@ sort {fprintf(out,"%s",yytext); return SORT;}
 
 ":" {fprintf(out,"%s",yytext); return COL;}
 ";" {
-        if(mat_id != NULL)  fprintf(out,"%s",mat_id);
+        if(mat_id != NULL){
+            fprintf(out,"%s",mat_id);
+            mat_id = NULL;
+        }
         fprintf(out,"%s",yytext);
         mat = 0; return SEMICOL;
     }

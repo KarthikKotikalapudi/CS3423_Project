@@ -1615,7 +1615,7 @@ class_head : CLASS ID{
         insert_classtab($2.name,temp);
         active_class_ptr = search_classtab($2.name);
     }
-    | CLASS ID INHERITS access_specifier ID{
+    | CLASS ID INHERITS access_specifier2 ID{
         //Inheritance
 
         if(search_classtab($2.name)){
@@ -1640,7 +1640,15 @@ access_specifier: PRIVATE COL
                 {access_spec = "public";   }  
               | PROTECTED COL
                 {access_spec = "protected"; }
-              | {access_spec = "private";   } 
+              | {} 
+              ;
+
+access_specifier2: PRIVATE COL
+                {access_spec = "private"; }                                                                                                   
+              | PUBLIC COL 
+                {access_spec = "public";   }  
+              | PROTECTED COL
+                {access_spec = "protected"; }
               ;
 
 
@@ -1994,7 +2002,7 @@ int main(int argc,char** argv)
     char tokf[50];
     snprintf(tokf,sizeof(tokf), "out_%s.cpp", argv[1]);
     out = fopen(tokf,"w");   //opening the output c++ file
-    fprintf(out,"#include\"inbuilt.hpp\"\n#include<bits/stdc++.h>\nusing namespace std;\n");
+    fprintf(out,"#include\"class_files/dataframe.hpp\"\n#include\"class_files/matrix.hpp\"\n#include<bits/stdc++.h>\nusing namespace std;\n");
    if(!yyparse())
    {
      //printf("No errors detected\n");
