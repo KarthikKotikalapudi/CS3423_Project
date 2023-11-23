@@ -200,5 +200,10 @@ class matrix{
             return temp.transpose();
         }
     }
+
+    //access to matrix element
+    T operator()(int i,int j){
+        return M[i][j];
+    }
  
 }
