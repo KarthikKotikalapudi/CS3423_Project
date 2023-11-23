@@ -24,7 +24,7 @@ unordered_map<std::string,vector<functab>> func_table_list;
 unordered_map<std::string,classtab> class_table_list;
 %}
 %token FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST VOID
-%token COMMA STRING CHAR ASSGN ARTHASSGN  FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
+%token COMMA STRING CHAR ASSGN ARTHASSGN  FOR WHILE PRINT INPUT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
 %token BOOL NUL SORT SELECT UPDATE DELETE
 %left NEG LOG ARTH BIT_OP SHIFT COMP COMMA MINUS
 %union{
@@ -111,6 +111,7 @@ stmtD : declstmt
     | loop
     | returnstmt
     | printstmt
+    | inputstmt
     | break
     | continue
     ;
@@ -1599,6 +1600,9 @@ returnstmt : RETURN pred SEMICOL
 printstmt : PRINT OBRAK STRING CBRAK SEMICOL
     ;
 
+inputstmt : INPUT OBRAK ID CBRAK SEMICOL
+    ;
+
 
 
 //class related syntax
@@ -1643,11 +1647,11 @@ access_specifier: PRIVATE COL
               | {} 
               ;
 
-access_specifier2: PRIVATE COL
+access_specifier2: PRIVATE
                 {access_spec = "private"; }                                                                                                   
-              | PUBLIC COL 
+              | PUBLIC
                 {access_spec = "public";   }  
-              | PROTECTED COL
+              | PROTECTED
                 {access_spec = "protected"; }
               ;
 

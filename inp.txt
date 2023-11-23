@@ -5,7 +5,7 @@ Class A{
     }
 };
 
-Class B Inherits Public: A{
+Class B Inherits Public A{
     Private: int y;
     string x;
 };
