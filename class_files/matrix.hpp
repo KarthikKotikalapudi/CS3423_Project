@@ -207,16 +207,34 @@ class matrix{
         }
     }
 
+    
+    class matrix_row{
+        private:
+        vector<T>&row;
+        public:
+        matrix_row(vector<T>&r):row(r){}
+
+        //access to matrix element M(i,j)
+        T& operator[](int j){
+            if(j>=row.size()){
+                cout<<"Index out of bounds"<<endl;
+                return row[0];
+            }
+            return row[j];
+        }
+    };
+
     //access to matrix element M[i][j]
-    vector<T>& operator[](int i){
+    matrix_row operator[](int i){
 
         // this returns row
         if(i>=M.size()){
             cout<<"Index out of bounds"<<endl;
             return M[0];
         }
-        return M[i];
+        return matrix_row(M[i]);
     }
+
 
     
 };
