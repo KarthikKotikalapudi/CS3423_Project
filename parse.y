@@ -68,7 +68,7 @@ unordered_map<std::string,classtab> class_table_list;
 %token <name> STRING
 %token <val> NUM
 %type <type> parameter access_specifier class_arg call_expression start_end_pos class_function_call
-%type <dim_len> access access2 access_assgn access_retn
+%type <dim_len> access access2 access_assgn 
 %type <type> uni arg rhs pred
 %type <number> numbers
 %type <funcattr> function_call
@@ -831,22 +831,6 @@ FuncHead : DATATYPE ID {$$.name = $2.name; $$.ret_type = $1;}
              }
     | MATRIX MATRIX_TYPE ID {string s = $2; $$.ret_type = strdup(s.c_str()); $$.name = $3.name; }
     | DF ID {$$.name = $2.name; $$.ret_type =$$.name = strdup("dataframe[][]");}
-    | DATATYPE access_retn ID {string s = $1; 
-              for(int i=0;i<$2;i++) s = s + "[]";  
-              $$.name = $3.name; $$.ret_type =strdup(s.c_str());      
-              }
-    | ID access_retn ID {
-        if(!search_classtab($1.name))
-               {
-                cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist at line no: "<<yylineno<<"\n";
-                    std::cout << "Error at line: " << __LINE__ << std::endl;
-
-                exit(1);
-               }
-              string s = $1.name; 
-              for(int i=0;i<$2;i++) s = s + "[]";  
-              $$.name = $3.name; $$.ret_type =strdup(s.c_str());
-                }
     | VOID ID {$$.name = $2.name; $$.ret_type = strdup("void");}
     ;
 
@@ -1292,10 +1276,7 @@ access_assgn :
 access2 : access {$$ = $1;}
         | access_assgn {$$ =$1;}
         ;
-
-access_retn : OSQA CSQA {$$ = 1;}
-       ;
-       
+               
 uni : ID POST {
       symtab s;
        if((s=search_symtab($1.name,scope,func,0))){

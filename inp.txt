@@ -10,16 +10,20 @@ Class B Inherits Public A{
     string x;
 };
 
-bool func(int df){
+matrix<int> func(matrix df<int>, matrix df2<float>, int x, matrix df5<int>){
     int i = 5*4;
     B obj;
-    return 0;
+    bool arr[5];
+    matrix m1<float> = {{1,3},{1,5}};
+    matrix m<int>(3,4);
+    return m;
 }
 
 int func(string df[]){
     int i = 5*4;
     B obj;
-    return 1;
+    int arr[5];
+    return arr[5];
 }
 
 main{
