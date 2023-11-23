@@ -78,10 +78,12 @@ sort {fprintf(out,"%s",yytext); return SORT;}
             mat_id = NULL;
         }
         fprintf(out,"%s",yytext);
-        mat = 0; return SEMICOL;
+        mat = 0; inout = 0;
+        return SEMICOL;
     }
 "," {
-    if(!(mat && mat_scope == 0))    fprintf(out,"%s",yytext);
+    if(inout)   fprintf(out,"<<");
+    else if(!(mat && mat_scope == 0))    fprintf(out,"%s",yytext);
     else{
         if(mat_id != NULL)  fprintf(out,"%s",mat_id);
         fprintf(out,"; matrix");
