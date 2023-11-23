@@ -209,7 +209,14 @@ class matrix{
 
     //access to matrix element M[i][j]
     vector<T>& operator[](int i){
+
+        // this returns row
+        if(i>=M.size()){
+            cout<<"Index out of bounds"<<endl;
+            return M[0];
+        }
         return M[i];
     }
+
     
 };
