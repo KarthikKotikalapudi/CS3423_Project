@@ -1322,10 +1322,11 @@ uni : ID POST {
 expr : ID ASSGN rhs 
         {   symtab var;
             if((var=search_symtab($1.name,scope,func,0))){
+               
                 if(!coersible(var->type,$3)){
                     cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
-                    exit(1);
-                }
+                    exit(1); 
+                } 
             }
             else{
                 //error

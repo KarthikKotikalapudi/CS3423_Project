@@ -1,7 +1,8 @@
 #include<bits/stdc++.h>
+using namespace std;
 class dataframe
 {
-private:
+public:
     int nrows;
     int ncols;
     std::vector<std::string> col_types;
@@ -36,7 +37,7 @@ public:
  void add_row(std::vector<std::string>row);
  dataframe get(std::vector<std::string>cols);
  dataframe get(std::vector<int>cols);
- 
+
 dataframe& operator=(const dataframe& other) {
     if (this != &other) { // Avoid self-assignment
         nrows = other.nrows;
@@ -157,7 +158,7 @@ void dataframe::real_read(std::string f,std::vector<std::string>dtypes,char deli
       {
          if(ch=='\n')
          {
-             row.push_back(s); s = ""; std::cout<<row.size()<<std::endl;
+             row.push_back(s); s = ""; 
              if(row.size()!=dtypes.size())
              {
                std::cout<<"This CSV file is ill structured. Structure properly and re-read. Remove tailing new line if present\n";
@@ -192,7 +193,7 @@ int dataframe::get_as_int(int i, int j)
    }
 
    if((i>=0 && i<nrows)&&(j>=0 && j <ncols))
-     return std::stoi(data[i-1][j-1]);
+     return std::stoi(data[i][j]);
     else 
     {
       std::cout<<"Index or Column out of bounds";
@@ -207,7 +208,7 @@ int dataframe::get_as_float(int i, int j)
       std::cout<<"Warning, coltype declared to a type and requesting as another type\n";
    }
    if((i>=0 && i<nrows)&&(j>=0 && j <ncols))
-     return std::stof(data[i-1][j-1]);
+     return std::stof(data[i][j]);
     else 
     {
       std::cout<<"Index or Column out of bounds";
@@ -244,36 +245,37 @@ void dataframe::add_row(std::vector<std::string>row)
 
 dataframe dataframe::select(std::string pred)
 {
-    dataframe n; n.ncols = ncols; n.nrows = 0; n.col_types = col_types;
+    dataframe n; n.ncols = ncols; n.nrows = 0; n.col_types = col_types; n.col_names = col_names;
     std::vector<std::string> row;
     // removing all the spaces from the string
     pred.erase(std::remove(pred.begin(), pred.end(), ' '), pred.end());
     if(pred.substr(0,3)=="int")
     {
-            std::string ind = extractSubstring(pred);
+            std::string ind = extractSubstring(pred); 
             if(ind.size()==0)
             {
                 std::cout<<"dataframe::select error:The predicate is ill-formed\n";
                 exit(1);
             }  
             int i = atoi(ind.c_str());
-            if(!((i>=0 && i<nrows)&&(j>=0 && j <ncols)))
+            if(!((i>=0 && i <ncols)))
             {
                 std::cout<<"dataframe::select error: Index or Column out of bounds\n";
                 exit(1);
             }
             int endPos = pred.find(')');
             if(pred.size()<=endPos+2)
-            {
+            { 
                  std::cout<<"dataframe::select error:The predicate is ill-formed\n";
                  exit(1);
             }
-            char comp = pred[endPos+1];
-            std::string val = pred.substr(endPos+2); int v = atoi(val.c_str());
+            std::string comp = pred.substr(endPos+1,1);
+            if(pred[endPos+2]=='=') { comp = comp + '='; endPos++;} 
+            std::string val = pred.substr(endPos+2); int v = atoi(val.c_str()); 
             // searching rows   
             for(int j=0;j<nrows;j++)
             {
-              if(comp=='<')  
+              if(comp=="<")  
               {
                 if(get_as_int(j,i)<v) 
                 {
@@ -281,7 +283,7 @@ dataframe dataframe::select(std::string pred)
                     n.data.push_back(row); row.clear(); n.nrows++;
                 }
               }
-              else if(comp=='>')  
+              else if(comp==">")  
               {
                 if(get_as_int(j,i)>v) 
                 {
@@ -289,7 +291,38 @@ dataframe dataframe::select(std::string pred)
                     n.data.push_back(row); row.clear(); n.nrows++;
                 }
               }
-
+               else if(comp=="<=")  
+              {
+                if(get_as_int(j,i)<=v) 
+                {
+                    row = data[j];
+                    n.data.push_back(row); row.clear(); n.nrows++;
+                }
+              }
+               else if(comp==">=")  
+              {
+                if(get_as_int(j,i)>=v) 
+                {
+                    row = data[j];
+                    n.data.push_back(row); row.clear(); n.nrows++;
+                }
+              }
+               else if(comp=="==")  
+              {
+                if(get_as_int(j,i)==v) 
+                {
+                    row = data[j];
+                    n.data.push_back(row); row.clear(); n.nrows++;
+                }
+              }
+               else if(comp=="!=")  
+              {
+                if(get_as_int(j,i)!=v) 
+                {
+                    row = data[j];
+                    n.data.push_back(row); row.clear(); n.nrows++;
+                }
+              }
               else 
               {
                   std::cout<<"dataframe::select error:The predicate has illeagal comparator operator\n";
@@ -300,17 +333,174 @@ dataframe dataframe::select(std::string pred)
     }
     else if(pred.substr(0,3)=="float")
     {
-        
+                    std::string ind = extractSubstring(pred);
+            if(ind.size()==0)
+            {
+                std::cout<<"dataframe::select error:The predicate is ill-formed\n";
+                exit(1);
+            }  
+            int i = atoi(ind.c_str());
+            if(!((i>=0 && i <ncols)))
+            {
+                std::cout<<"dataframe::select error: Index or Column out of bounds\n";
+                exit(1);
+            }
+            int endPos = pred.find(')');
+            if(pred.size()<=endPos+2)
+            {
+                 std::cout<<"dataframe::select error:The predicate is ill-formed\n";
+                 exit(1);
+            }
+            std::string comp = pred.substr(endPos+1,1);
+            if(pred[endPos+2]=='=') { comp = comp + '='; endPos++;}
+            std::string val = pred.substr(endPos+2); int v = atof(val.c_str());
+            // searching rows   
+            for(int j=0;j<nrows;j++)
+            {
+              if(comp=="<")  
+              {
+                if(get_as_float(j,i)<v) 
+                {
+                    row = data[j];
+                    n.data.push_back(row); row.clear(); n.nrows++;
+                }
+              }
+              else if(comp==">")  
+              {
+                if(get_as_float(j,i)>v) 
+                {
+                    row = data[j];
+                    n.data.push_back(row); row.clear(); n.nrows++;
+                }
+              }
+              else if(comp=="<=")  
+              {
+                if(get_as_float(j,i)<=v) 
+                {
+                    row = data[j];
+                    n.data.push_back(row); row.clear(); n.nrows++;
+                }
+              }
+              else if(comp==">=")  
+              {
+                if(get_as_float(j,i)>v) 
+                {
+                    row = data[j];
+                    n.data.push_back(row); row.clear(); n.nrows++;
+                }
+              }
+              else if(comp=="==")  
+              {
+                if(get_as_float(j,i)==v) 
+                {
+                    row = data[j];
+                    n.data.push_back(row); row.clear(); n.nrows++;
+                }
+              }
+              else if(comp=="!=")  
+              {
+                if(get_as_float(j,i)!=v) 
+                {
+                    row = data[j];
+                    n.data.push_back(row); row.clear(); n.nrows++;
+                }
+              }
+              else 
+              {
+                  std::cout<<"dataframe::select error:The predicate has illeagal comparator operator\n";
+                  exit(1);
+              }
+            }
+            return n;
     }
     else if(pred.substr(0,3)=="string")
     {
-        
+            std::string ind = extractSubstring(pred);
+            if(ind.size()==0)
+            {
+                std::cout<<"dataframe::select error:The predicate is ill-formed\n";
+                exit(1);
+            }  
+            int i = atoi(ind.c_str());
+            if(!((i>=0 && i <ncols)))
+            {
+                std::cout<<"dataframe::select error: Index or Column out of bounds\n";
+                exit(1);
+            }
+            int endPos = pred.find(')');
+            if(pred.size()<=endPos+2)
+            {
+                 std::cout<<"dataframe::select error:The predicate is ill-formed\n";
+                 exit(1);
+            }
+            std::string comp = pred.substr(endPos+1,1);
+            if(pred[endPos+2]=='=') { comp = comp + '='; endPos++;}
+            std::string val = pred.substr(endPos+2); 
+            // searching rows   
+            for(int j=0;j<nrows;j++)
+            {
+              if(comp=="<")  
+              {
+                if(data[j][i]<val) 
+                {
+                    row = data[j];
+                    n.data.push_back(row); row.clear(); n.nrows++;
+                }
+              }
+              else if(comp==">")  
+              {
+                if(data[j][i]>val) 
+                {
+                    row = data[j];
+                    n.data.push_back(row); row.clear(); n.nrows++;
+                }
+              }
+              else if(comp=="<=")  
+              {
+                if(data[j][i]<=val) 
+                {
+                    row = data[j];
+                    n.data.push_back(row); row.clear(); n.nrows++;
+                }
+              }
+              else if(comp==">=")  
+              {
+                if(data[j][i]>=val) 
+                {
+                    row = data[j];
+                    n.data.push_back(row); row.clear(); n.nrows++;
+                }
+              }
+              else if(comp=="==")  
+              {
+                if(data[j][i]==val) 
+                {
+                    row = data[j];
+                    n.data.push_back(row); row.clear(); n.nrows++;
+                }
+              }
+              else if(comp=="!=")  
+              {
+                if(data[j][i]!=val) 
+                {
+                    row = data[j];
+                    n.data.push_back(row); row.clear(); n.nrows++;
+                }
+              }
+              else 
+              {
+                  std::cout<<"dataframe::select error:The predicate has illeagal comparator operator\n";
+                  exit(1);
+              }
+            }
+            return n;
     }
     else
     {
          std::cout<<"dataframe::select error:The predicate is ill-formed\n";
          exit(1);
     }
+    return n;
 }
 
 std::string dataframe::extractSubstring(const std::string& input) {
