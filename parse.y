@@ -23,14 +23,8 @@ vector<std::unordered_map<std::string,symtab>> sym_table_list;
 unordered_map<std::string,vector<functab>> func_table_list;
 unordered_map<std::string,classtab> class_table_list;
 
-// classtab c_table = new struct class_table;
-// c_table->name = "matrix<int>";
 
-// functab function_table = new struct func_table;
-// function_table->name = name;
-// function_table->params = params;
-// function_table->return_type = return_type;
-// add the functions of matrix<int>
+
 
 
 %}
@@ -2122,6 +2116,24 @@ pred1 : STRING
 %%
 int main(int argc,char** argv)
 {
+
+        // add matrix classes
+        pair<string,string> temp;
+        insert_classtab("matrix<int>",temp);
+        classtab MI= search_classtab("matrix<int>"); 
+        insert_classfunc("transpose","matrix<int>","public",{},MI,false);
+        insert_classfunc("determinant","int","public",{},MI,false);
+        insert_classfunc("inverse","matrix<int>","public",{},MI,false);
+
+        insert_classtab("matrix<float>",temp);
+        classtab MF= search_classtab("matrix<float>"); 
+        insert_classfunc("transpose","matrix<float>","public",{},MF,false);
+        insert_classfunc("determinant","float","public",{},MF,false);
+        insert_classfunc("inverse","matrix<float>","public",{},MF,false);
+
+
+       //anyone add dataframe class in symbol table too
+       
  
     
     if(argc!= 2)
