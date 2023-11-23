@@ -1648,11 +1648,7 @@ returnstmt : RETURN pred SEMICOL
 // print statement
 printstmt : PRINT OBRAK STRING CBRAK SEMICOL
     {
-        // cout<<$3<<endl;
-        vector <string> v =getStr($3);
-        vector<bool> v2= containsDot(v);
         
-        // for(int i=0;i<v.size();i++)cout<<v[i]<<endl;
     }
     ;
 
