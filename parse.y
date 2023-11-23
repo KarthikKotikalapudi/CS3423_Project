@@ -1288,8 +1288,7 @@ access2 : access {$$ = $1;}
         | access_assgn {$$ =$1;}
         ;
 
-access_retn : OSQA CSQA access_retn{ $$ = $3+1;}
-        | OSQA CSQA {$$ = 1;}
+access_retn : OSQA CSQA {$$ = 1;}
        ;
        
 uni : ID POST {
@@ -1646,11 +1645,13 @@ returnstmt : RETURN pred SEMICOL
     ;
 
 // print statement
-printstmt : PRINT OBRAK STRING CBRAK SEMICOL
-    {
-        
-    }
+printstmt : PRINT OBRAK multirhs CBRAK SEMICOL
     ;
+
+multirhs : rhs
+         | multirhs COMMA rhs
+         | 
+         ;
 
 inputstmt : INPUT OBRAK ID CBRAK SEMICOL
     {
