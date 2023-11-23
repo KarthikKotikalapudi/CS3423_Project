@@ -22,6 +22,17 @@ vector<struct symbol_table> var_list;
 vector<std::unordered_map<std::string,symtab>> sym_table_list;
 unordered_map<std::string,vector<functab>> func_table_list;
 unordered_map<std::string,classtab> class_table_list;
+
+// classtab c_table = new struct class_table;
+// c_table->name = "matrix<int>";
+
+// functab function_table = new struct func_table;
+// function_table->name = name;
+// function_table->params = params;
+// function_table->return_type = return_type;
+// add the functions of matrix<int>
+
+
 %}
 %token FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST VOID
 %token COMMA CHAR ASSGN ARTHASSGN  FOR WHILE PRINT INPUT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
