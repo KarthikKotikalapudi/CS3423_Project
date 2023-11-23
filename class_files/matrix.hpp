@@ -1,5 +1,5 @@
 #include <iostream>
-#include <vector.h>
+#include <vector>
 
 template <class T>
 class matrix{
@@ -43,7 +43,7 @@ class matrix{
     matrix operator+(matrix<T> m){
         // check if both matrix have same order (use above get_order function)
         if(get_order()!=m.get_order()){
-            cout<<"Matrix order not same"<<endl;
+            cout<<"Matrix order not same, cannot perform addition"<<endl;
             return *this;
         }
 
@@ -61,7 +61,7 @@ class matrix{
     matrix operator-(matrix<T> m){
         // check if both matrix have same order (use above get_order function)
         if(get_order()!=m.get_order()){
-            cout<<"Matrix order not same"<<endl;
+            cout<<"Matrix order not same, cannot perform substraction"<<endl;
             return *this;
         }
 
@@ -78,7 +78,7 @@ class matrix{
     matrix operator=(matrix<T> m){
         //check if not intilized use get_order function
         if(get_order()!=m.get_order()){
-            cout<<"Matrix order not same"<<endl;
+            cout<<"Matrix order not same, cannot assign"<<endl;
             return *this;
         }
         M=m.M;
@@ -89,7 +89,7 @@ class matrix{
     matrix operator*(matrix<T> m){
              //check if both are multiplication compatible (use get_order function)
              if(get_order()[1]!=m.get_order()[0]){
-                cout<<"Matrix order not same"<<endl;
+                cout<<"Matrix order not same, cannot be multiplied"<<endl;
                 return *this;
              }
         matrix<T>temp(M.size(),m.M[0].size());
@@ -133,7 +133,7 @@ class matrix{
         //check if matrix is square (use get_order function)
         vector<int>temp=get_order();
         if(temp[0]!=temp[1]){
-            cout<<"Matrix is not square"<<endl;
+            cout<<"Matrix is not square, cannot determine det"<<endl;
             return 0;
         }
 
@@ -206,4 +206,4 @@ class matrix{
         return M[i][j];
     }
  
-}
+};
