@@ -29,10 +29,14 @@ main{
     int arr[5] = {1,2,3,4,5};
     matrix m<int>(3,4);
     A obj, obj2;
+    input(obj.x[0]);
     {
         int z = y-2;
     }
+    string sss ="akjkbdbbkdbkjbkj";
+    print("absdf$$obj.x$$asss$$arr[0]$$$$z$$kldkl");
     bool x = true;
+    input(x);
     x = x^x;
     dataframe df = dataframe();
     df[0][0] = (z+y)*3;
