@@ -93,7 +93,7 @@ sort {fprintf(out,"%s",yytext); return SORT;}
 
 
 (\")([^\"]|\\.)*(\")   {
-                        // yylval.str = 
+                        yylval.name = strdup(yytext);
                         fprintf(out,"%s",yytext); return STRING;
                        }
 '[^'\n]?' {
