@@ -30,16 +30,13 @@ public:
     }
  } 
 
-
-
  int get_as_int(int i, int j) ;
  int get_as_float(int i, int j) ;
  std::vector<std::string> columns();
  void add_row(std::vector<std::string>row);
  dataframe get(std::vector<std::string>cols);
  dataframe get(std::vector<int>cols);
-
-
+ 
 dataframe& operator=(const dataframe& other) {
     if (this != &other) { // Avoid self-assignment
         nrows = other.nrows;
@@ -52,22 +49,23 @@ dataframe& operator=(const dataframe& other) {
 }
 
   //get columns
-  vector<string> get_columns(){
+  std::vector<std::string> get_columns(){
       return col_names;
   }
 
   //write a data frame to csv file
-  void write(string filename,vector<string>cols,char delim);
+  void write(std::string filename,std::vector<std::string>cols,char delim);
 
 
   //drop columns
-  void drop(vector<string>cols);
-  void drop(vector<int>cols);
-
-
+  void drop(std::vector<std::string>cols);
+  void drop(std::vector<int>cols);
+  // functions involving predicates
+  dataframe select(std::string pred);
 
  private:
    void real_read(std::string s,std::vector<std::string>dtypes,char delim);
+   std::string extractSubstring(const std::string& input);
 };
 
 dataframe::dataframe(/* args */)
@@ -78,10 +76,10 @@ dataframe::~dataframe()
 {
 }
 
-dataframe::write(string filename,vector<string>cols,char delim){
-    ofstream out(filename);
+void dataframe::write(std::string filename,std::vector<std::string>cols,char delim){
+    std::ofstream out(filename);
     if(!out.is_open()){
-        cout<<"Error opening file"<<endl;
+        std::cout<<"Error opening file"<<std::endl;
         return;
     }
     //write column names
@@ -91,7 +89,7 @@ dataframe::write(string filename,vector<string>cols,char delim){
         if(i!=cols.size()-1)
             out<<delim;
         }
-        out<<endl;
+        out<<std::endl;
     }
     //write data
     for(int i=0;i<data.size();i++){
@@ -100,13 +98,13 @@ dataframe::write(string filename,vector<string>cols,char delim){
             if(j!=data[0].size()-1)
                 out<<delim;
         }
-        out<<endl;
+        out<<std::endl;
     }
     out.close();
 }
 
-void dataframe::drop(vector<string>cols){
-    vector<int>indices;
+void dataframe::drop(std::vector<std::string>cols){
+    std::vector<int>indices;
     for(int i=0;i<cols.size();i++){
         for(int j=0;j<col_names.size();j++){
             if(cols[i]==col_names[j]){
@@ -115,7 +113,7 @@ void dataframe::drop(vector<string>cols){
             }
         }
     }
-    sort(indices.begin(),indices.end());
+    std::sort(indices.begin(),indices.end());
     for(int i=0;i<indices.size();i++){
         col_names.erase(col_names.begin()+indices[i]-i);
         col_types.erase(col_types.begin()+indices[i]-i);
@@ -127,8 +125,8 @@ void dataframe::drop(vector<string>cols){
 }
 
 
-void dataframe::drop(vector<int>cols){
-    sort(cols.begin(),cols.end());
+void dataframe::drop(std::vector<int>cols){
+    std::sort(cols.begin(),cols.end());
     for(int i=0;i<cols.size();i++){
         col_names.erase(col_names.begin()+cols[i]-i);
         col_types.erase(col_types.begin()+cols[i]-i);
@@ -232,14 +230,98 @@ void dataframe::add_row(std::vector<std::string>row)
     data.push_back(row);
 }
 
-dataframe dataframe::get(std::vector<int>cols)
-{
-    dataframe n;
-    n.nrows = nrows;
-    n.ncols = ncols - cols.size();
+// dataframe dataframe::get(std::vector<int>cols)
+// {
+//     dataframe n;
+//     n.nrows = nrows;
+//     n.ncols = ncols - cols.size();
 
-    for(int i=0;i<nrows;i++)
+//     for(int i=0;i<nrows;i++)
+//     {
+
+//     } 
+// }
+
+dataframe dataframe::select(std::string pred)
+{
+    dataframe n; n.ncols = ncols; n.nrows = 0; n.col_types = col_types;
+    std::vector<std::string> row;
+    // removing all the spaces from the string
+    pred.erase(std::remove(pred.begin(), pred.end(), ' '), pred.end());
+    if(pred.substr(0,3)=="int")
+    {
+            std::string ind = extractSubstring(pred);
+            if(ind.size()==0)
+            {
+                std::cout<<"dataframe::select error:The predicate is ill-formed\n";
+                exit(1);
+            }  
+            int i = atoi(ind.c_str());
+            if(!((i>=0 && i<nrows)&&(j>=0 && j <ncols)))
+            {
+                std::cout<<"dataframe::select error: Index or Column out of bounds\n";
+                exit(1);
+            }
+            int endPos = pred.find(')');
+            if(pred.size()<=endPos+2)
+            {
+                 std::cout<<"dataframe::select error:The predicate is ill-formed\n";
+                 exit(1);
+            }
+            char comp = pred[endPos+1];
+            std::string val = pred.substr(endPos+2); int v = atoi(val.c_str());
+            // searching rows   
+            for(int j=0;j<nrows;j++)
+            {
+              if(comp=='<')  
+              {
+                if(get_as_int(j,i)<v) 
+                {
+                    row = data[j];
+                    n.data.push_back(row); row.clear(); n.nrows++;
+                }
+              }
+              else if(comp=='>')  
+              {
+                if(get_as_int(j,i)>v) 
+                {
+                    row = data[j];
+                    n.data.push_back(row); row.clear(); n.nrows++;
+                }
+              }
+
+              else 
+              {
+                  std::cout<<"dataframe::select error:The predicate has illeagal comparator operator\n";
+                  exit(1);
+              }
+            }
+            return n;
+    }
+    else if(pred.substr(0,3)=="float")
     {
         
-    } 
+    }
+    else if(pred.substr(0,3)=="string")
+    {
+        
+    }
+    else
+    {
+         std::cout<<"dataframe::select error:The predicate is ill-formed\n";
+         exit(1);
+    }
+}
+
+std::string dataframe::extractSubstring(const std::string& input) {
+    size_t startPos = input.find('(');
+    size_t endPos = input.find(')', startPos + 1);  // Start searching from startPos + 1
+
+    if (startPos != std::string::npos && endPos != std::string::npos) {
+        // Extract substring between '(' and ')'
+        return input.substr(startPos + 1, endPos - startPos - 1);
+    } else {
+        // '(' or ')' not found
+        return nullptr;
+    }
 }
