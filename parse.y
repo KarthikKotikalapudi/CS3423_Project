@@ -12,6 +12,7 @@
 //global variables
 
 int scope = 0;
+bool infun = false;
 bool ret=false, cond=false;
 string rettype="int";
 vector<string> params; 
@@ -763,9 +764,11 @@ MatrixL : OBRACE open_marker constL closing_marker CBRACE  COMMA MatrixL {
     ;
 
 //function declaration
-FuncDecl : FuncHead_dup OBRACE open_marker FuncBody closing_marker CBRACE{
+FuncDecl : FuncHead_dup OBRACE open_marker open_func FuncBody close_func closing_marker CBRACE{
     rettype = "int";
 }
+open_func: {infun = true;};
+close_func: {infun = false;};
 FuncHead_dup :FuncHead  OBRAK params CBRAK 
     {
         //search if this function already exists
@@ -1613,8 +1616,9 @@ continue:
 returnstmt : RETURN pred SEMICOL 
     {
         if(!cond) ret = true;
-        //cout<<$2<<rettype<<endl;
-        if(func==false){
+        cout<<$2<<rettype<<endl;
+        cout<<infun<<endl;
+        if(infun==true){
             if(!coersible($2,rettype)){
                 cout<<"Semantic Error: Return type mismatch at line no: "<<yylineno<<"\n";
                 exit(1);
