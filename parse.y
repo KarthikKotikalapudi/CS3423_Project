@@ -1299,8 +1299,7 @@ access2 : access {$$ = $1;}
         | access_assgn {$$ =$1;}
         ;
 
-access_retn : OSQA CSQA access_retn{ $$ = $3+1;}
-        | OSQA CSQA {$$ = 1;}
+access_retn : OSQA CSQA {$$ = 1;}
        ;
        
 uni : ID POST {
@@ -1350,10 +1349,11 @@ uni : ID POST {
 expr : ID ASSGN rhs 
         {   symtab var;
             if((var=search_symtab($1.name,scope,func,0))){
+               
                 if(!coersible(var->type,$3)){
                     cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
-                    exit(1);
-                }
+                    exit(1); 
+                } 
             }
             else{
                 //error
@@ -1657,11 +1657,13 @@ returnstmt : RETURN pred SEMICOL
     ;
 
 // print statement
-printstmt : PRINT OBRAK STRING CBRAK SEMICOL
-    {
-        
-    }
+printstmt : PRINT OBRAK multirhs CBRAK SEMICOL
     ;
+
+multirhs : rhs
+         | multirhs COMMA rhs
+         | 
+         ;
 
 inputstmt : INPUT OBRAK ID CBRAK SEMICOL
     {
