@@ -17,6 +17,11 @@ class matrix{
         }
     }
 
+    //deconstructor
+    ~matrix(){
+        M.clear();
+    }
+
     //intilization can matrix m<int> = {{1,2,3},{4,5,6}};
      matrix(std::initializer_list<std::initializer_list<T>> init) {
         M.resize(init.size());
@@ -207,9 +212,34 @@ class matrix{
         }
     }
 
+    
+    class matrix_row{
+        private:
+        vector<T>&row;
+        public:
+        matrix_row(vector<T>&r):row(r){}
+
+        //access to matrix element M(i,j)
+        T& operator[](int j){
+            if(j>=row.size()){
+                cout<<"Index out of bounds"<<endl;
+                return row[0];
+            }
+            return row[j];
+        }
+    };
+
     //access to matrix element M[i][j]
-    vector<T>& operator[](int i){
-        return M[i];
+    matrix_row operator[](int i){
+
+        // this returns row
+        if(i>=M.size()){
+            cout<<"Index out of bounds"<<endl;
+            return M[0];
+        }
+        return matrix_row(M[i]);
     }
+
+
     
 };

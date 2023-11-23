@@ -24,7 +24,7 @@ unordered_map<std::string,vector<functab>> func_table_list;
 unordered_map<std::string,classtab> class_table_list;
 %}
 %token FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST VOID
-%token COMMA STRING CHAR ASSGN ARTHASSGN  FOR WHILE PRINT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
+%token COMMA CHAR ASSGN ARTHASSGN  FOR WHILE PRINT INPUT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
 %token BOOL NUL SORT SELECT UPDATE DELETE
 %left NEG LOG ARTH BIT_OP SHIFT COMP COMMA MINUS
 %union{
@@ -60,6 +60,7 @@ unordered_map<std::string,classtab> class_table_list;
 }
 
 %token <type> DATATYPE MATRIX_TYPE 
+%token <name> STRING
 %token <val> NUM
 %type <type> parameter access_specifier class_arg call_expression start_end_pos class_function_call
 %type <dim_len> access access2 access_assgn access_retn
@@ -111,6 +112,7 @@ stmtD : declstmt
     | loop
     | returnstmt
     | printstmt
+    | inputstmt
     | break
     | continue
     ;
@@ -493,34 +495,9 @@ MultiDimL : OBRACE MultiDimL CBRACE {
     }
     ;
 
-MatrixDecl : ID MATRIX_TYPE 
-    {
-         //first check if already declared
-           symtab var = search_symtab($1.name,scope,func,1); //check this,can string be char * 
-           if(var)
-           {
-            cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
-                std::cout << "Error at line: " << __LINE__ << std::endl;
-
-            exit(1);
-           } 
-         
-         char mtype[] = "<int>";
-         char mtype1[] = "<float>";
-         if(!strcmp(mtype,$2) || !strcmp(mtype1,$2)){
-            //add matrix with type int or float
-            insert_symtab($1.name,$2,{},scope);
-         }
-         else{
-             cout<<"Semantic Error: Matrix can only have int or float at line no: "<<yylineno<<"\n";
-                 std::cout << "Error at line: " << __LINE__ << std::endl;
-
-             exit(1);
-         }
-
-    }
-    | ID MATRIX_TYPE ASSGN ID{
-        symtab var = search_symtab($1.name,scope,func,1); //check this,can string be char * 
+MatrixDecl : 
+        ID MATRIX_TYPE ASSGN ID{
+            symtab var = search_symtab($1.name,scope,func,1); //check this,can string be char * 
            if(var)
            {
             cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
@@ -1022,6 +999,11 @@ class_arg:
             exit(1);
         }
         string class_name = x->type;
+        if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+        if(!search_classtab(class_name)){
+              cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
+              exit(1);
+        }
         vector<string> M = search_classvar($3.name, class_name);
         if(M[0]==""){
               cout<<"Semantic Error: Variable is not declared in the class at line no: "<<yylineno<<"\n";
@@ -1041,6 +1023,11 @@ class_arg:
             exit(1);
         }
         string class_name = x->type;
+        if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+        if(!search_classtab(class_name)){
+              cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
+              exit(1);
+        }
         vector<string> M = search_classvar($3.name, class_name); 
         if(M[0]==""){
               cout<<"Semantic Error: Variable is not declared in the class at line no: "<<yylineno<<"\n";
@@ -1076,6 +1063,11 @@ class_arg:
             exit(1);
         }
         string class_name = x->type;
+        if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+        if(!search_classtab(class_name)){
+              cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
+              exit(1);
+        }
         pair <functab,string> M = search_classfunc($3,params,class_name); 
         if(M.first==NULL){
               cout<<"Semantic Error: Method is not declared in the class at line no: "<<yylineno<<"\n";
@@ -1116,11 +1108,21 @@ pred : pred LOG pred
             cout<<"Semantic Error: Both sides of the Comparator operation must be same"<<endl;
             exit(1);
         }
+        string s = $1,s1=$3;
+        if(s[s.size()-1]==']'||s1[s1.size()-1]==']'){
+            cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
+            exit(1);
+        }
        $$ = strdup("bool");  // $$ = "bool";
     }
     | pred SHIFT pred 
     {
         if($1=="string" || $1=="char"||$3=="string" || $3=="char"||$1=="bool" || $3=="bool"){
+            cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
+            exit(1);
+        }
+        string s = $1,s1=$3;
+        if(s[s.size()-1]==']'||s1[s1.size()-1]==']'){
             cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
             exit(1);
         }
@@ -1132,6 +1134,11 @@ pred : pred LOG pred
     }
     | pred BIT_OP pred 
     {
+        string s = $1,s1=$3;
+        if(s[s.size()-1]==']'||s1[s1.size()-1]==']'){
+            cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
+            exit(1);
+        }
         if(strcmp($1,$3)){
             cout<<"Semantic Error: Both sides of the Bitwise operation must be same"<<endl;
             exit(1);
@@ -1141,6 +1148,11 @@ pred : pred LOG pred
     | pred ARTH pred 
     {   
         if($1=="string" || $1=="char"||$3=="string" || $3=="char"){
+            cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
+            exit(1);
+        }
+        string s = $1,s1=$3;
+        if(s[s.size()-1]==']'||s1[s1.size()-1]==']'){
             cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
             exit(1);
         }
@@ -1154,6 +1166,11 @@ pred : pred LOG pred
     | pred MINUS pred 
     {   
         if($1=="string" || $1=="char"||$3=="string" || $3=="char"||$1=="bool" || $3=="bool"){
+            cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
+            exit(1);
+        }
+        string s = $1,s1=$3;
+        if(s[s.size()-1]==']'||s1[s1.size()-1]==']'){
             cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
             exit(1);
         }
@@ -1418,6 +1435,17 @@ expr : ID ASSGN rhs
     | ID DOT ID ASSGN rhs 
         {
             symtab var = search_symtab($1.name,scope,func,0);
+            if(!var){
+                //error
+                cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
+                exit(1);
+            }
+            string class_name = var->type;
+            if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+            if(!search_classtab(class_name)){
+                cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
+                exit(1);
+            }
             vector<string> temp = search_classvar($3.name, var->type);
             if(temp[0] == ""){
                 //error
@@ -1438,6 +1466,17 @@ expr : ID ASSGN rhs
     | ID DOT ID ARTHASSGN rhs 
         {
             symtab var = search_symtab($1.name,scope,func,0);
+            if(!var){
+                //error
+                cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
+                exit(1);
+            }
+            string class_name = var->type;
+            if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+            if(!search_classtab(class_name)){
+                cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
+                exit(1);
+            }
             vector<string> temp = search_classvar($3.name, var->type);
             if(temp[0] == ""){
                 //error
@@ -1462,6 +1501,17 @@ expr : ID ASSGN rhs
     | ID DOT ID access ARTHASSGN rhs 
     {
         symtab var = search_symtab($1.name,scope,func,0);
+            if(!var){
+                //error
+                cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
+                exit(1);
+            }
+            string class_name = var->type;
+            if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+            if(!search_classtab(class_name)){
+                cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
+                exit(1);
+            }
             vector<string> temp = search_classvar($3.name, var->type);
             if(temp[0] == ""){
                 //error
@@ -1598,6 +1648,94 @@ returnstmt : RETURN pred SEMICOL
 
 // print statement
 printstmt : PRINT OBRAK STRING CBRAK SEMICOL
+    {
+        
+    }
+    ;
+
+inputstmt : INPUT OBRAK ID CBRAK SEMICOL
+    {
+        if(!search_symtab($3.name, scope, func, 0)){
+            cout<<"Semantic Error: ID must be declared before use at line no: "<<yylineno<<"\n";
+            exit(1);
+        }
+    }
+          | INPUT OBRAK ID access CBRAK SEMICOL
+    {
+        symtab var;
+        if(!(var=search_symtab($3.name, scope, func, 0))){
+            cout<<"Semantic Error: ID must be declared before use at line no: "<<yylineno<<"\n";
+            exit(1);
+        }
+        if(var->dim.size()<$4){
+            cout<<"Semantic Error: Invalid arr access (dimension mismatch), at line no: "<<yylineno<<"\n";
+            exit(1);
+        }
+    }
+          | INPUT OBRAK ID  DOT ID CBRAK SEMICOL
+    {   
+        symtab var=search_symtab($3.name, scope, func, 0);
+        if(!var){
+            cout<<"Semantic Error: object must be declared before use, at line no: "<<yylineno<<"\n";
+            exit(1);
+        }
+        classtab c;
+        c = search_classtab(var->type);
+        if(!c){
+             cout<<"Semantic Error: class must be declared before use, at line no: "<<yylineno<<"\n";
+            exit(1);
+        }
+        vector<string> temp=search_classvar($5.name,var->type);
+        if(temp[0] == ""){
+            //error
+            cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
+            exit(1);
+        }
+        if(temp[1] != "public"){
+            //error
+            cout<<"Semantic Error: Variable not accessible at line no: "<<yylineno<<"\n";
+            exit(1);
+        }
+        if(temp[0][temp[0].size() - 1]==']'){
+            cout<<"Semantic Error: Invalid input type input can only take simple datatype, at line no: "<<yylineno<<"\n";
+            exit(1);
+        }
+    }
+          | INPUT OBRAK ID  DOT ID access CBRAK SEMICOL
+    {
+        symtab var=search_symtab($3.name, scope, func, 0);
+        if(!var){
+            cout<<"Semantic Error: object must be declared before use, at line no: "<<yylineno<<"\n";
+            exit(1);
+        }
+        classtab c;
+        c = search_classtab(var->type);
+        if(!c){
+             cout<<"Semantic Error: class must be declared before use, at line no: "<<yylineno<<"\n";
+            exit(1);
+        }
+        vector<string> temp=search_classvar($5.name,var->type);
+        if(temp[0] == ""){
+            //error
+            cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
+            exit(1);
+        }
+        if(temp[1] != "public"){
+            //error
+            cout<<"Semantic Error: Variable not accessible at line no: "<<yylineno<<"\n";
+            exit(1);
+        }
+        string s="",s1=temp[0].substr( temp[0].size() - 2*$6, 2*$6);
+        for(int j=0;j<$6;j++)s+="[]";
+        if(s1!=s){
+            cout<<"Semantic Error: dimensions do not match at line no: "<<yylineno<<"\n";
+            exit(1);
+        }
+        if(temp[0][temp[0].size() - 2*$6-1]==']'){
+            cout<<"Semantic Error: Invalid input type input can only take simple datatype, at line no: "<<yylineno<<"\n";
+            exit(1);
+        }
+    }
     ;
 
 
@@ -1644,11 +1782,11 @@ access_specifier: PRIVATE COL
               | {} 
               ;
 
-access_specifier2: PRIVATE COL
+access_specifier2: PRIVATE
                 {access_spec = "private"; }                                                                                                   
-              | PUBLIC COL 
+              | PUBLIC
                 {access_spec = "public";   }  
-              | PROTECTED COL
+              | PROTECTED
                 {access_spec = "protected"; }
               ;
 
