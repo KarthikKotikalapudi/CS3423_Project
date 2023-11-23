@@ -1,14 +1,11 @@
 Class A{
-    int x[9];
+    Public: int x[9];
     int fun(int y,int a){
-        return y+a;
-    }
-    int fun(string y,int a){
         return x[0];
     }
 };
 
-Class B Inherits A{
+Class B Inherits Public: A{
     Private: int y;
     string x;
 };
@@ -39,7 +36,7 @@ main{
     x = x^x;
     dataframe df = dataframe();
     df[0][0] = (z+y)*3;
-    matrix m1<int> = {{1,2},{2,3}}, m3<int> = m5, m2<float>(4,5), m5<int> = m1;
+    matrix m1<int> = {{1,2},{2,3}}, m3<int> = m1, m2<float>(4,5), m5<int> = m1;
     int r = m1[0][0];
     string s[10];
     sort(arr,arr+5);
