@@ -17,6 +17,11 @@ class matrix{
         }
     }
 
+    //deconstructor
+    ~matrix(){
+        M.clear();
+    }
+
     //intilization can matrix m<int> = {{1,2,3},{4,5,6}};
      matrix(std::initializer_list<std::initializer_list<T>> init) {
         M.resize(init.size());
