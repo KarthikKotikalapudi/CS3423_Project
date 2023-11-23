@@ -22,6 +22,17 @@ vector<struct symbol_table> var_list;
 vector<std::unordered_map<std::string,symtab>> sym_table_list;
 unordered_map<std::string,vector<functab>> func_table_list;
 unordered_map<std::string,classtab> class_table_list;
+
+// classtab c_table = new struct class_table;
+// c_table->name = "matrix<int>";
+
+// functab function_table = new struct func_table;
+// function_table->name = name;
+// function_table->params = params;
+// function_table->return_type = return_type;
+// add the functions of matrix<int>
+
+
 %}
 %token FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST VOID
 %token COMMA CHAR ASSGN ARTHASSGN  FOR WHILE PRINT INPUT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
@@ -63,7 +74,7 @@ unordered_map<std::string,classtab> class_table_list;
 %token <name> STRING
 %token <val> NUM
 %type <type> parameter access_specifier class_arg call_expression start_end_pos class_function_call
-%type <dim_len> access access2 access_assgn access_retn
+%type <dim_len> access access2 access_assgn 
 %type <type> uni arg rhs pred
 %type <number> numbers
 %type <funcattr> function_call
@@ -826,22 +837,6 @@ FuncHead : DATATYPE ID {$$.name = $2.name; $$.ret_type = $1;}
              }
     | MATRIX MATRIX_TYPE ID {string s = $2; $$.ret_type = strdup(s.c_str()); $$.name = $3.name; }
     | DF ID {$$.name = $2.name; $$.ret_type =$$.name = strdup("dataframe[][]");}
-    | DATATYPE access_retn ID {string s = $1; 
-              for(int i=0;i<$2;i++) s = s + "[]";  
-              $$.name = $3.name; $$.ret_type =strdup(s.c_str());      
-              }
-    | ID access_retn ID {
-        if(!search_classtab($1.name))
-               {
-                cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist at line no: "<<yylineno<<"\n";
-                    std::cout << "Error at line: " << __LINE__ << std::endl;
-
-                exit(1);
-               }
-              string s = $1.name; 
-              for(int i=0;i<$2;i++) s = s + "[]";  
-              $$.name = $3.name; $$.ret_type =strdup(s.c_str());
-                }
     | VOID ID {$$.name = $2.name; $$.ret_type = strdup("void");}
     ;
 
@@ -1287,11 +1282,7 @@ access_assgn :
 access2 : access {$$ = $1;}
         | access_assgn {$$ =$1;}
         ;
-
-access_retn : OSQA CSQA access_retn{ $$ = $3+1;}
-        | OSQA CSQA {$$ = 1;}
-       ;
-       
+               
 uni : ID POST {
       symtab s;
        if((s=search_symtab($1.name,scope,func,0))){
@@ -1339,10 +1330,11 @@ uni : ID POST {
 expr : ID ASSGN rhs 
         {   symtab var;
             if((var=search_symtab($1.name,scope,func,0))){
+               
                 if(!coersible(var->type,$3)){
                     cout<<"Semantic Error: Types on LHS and RHS are not coersible at line no: "<<yylineno<<"\n";
-                    exit(1);
-                }
+                    exit(1); 
+                } 
             }
             else{
                 //error
@@ -1646,11 +1638,13 @@ returnstmt : RETURN pred SEMICOL
     ;
 
 // print statement
-printstmt : PRINT OBRAK STRING CBRAK SEMICOL
-    {
-        
-    }
+printstmt : PRINT OBRAK multirhs CBRAK SEMICOL
     ;
+
+multirhs : rhs
+         | multirhs COMMA rhs
+         | 
+         ;
 
 inputstmt : INPUT OBRAK ID CBRAK SEMICOL
     {
