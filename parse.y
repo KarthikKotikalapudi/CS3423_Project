@@ -994,7 +994,9 @@ class_arg:
             exit(1);
         }
         string class_name = x->type;
-        if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+        
+        if(class_name == "<int>")   class_name = "matrix<int>";
+        if(class_name == "<float>")   class_name = "matrix<float>";
         if(!search_classtab(class_name)){
               cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
               exit(1);
@@ -1018,7 +1020,9 @@ class_arg:
             exit(1);
         }
         string class_name = x->type;
-        if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+        
+        if(class_name == "<int>")   class_name = "matrix<int>";
+        if(class_name == "<float>")   class_name = "matrix<float>";
         if(!search_classtab(class_name)){
               cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
               exit(1);
@@ -1058,7 +1062,9 @@ class_arg:
             exit(1);
         }
         string class_name = x->type;
-        if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+        
+        if(class_name == "<int>")   class_name = "matrix<int>";
+        if(class_name == "<float>")   class_name = "matrix<float>";
         if(!search_classtab(class_name)){
               cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
               exit(1);
@@ -1432,7 +1438,9 @@ expr : ID ASSGN rhs
                 exit(1);
             }
             string class_name = var->type;
-            if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+            
+        if(class_name == "<int>")   class_name = "matrix<int>";
+        if(class_name == "<float>")   class_name = "matrix<float>";
             if(!search_classtab(class_name)){
                 cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
                 exit(1);
@@ -1463,7 +1471,9 @@ expr : ID ASSGN rhs
                 exit(1);
             }
             string class_name = var->type;
-            if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+            
+        if(class_name == "<int>")   class_name = "matrix<int>";
+        if(class_name == "<float>")   class_name = "matrix<float>";
             if(!search_classtab(class_name)){
                 cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
                 exit(1);
@@ -1498,7 +1508,9 @@ expr : ID ASSGN rhs
                 exit(1);
             }
             string class_name = var->type;
-            if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+            
+        if(class_name == "<int>")   class_name = "matrix<int>";
+        if(class_name == "<float>")   class_name = "matrix<float>";
             if(!search_classtab(class_name)){
                 cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
                 exit(1);
