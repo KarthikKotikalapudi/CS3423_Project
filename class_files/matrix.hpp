@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <math.h>
+using namespace std;
 
 template <class T>
 class matrix{
@@ -16,8 +18,12 @@ class matrix{
     }
 
     //intilization can matrix m<int> = {{1,2,3},{4,5,6}};
-    matrix(vector<vector<T>>m){
-        M=m;
+     matrix(std::initializer_list<std::initializer_list<T>> init) {
+        M.resize(init.size());
+        int i = 0;
+        for (const auto& row : init) {
+            M[i++] = row;
+        }
     }
 
     //transpose of matrix
@@ -205,5 +211,5 @@ class matrix{
     vector<T>& operator[](int i){
         return M[i];
     }
- 
+    
 };
