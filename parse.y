@@ -494,34 +494,9 @@ MultiDimL : OBRACE MultiDimL CBRACE {
     }
     ;
 
-MatrixDecl : ID MATRIX_TYPE 
-    {
-         //first check if already declared
-           symtab var = search_symtab($1.name,scope,func,1); //check this,can string be char * 
-           if(var)
-           {
-            cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
-                std::cout << "Error at line: " << __LINE__ << std::endl;
-
-            exit(1);
-           } 
-         
-         char mtype[] = "<int>";
-         char mtype1[] = "<float>";
-         if(!strcmp(mtype,$2) || !strcmp(mtype1,$2)){
-            //add matrix with type int or float
-            insert_symtab($1.name,$2,{},scope);
-         }
-         else{
-             cout<<"Semantic Error: Matrix can only have int or float at line no: "<<yylineno<<"\n";
-                 std::cout << "Error at line: " << __LINE__ << std::endl;
-
-             exit(1);
-         }
-
-    }
-    | ID MATRIX_TYPE ASSGN ID{
-        symtab var = search_symtab($1.name,scope,func,1); //check this,can string be char * 
+MatrixDecl : 
+        ID MATRIX_TYPE ASSGN ID{
+            symtab var = search_symtab($1.name,scope,func,1); //check this,can string be char * 
            if(var)
            {
             cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
@@ -1023,6 +998,11 @@ class_arg:
             exit(1);
         }
         string class_name = x->type;
+        if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+        if(!search_classtab(class_name)){
+              cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
+              exit(1);
+        }
         vector<string> M = search_classvar($3.name, class_name);
         if(M[0]==""){
               cout<<"Semantic Error: Variable is not declared in the class at line no: "<<yylineno<<"\n";
@@ -1042,6 +1022,11 @@ class_arg:
             exit(1);
         }
         string class_name = x->type;
+        if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+        if(!search_classtab(class_name)){
+              cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
+              exit(1);
+        }
         vector<string> M = search_classvar($3.name, class_name); 
         if(M[0]==""){
               cout<<"Semantic Error: Variable is not declared in the class at line no: "<<yylineno<<"\n";
@@ -1077,6 +1062,11 @@ class_arg:
             exit(1);
         }
         string class_name = x->type;
+        if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+        if(!search_classtab(class_name)){
+              cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
+              exit(1);
+        }
         pair <functab,string> M = search_classfunc($3,params,class_name); 
         if(M.first==NULL){
               cout<<"Semantic Error: Method is not declared in the class at line no: "<<yylineno<<"\n";
@@ -1418,6 +1408,17 @@ expr : ID ASSGN rhs
     | ID DOT ID ASSGN rhs 
         {
             symtab var = search_symtab($1.name,scope,func,0);
+            if(!var){
+                //error
+                cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
+                exit(1);
+            }
+            string class_name = var->type;
+            if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+            if(!search_classtab(class_name)){
+                cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
+                exit(1);
+            }
             vector<string> temp = search_classvar($3.name, var->type);
             if(temp[0] == ""){
                 //error
@@ -1438,6 +1439,17 @@ expr : ID ASSGN rhs
     | ID DOT ID ARTHASSGN rhs 
         {
             symtab var = search_symtab($1.name,scope,func,0);
+            if(!var){
+                //error
+                cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
+                exit(1);
+            }
+            string class_name = var->type;
+            if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+            if(!search_classtab(class_name)){
+                cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
+                exit(1);
+            }
             vector<string> temp = search_classvar($3.name, var->type);
             if(temp[0] == ""){
                 //error
@@ -1462,6 +1474,17 @@ expr : ID ASSGN rhs
     | ID DOT ID access ARTHASSGN rhs 
     {
         symtab var = search_symtab($1.name,scope,func,0);
+            if(!var){
+                //error
+                cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
+                exit(1);
+            }
+            string class_name = var->type;
+            if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+            if(!search_classtab(class_name)){
+                cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
+                exit(1);
+            }
             vector<string> temp = search_classvar($3.name, var->type);
             if(temp[0] == ""){
                 //error
