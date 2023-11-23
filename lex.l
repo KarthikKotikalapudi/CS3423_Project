@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "parse.tab.hpp"
 bool mat = 0;
+int inout = 0;
 char* mat_id = NULL;
 int mat_scope = 0;
 FILE * out; //output file
@@ -40,16 +41,21 @@ break {fprintf(out,"%s",yytext); return BREAK;}
 continue {fprintf(out,"%s",yytext); return CONT;}
 for {fprintf(out,"%s",yytext); return FOR;}
 while {fprintf(out,"%s",yytext); return WHILE;}
-print {fprintf(out,"%s",yytext); return PRINT;}
+print {fprintf(out,"%s",yytext); inout = 2; return PRINT;}
+input {fprintf(out,"cin"); inout = 1; return INPUT;}
 main {fprintf(out,"int main()"); return MAIN;}
 sort {fprintf(out,"%s",yytext); return SORT;}
 
 
 
-\(	{/*printf("%s",yytext);*/  fprintf(out,"%s",yytext);
+\(	{/*printf("%s",yytext);*/
+    if(!inout) fprintf(out,"%s",yytext);
+    else if(inout == 1) fprintf(out,"<<");
+    else    fprintf(out,">>");
     if(mat) mat_scope++;
     return OBRAK;}
-\)	{/*printf("%s",yytext);*/  fprintf(out,"%s",yytext);
+\)	{/*printf("%s",yytext);*/
+    if(!inout) fprintf(out,"%s",yytext);
     if(mat) mat_scope--;
     return CBRAK;}
 \[  {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return OSQA;}
@@ -67,7 +73,10 @@ sort {fprintf(out,"%s",yytext); return SORT;}
 
 ":" {fprintf(out,"%s",yytext); return COL;}
 ";" {
-        if(mat_id != NULL)  fprintf(out,"%s",mat_id);
+        if(mat_id != NULL){
+            fprintf(out,"%s",mat_id);
+            mat_id = NULL;
+        }
         fprintf(out,"%s",yytext);
         mat = 0; return SEMICOL;
     }
