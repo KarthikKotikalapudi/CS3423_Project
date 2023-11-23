@@ -201,9 +201,9 @@ class matrix{
         }
     }
 
-    //access to matrix element
-    T operator()(int i,int j){
-        return M[i][j];
+    //access to matrix element M[i][j]
+    vector<T>& operator[](int i){
+        return M[i];
     }
  
 };
