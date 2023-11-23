@@ -50,8 +50,8 @@ sort {fprintf(out,"%s",yytext); return SORT;}
 
 \(	{/*printf("%s",yytext);*/
     if(!inout) fprintf(out,"%s",yytext);
-    else if(inout == 1) fprintf(out,"<<");
-    else    fprintf(out,">>");
+    else if(inout == 1) fprintf(out,">>");
+    else    fprintf(out,"<<");
     if(mat) mat_scope++;
     return OBRAK;}
 \)	{/*printf("%s",yytext);*/
