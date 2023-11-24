@@ -1829,6 +1829,11 @@ class_head : CLASS ID{
             cout<<"Semantic Error: Class already declared at line no: "<<yylineno<<"\n";
             exit(1);
         }
+        // cout<<$5.name<<endl;
+        if(!search_classtab($5.name)){
+            cout<<"Semantic Error: Class is not declared at line no: "<<yylineno<<"\n";
+            exit(1);
+        }
         pair<string,string> temp;
         temp.first = access_spec;
         temp.second = $5.name;
