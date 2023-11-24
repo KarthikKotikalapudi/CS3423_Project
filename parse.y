@@ -801,7 +801,7 @@ FuncHead_dup :FuncHead  OBRAK params CBRAK
                 cout<<"Semantic Error: function already declared in the class with same signature at line no: "<<yylineno<<"\n";
                 exit(1);
             }
-            insert_classfunc(active_class_ptr->name, $1.ret_type, access_spec, {}, active_class_ptr,0);
+            insert_classfunc($1.name, $1.ret_type, access_spec, {}, active_class_ptr,0);
         }
         }
     ;
