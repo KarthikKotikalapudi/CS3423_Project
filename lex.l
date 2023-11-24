@@ -36,7 +36,7 @@ delete {fprintf(out,"%s",yytext); return DELETE;}
 update {fprintf(out,"%s",yytext); return UPDATE;}
 
 if {fprintf(out,"%s",yytext); return IF;}
-elif {fprintf(out,"%s",yytext); return ELIF;}
+elif {fprintf(out,"else if"); return ELIF;}
 else {fprintf(out,"%s",yytext); return ELSE;}
 return {fprintf(out,"%s",yytext); return RETURN;}
 break {fprintf(out,"%s",yytext); return BREAK;}
