@@ -309,6 +309,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
 
                 exit(1);
                 }
+                // cout<<$1<<$4<<endl;
                 if(!coersible($1,$4)){
                     cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
                         std::cout << "Error at line: " << __LINE__ << std::endl;
@@ -781,6 +782,7 @@ FuncHead_dup :FuncHead  OBRAK params CBRAK
     }
     | FuncHead OBRAK CBRAK{
         rettype =$1.ret_type;
+        // cout<<rettype<<endl;
         //search if this function already exists
         if(!active_class_ptr)
         {   // here we store parameter types in params global variable
@@ -802,11 +804,17 @@ FuncHead_dup :FuncHead  OBRAK params CBRAK
                 exit(1);
             }
             insert_classfunc($1.name, $1.ret_type, access_spec, {}, active_class_ptr,0);
+            functab f1 = search_classfunc($1.name, {},active_class_ptr->name).first;
+            // cout<<"rettype: "<<f1->return_type<<endl;
         }
         }
     ;
 
-FuncHead : DATATYPE ID {$$.name = $2.name; $$.ret_type = $1;}
+FuncHead : DATATYPE ID 
+    {
+        $$.name = $2.name; $$.ret_type = $1;
+        // cout<<"type: "<<$$.ret_type<<endl;
+    }
     | ID ID { if(!search_classtab($1.name))
                {
                 cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist at line no: "<<yylineno<<"\n";
@@ -1079,7 +1087,8 @@ class_arg:
               cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
               exit(1);
         } 
-        pair <functab,string> M = search_classfunc($3,params,class_name); 
+        pair <functab,string> M = search_classfunc($3,params,class_name);
+        // cout<<M.first->return_type<<" kjbfjgjf"<<endl;
         if(M.first==NULL){
               cout<<"Semantic Error: Method is not declared in the class at line no: "<<yylineno<<"\n";
               exit(1);
@@ -1089,8 +1098,9 @@ class_arg:
             exit(1);
         }
         params.clear();
-        if(M.first->return_type != "int")   $$ =strdup(x->type.c_str());
-        else    $$ =strdup(M.first->return_type.c_str());
+        // if(M.first->return_type != "int")   $$ =strdup(x->type.c_str());
+        // else   
+         $$ =strdup(M.first->return_type.c_str());
     }
     ;
 
@@ -1302,7 +1312,11 @@ arg : ID { //use after declaration check
         exit(1);
       }
     }
-    | class_arg {$$ = $1;}
+    | class_arg 
+    {
+        $$ = $1;
+        // cout<<$1<<endl;
+    }
     ;
 
 access : OSQA pred CSQA access 
