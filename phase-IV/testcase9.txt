@@ -1,0 +1,14 @@
+ main {
+
+     string list[] = {"int","int","int","int"};
+     dataframe df = dataframe(); df.read("username.csv",list,4);
+     string list2[] = {"5","5","5","5"};
+     df.add_row(list2,4);
+     df = df.select("int(1)<4");
+     dataframe df2 = dataframe() ; df2.read("test111.csv",list,4,';');
+    dataframe df3 = dataframe();
+    df3 =  df.union_dfs(df2);
+    df3 = df.delete_rows("int(1)==3");
+    df3.write("test2.csv",';');
+    return 0;
+}
