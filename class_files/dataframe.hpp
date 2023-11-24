@@ -18,7 +18,7 @@ public:
        for(int i=0;i<sz;i++) types.push_back(dtypes[i]);
        real_read(s,types,',');
  }
- void read(std::string s,std::string dtypes[],char delim,int sz)
+ void read(std::string s,std::string dtypes[],int sz,char delim)
  {
        vector<string> types;
        for(int i=0;i<sz;i++) types.push_back(dtypes[i]);
@@ -67,6 +67,7 @@ dataframe& operator=(const dataframe& other) {
   // functions involving predicates
   dataframe select(std::string pred);
   dataframe delete_rows(std::string pred);
+  dataframe union_dfs(dataframe df1);
 
  private:
    void real_read(std::string s,std::vector<std::string>dtypes,char delim);
@@ -96,7 +97,7 @@ void dataframe::write(std::string filename,char delim){
             if(j!=data[0].size()-1)
                 out<<delim;
         }
-        out<<std::endl;
+      if(i!=data.size()-1)  out<<std::endl;
     }
     out.close();
 }
@@ -798,3 +799,26 @@ std::vector<std::string> dataframe::removeIndices(std::vector<std::string> vec, 
     }
     return vec;
 }
+ dataframe dataframe::union_dfs(dataframe df1)
+ {
+        if(df1.col_types != col_types)
+        {
+          cout<<"DF Union Error: The two dataframe types are incompatible\n";
+          exit(1);
+        }
+      dataframe n;
+      n.col_names = df1.col_names; n.col_types = df1.col_types;
+      n.data = df1.data;
+      for(int i=0;i<data.size();i++)
+      {
+        int c=0;
+        for(int j=0;j<df1.data.size();j++)
+        {
+             if(data[i]==df1.data[j]) break;
+             c++;
+        } 
+        if(c==df1.data.size()) n.data.push_back(data[i]);
+      }
+      n.ncols = df1.ncols; n.nrows = n.data.size();
+      return n;
+ }

@@ -1,0 +1,63 @@
+Class BankersAlgorithm {
+Private:
+    int numProcesses;
+    int numResources;
+    matrix m<int>(4,5);
+    matrix allocation<int>(6,7);
+    matrix need<int>(8,9); 
+
+
+Public:
+    BankersAlgorithm(int processes, int resources) {
+        numProcesses = processes;
+        numResources = resources;
+    }
+
+    void setMax(int process, int resource, int value) {
+        m[process][resource] = value;
+    }
+
+    void setAllocation(int process, int resource, int value) {
+        allocation[process][resource] = value;
+    }
+
+    void setAvailable(int resource, int value) {
+        available[resource] = value;
+    }
+
+    bool isSafe() {
+
+        int count = 0; 
+
+        while (count < numProcesses) {
+            bool found = false;
+            for (int i = 0; i < numProcesses; i++) {
+                if (!finish[i]) {
+                    bool canExecute = true;
+                    for (int j = 0; j < numResources; j++) {
+   
+                    }
+                    if (canExecute) {
+
+                    }
+                }
+            }
+            if (!found) {
+                break;
+            }
+        }
+
+        return count == numProcesses;
+    }
+};
+
+ main(){
+    int x;
+    cout<<x<<endl;
+}
+
+
+
+
+
+
