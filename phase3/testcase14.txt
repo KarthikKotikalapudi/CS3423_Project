@@ -21,13 +21,14 @@ main{
     input(d);
     int min1 = min(a,b,c,d);
     int min2 = min(min(a,b,c),d);
-    int min3 = min(min(a,b),min(c,d));
+    int min3 = min(min(a,b),min(d));
+    ##int min3 = min(min(a,b),min(c,d));
+    
     print(min1," ",min2," ",min3,"\n");
 
-    matrix m1<int> = {{1,2},{2,3}}, m3<int> = {{2,4},{1,2}};
+    matrix m1<int> = {{1,2},{2,3}}, m3<int> = {{2,4},{0,2}};
     matrix m2<int> = m3.inverse();
-    m1 =m1 + m3*m3[0][0]+7;
-    ## m1 =m1 + m3*m3[0][0];
+    m1 =m1 + m3*m3[0][0];
     int det = m1.determinant();
     print("determinant(m1): ",det,"\n");
     for(int i=0;i<m1.getRowCount();i++){
@@ -35,5 +36,4 @@ main{
             print(m1[i][j]," ");
         }
         print("\n");
-    }
-}
+    }}

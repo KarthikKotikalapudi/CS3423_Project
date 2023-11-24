@@ -10,9 +10,11 @@ Class A{
      Private:
      int x,y;
      matrix m<int>(2,3);
-
+     
+     Public:
      void hello(){
-        print("Hello this is A ",a,b,c+x,m[0][1]+w);
+        print("Hello this is A ",a,b,c+x,m[0][1]);
+        return;
      }
 
      int add(){
@@ -36,10 +38,12 @@ Class B{
      Private:
      int z;
      matrix n<int>(3,2);
-
+     
+     Public:
      void welcome(){
         int z;
-        print("Welcome to B ",d,e,f+z,n[1][0]+x);
+        print("Welcome to B ",d,e,f+z,n[1][0]);
+        return;
      }
 
      int multiply(){
@@ -57,7 +61,7 @@ Class B{
 
 };
 
- main(){
+ main{
     A objA;
     B objB;
 
@@ -66,7 +70,7 @@ Class B{
 
     objB.welcome();
     int resultB = objB.multiply();
-    bool isPositiveB = objB.isPositive();
+    bool isPositiveB = objB.isPositive() = objB.multiply();
     return 0;
 }
 

@@ -4,31 +4,31 @@ Private:
     int numResources;
     matrix m<int>(4,5);
     matrix allocation<int>(6,7);
+     int available[10];
+     int finish[10];
     matrix need<int>(8,9); 
 
 
 Public:
-    BankersAlgorithm(int processes, int resources) {
-        numProcesses = processes;
-        numResources = resources;
-    }
 
     void setMax(int process, int resource, int value) {
         m[process][resource] = value;
+        return;
     }
 
     void setAllocation(int process, int resource, int value) {
         allocation[process][resource] = value;
+        return;
     }
 
     void setAvailable(int resource, int value) {
         available[resource] = value;
+        return;
     }
 
     bool isSafe() {
 
         int count = 0; 
-
         while (count < numProcesses) {
             bool found = false;
             for (int i = 0; i < numProcesses; i++) {
@@ -51,9 +51,9 @@ Public:
     }
 };
 
- main(){
+ main{
     int x;
-    cout<<x<<endl;
+    print(x);
 }
 
 

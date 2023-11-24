@@ -1,0 +1,134 @@
+Class queue{
+        int x[10];
+        void pop(){return;}
+        void push(int x){return;}
+        int front(){return x[10];}
+        bool empty(){return false;}
+
+    };
+Class stack{
+        int x[10];
+        void pop(){return;}
+        void push(int x){return;}
+        int top(){return x[10];}
+        bool empty(){return false;}
+
+    };
+
+Class Graph {
+Private:
+    int numVertices;
+    matrix adjList <int>(3,4);
+  
+
+Public:
+    void Graph(int vertices) {
+        numVertices = vertices;
+        return;
+    }
+
+    void addEdge(int src, int dest) {
+        adjList[src][-1]=(dest);
+        adjList[dest][-1]=(src);
+        return;
+    }
+
+    void printGraph() {
+        for (int i = 0; i < numVertices; i++) {
+            print( "Adjacency list of vertex ", i , ": ");
+            for (int j = 0; j < adjList[i][j]; j++) {
+                print( adjList[i][j] , " ");
+            }
+            print("\n");
+        }
+        return;
+    }
+
+    void bfs(int startVertex) {
+        bool visited1[numVertices];
+        queue q;
+
+        visited1[startVertex] = true;
+        q.push(startVertex);
+
+        while (!q.empty()) {
+            int currentVertex = q.front();
+            q.pop();
+
+            print( currentVertex , " ");
+
+            for (int neighbor = adjList[currentVertex][0];q;startVertex++) {
+                if (!visited1[neighbor]) {
+                    visited1[neighbor] = true;
+                    q.push(neighbor);
+                }
+            }
+        }
+        return;
+    }
+
+    void dfs(int startVertex) {
+       bool visited[numVertices];
+       stack s;
+
+        visited[startVertex] = true;
+        s.push(startVertex);
+
+        while (!s.empty()) {
+            int currentVertex = s.top();
+            s.pop();
+            print( currentVertex , " ");
+            for (int neighbor = adjList[currentVertex][currentVertex] ; currentVertex ; currentVertex++) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    s.push(neighbor);
+                }
+            }
+        }
+        return;
+    }
+};
+
+ main {
+    int x;
+    print( x );
+
+    Graph graph;
+    graph.addEdge(0, 1);
+    graph.addEdge(1, 2);
+    graph.addEdge(2, 3);
+    graph.addEdge(3, 4);
+    graph.addEdge(4, 5);
+    graph.addEdge(5, 6);
+    graph.addEdge(6, 7);
+    graph.addEdge(7, 8);
+    graph.addEdge(8, 9);
+
+    graph.printGraph();
+
+    print( "BFS traversal: ");
+    graph.bfs(0);
+    print();
+
+    print();
+    graph.dfs(0);
+    print( );
+    { 
+        x=6;
+
+        {
+           for(x=5;;){
+            
+           }
+        }
+
+    }
+
+    return 0;
+}
+
+
+
+
+
+

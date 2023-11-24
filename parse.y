@@ -66,7 +66,7 @@ unordered_map<std::string,classtab> class_table_list;
 }
 
 %token <type> DATATYPE MATRIX_TYPE 
-%token <name> STRING
+%token <name> STRING ARTH
 %token <val> NUM
 %type <type> parameter access_specifier class_arg call_expression start_end_pos class_function_call
 %type <dim_len> access access2 access_assgn 
@@ -590,132 +590,7 @@ MatrixDecl :
     ;
 
 
-// MultiMatrixDecl : COMMA ID MATRIX_TYPE MultiMatrixDecl 
-//     {
-//        //Assign type to ID , MultiMatrixDecl
-//        symtab var = search_symtab($2.name,scope,func,1); //check this,can string be char * 
-//            if(var)
-//            {
-//             cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
-//                 std::cout << "Error at line: " << __LINE__ << std::endl;
 
-//             exit(1);
-//            } 
-         
-//          char mtype[] = "<int>";
-//          char mtype1[] = "<float>";
-//          if(!strcmp(mtype,$3) || !strcmp(mtype1,$3)){
-//             //add matrix with type int or float
-//             insert_symtab($2.name,$3,{},scope);
-//          }
-//          else{
-//              cout<<"Semantic Error: Matrix can only have int or float at line no: "<<yylineno<<"\n";
-//                  std::cout << "Error at line: " << __LINE__ << std::endl;
-
-//          }
-//     }
-//     | COMMA ID MATRIX_TYPE ASSGN ID MultiMatrixDecl 
-//     {
-//             symtab var = search_symtab($2.name,scope,func,1); //check this,can string be char * 
-//            if(var)
-//            {
-//             cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
-//                 std::cout << "Error at line: " << __LINE__ << std::endl;
-
-//             exit(1);
-//            } 
-         
-//          char mtype[] = "<int>";
-//          char mtype1[] = "<float>";
-//          if(!strcmp(mtype,$3) || !strcmp(mtype1,$3)){
-//               //add matrix with type int or float
-//                insert_symtab($2.name,$3,{},scope);
-            
-//                symtab var = search_symtab($5.name,scope,func,0); //check this,can string be char * 
-//               if(var)
-//                {
-//                 //compare the rhs matrix type
-//                 if(!strcmp(var->type.c_str(),$3)){
-//                     //do nothing
-//                 }
-//                 else{
-//                     cout<<"Semantic Error: Martices are of different types at line no: "<<yylineno<<"\n";
-//                         std::cout << "Error at line: " << __LINE__ << std::endl;
-
-//                 }
-//                } 
-//                else{
-//                 cout<<"Semantic Error: variable not declared at line no: "<<yylineno<<"\n";
-//                     std::cout << "Error at line: " << __LINE__ << std::endl;
-
-//                 exit(1);
-//                }
-//          }
-//          else{
-//              cout<<"Semantic Error: Matrix can only have int or float at line no: "<<yylineno<<"\n";
-//                  std::cout << "Error at line: " << __LINE__ << std::endl;
-
-//          }
-//     }
-//     | COMMA ID MATRIX_TYPE OBRAK numL CBRAK MultiMatrixDecl 
-//     {
-//            symtab var = search_symtab($2.name,scope,func,1); //check this,can string be char * 
-//            if(var)
-//            {
-//             cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
-//                 std::cout << "Error at line: " << __LINE__ << std::endl;
-
-//             exit(1);
-//            } 
-         
-//          char mtype[] = "<int>";
-//          char mtype1[] = "<float>";
-//          if(!strcmp(mtype,$3) || !strcmp(mtype1,$3)){
-//             //add matrix with type int or float
-//             // also patch the dimensions from numL
-//             insert_symtab($2.name,$3,{$5.row,$5.col},scope);
-//          }
-//          else{
-//              cout<<"Semantic Error: Matrix can only have int or float at line no: "<<yylineno<<"\n";
-//                  std::cout << "Error at line: " << __LINE__ << std::endl;
-
-//          }
-//     }
-//     | COMMA ID MATRIX_TYPE ASSGN OBRACE open_marker MatrixL closing_marker CBRACE  MultiMatrixDecl 
-//     {
-//          symtab var = search_symtab($2.name,scope,func,1); //check this,can string be char * 
-//            if(var)
-//            {
-//             cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
-//                 std::cout << "Error at line: " << __LINE__ << std::endl;
-
-//             exit(1);
-//            } 
-         
-//          char mtype[] = "<int>";
-//          char mtype1[] = "<float>";
-//          if(!strcmp(mtype,$3) || !strcmp(mtype1,$3)){
-//             //add matrix with type int or float
-//             // also patch the dimensions from MAtrixL
-//             if(strcmp($3,$7.type)){
-//                  cout<<"The assigned constant matrix is different from the variable matrix declared here at line no: "<<yylineno<<"\n";
-//                  exit(1);  
-//             }
-//             insert_symtab($2.name,$3,{$7.row,$7.col},scope);
-
-//          }
-//          else{
-//              cout<<"Semantic Error: Matrix can only have int or float at line no: "<<yylineno<<"\n";
-//                  std::cout << "Error at line: " << __LINE__ << std::endl;
-
-//          }      
-
-//     }
-//     | /* empty */
-
-//     ;
-
-//new decl
 
 MultiMatrixDecl : MultiMatrixDecl COMMA MatrixDecl
                 | MatrixDecl
@@ -1100,9 +975,23 @@ class_arg:
             exit(1);
         }
         params.clear();
-        // if(M.first->return_type != "int")   $$ =strdup(x->type.c_str());
-        // else   
+        if(M.first->return_type[0] == 'm') {
+            string t = M.first->return_type;
+            if(t[t.size()-3]=='a'){
+                $$ = strdup("<float>");
+            }
+            else if(t[t.size()-3]=='n'){
+                $$ = strdup("<int>");
+            }
+            else{
+                cout<<"Semantic Error: Invalid Matrix return type, at line no.: "<<yylineno<<"\n";
+                exit(1);
+            }
+        }
+        else   
          $$ =strdup(M.first->return_type.c_str());
+
+        cout<<x->type<<M.first->return_type<<endl;
     }
     ;
 
@@ -1182,19 +1071,22 @@ pred : pred LOG pred
         }
         bool flg= true;
         //cout<<s<<s1<<endl;
-        if(s[0]=='<'){
-            if(!(s1=="int" || s1 == "float")){
-                
+        //cout<<$2[0]<<endl;
+        if($2[0]=='*'){
+            if(s[0]=='<'){
+                if(!(s1=="int" || s1 == "float")){
+                    
+                }
+                else 
+                flg = false;
             }
-            else 
-            flg = false;
-        }
-        else if(s1[0]=='<'){
-            if(!(s=="int" || s== "float")){
-                
+            else if(s1[0]=='<'){
+                if(!(s=="int" || s== "float")){
+                    
+                }
+                else
+                flg =false;
             }
-            else
-            flg =false;
         }
         if(flg && !coersible($1,$3)){
             cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible at line no: "<<yylineno<<endl;
@@ -1214,20 +1106,7 @@ pred : pred LOG pred
             cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
             exit(1);
         }
-        bool flg= true;
-        if(s[0]=='<'){
-            if(!(s1=="int" || s1 == "float")){
-                
-            }
-            flg = false;
-        }
-        else if(s1[0]=='<'){
-            if(!(s=="int" || s== "float")){
-                
-            }
-            flg =false;
-        }
-        if(flg && !coersible($1,$3)){
+        if(!coersible($1,$3)){
             cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible at line no: "<<yylineno<<endl;
             exit(1);
         }
@@ -1825,6 +1704,11 @@ class_head : CLASS ID{
             cout<<"Semantic Error: Class already declared at line no: "<<yylineno<<"\n";
             exit(1);
         }
+        // cout<<$5.name<<endl;
+        if(!search_classtab($5.name)){
+            cout<<"Semantic Error: Class is not declared at line no: "<<yylineno<<"\n";
+            exit(1);
+        }
         pair<string,string> temp;
         temp.first = access_spec;
         temp.second = $5.name;
@@ -2160,7 +2044,7 @@ DF_UPDATECOL : UPDATE OBRAK ID COMMA ID COMMA pred1 COMMA rhs CBRAK {   symtab v
                     }
              ;
 
-DF_SELECT   : SELECT OBRAK ID COMMA ID COMMA pred1 CBRAK{   symtab var = search_symtab($3.name,scope,func,0);
+DF_SELECT   : SELECT OBRAK ID COMMA  pred1 CBRAK{   symtab var = search_symtab($3.name,scope,func,0);
                 if(!var )
                 {
                     cout<<"Semantic Eroor: The variable has to be declared before use at line no: "<<yylineno<<"\n";
@@ -2207,16 +2091,19 @@ int main(int argc,char** argv)
        // inserting variables
 
        // inserting functions
-       insert_classfunc("read","void","public",{"string","string[]"},D,0);
+       insert_classfunc("read","void","public",{"string","string[]","int"},D,0);
+       insert_classfunc("read","void","public",{"string","string[]","int","char"},D,0);
+       insert_classfunc("union","dataframe","public",{"dataframe[][]"},D,0);
        insert_classfunc("select","dataframe","public",{"string"},D,0);
        insert_classfunc("delete","dataframe","public",{"string"},D,0);
        insert_classfunc("drop","void","public",{"string"},D,0);
        insert_classfunc("get_as_int","int","public",{"int","int"},D,0);
        insert_classfunc("get_as_float","float","public",{"int","int"},D,0);
        insert_classfunc("get_row","string","public",{"float","float"},D,0);
-       insert_classfunc("write","void","public",{},D,0);
-       insert_classfunc("add_row","void","public",{"string[]"},D,0);
-       insert_classfunc("get","dataframe","public",{"int[]"},D,0);
+       insert_classfunc("write","void","public",{"string"},D,0);
+       insert_classfunc("write","void","public",{"string","char"},D,0);
+       insert_classfunc("add_row","void","public",{"string[]","int"},D,0);
+       insert_classfunc("get","dataframe","public",{"int[]","int"},D,0);
     
     if(argc!= 2)
     {
