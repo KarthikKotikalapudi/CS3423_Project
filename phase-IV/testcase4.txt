@@ -53,5 +53,5 @@ main{
     sort(arr,arr+5);
     int a[10];
     obj.x[0];
-    print(obj.x[0]);
+    print(obj.x[0],"\n");
 }
