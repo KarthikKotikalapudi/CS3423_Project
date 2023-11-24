@@ -1,56 +1,67 @@
 Class A{
-    Public: int x[9];
-    int fun(int y,int a){
-        return x[0];
-    }
+     int a,b,c;
+     Private:
+     int x,y;
+     matrix m<int>(2,3);
+
+     void hello(){
+        print("Hello this is A ",a,b,c+x,m[0][1]+w);
+     }
+
+     int add(){
+         return a+m[0][1];
+     }
+
+     bool Truth(){
+        for(int i=0;i<a;i++){
+                    if(b==0){
+                        return true;
+                    }
+        }
+        return false;
+     }
+
+
 };
 
-Class B Inherits Public A{
-    Private: int y;
-    string x;
+Class B{
+     int d,e,f;
+     Private:
+     int z;
+     matrix n<int>(3,2);
+
+     void welcome(){
+        int z;
+        print("Welcome to B ",d,e,f+z,n[1][0]+x);
+     }
+
+     int multiply(){
+         int z;
+         return d*n[1][0];
+     }
+
+     bool isPositive(){
+        if(e > 0){
+            return true;
+        }
+        return false;
+     }
+
+
 };
 
-matrix<int> func(matrix df<int>, matrix df2<float>, int x, matrix df5<int>){
-    int i = 5*4;
-    B obj;
-    bool arr[5];
-    matrix m<int>(3,4);
-    return m;
+ main(){
+    A objA;
+    B objB;
+
+    objA.hello();
+    int resultA = objA.add(); 
+
+    objB.welcome();
+    int resultB = objB.multiply();
+    bool isPositiveB = objB.isPositive();
+    return 0;
 }
 
-int func(string df[]){
-    int i = 5*4;
-    B obj;
-    int arr[5];
-    return arr[5];
-}
 
 
-
-main{
-    int y;
-    int z = y;
-    int arr[5] = {1,2,3,4,5};
-    matrix m<int>(3,4);
-    A obj, obj2;
-    input(obj.x[0]);
-    {
-        int z = y-2;
-    }
-    string sss ="akjkbdbbkdbkjbkj";
-    print("absdf$$obj.x$$asss$$arr[0]$$$$z$$kldkl");
-    bool x = true;
-    input(x);
-    x = x^x;
-    matrix m1<int> = {{1,2},{2,3}}, m3<int> = {{2,4},{1,2}};
-    m3=m3+m1*m1;
-
-    int r = m1[0][0];
-    dataframe df = dataframe();
-    df[0][0] = (z+y)*3;
-    matrix m11<float> = {{1,3},{1,5}}; matrix m4<float> = m11; matrix m2<float>(4,5); matrix m5<float> = m11;
-    string s[10];
-    sort(arr,arr+5);
-    int a[10];
-    obj.x[0];
-}
