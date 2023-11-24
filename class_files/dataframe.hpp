@@ -1,5 +1,15 @@
 #include<bits/stdc++.h>
 using namespace std;
+
+template <typename T>
+void sort(T* arr, T* arr1, int p) {
+    std::sort(arr, arr1, std::greater<T>());
+}
+template <typename T>
+void sort(T* arr, T* arr1) {
+    std::sort(arr, arr1);
+}
+
 class dataframe
 {
 public:
