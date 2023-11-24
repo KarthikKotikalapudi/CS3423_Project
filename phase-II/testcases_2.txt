@@ -31,10 +31,12 @@ Class B{
      matrix n<int>(3,2);
 
      void welcome(){
+        int z;
         print("Welcome to B ",d,e,f+z,n[1][0]+x);
      }
 
      int multiply(){
+         int z;
          return d*n[1][0];
      }
 
