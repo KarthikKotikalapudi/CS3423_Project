@@ -1,7 +1,7 @@
 %{
-    #include"global.hpp"
+    #include"Helper/global.hpp"
     #include<bits/stdc++.h>
-    #include "helper_functions.hpp"
+    #include "Helper/helper_functions.hpp"
     using namespace std;
     void yyerror(const char* s);
     extern int yylex(void);
