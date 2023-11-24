@@ -1,0 +1,81 @@
+#different types of ids
+int _23 = 5;
+int _x = 3;
+int x92 = 4;
+int x_4 = 5;
+
+
+Class A{
+     int a,b,c;
+     Private:
+     int x,y;
+     matrix m<int>(2,3);
+     
+     Public:
+     void hello(){
+        print("Hello this is A ",a,b,c+x,m[0][1]);
+        return;
+     }
+
+     int add(){
+         return a+m[0][1];
+     }
+
+     bool Truth(){
+        for(int i=0;i<a;i++){
+                    if(b==0){
+                        return true;
+                    }
+        }
+        return false;
+     }
+
+
+};
+
+Class B{
+     int d,e,f;
+     Private:
+     int z;
+     matrix n<int>(3,2);
+     
+     Public:
+     void welcome(){
+        int z;
+        print("Welcome to B ",d,e,f+z,n[1][0]);
+        return;
+     }
+
+     int multiply(){
+         int z;
+         return d*n[1][0];
+     }
+
+     bool isPositive(){
+        if(e > 0 AND z>0){
+            return true;
+        }
+        elif z>0 {
+            return true;
+        }
+        return false;
+     }
+
+
+};
+
+ main{
+    A objA;
+    B objB;
+
+    objA.hello();
+    int resultA = objA.add(); 
+
+    objB.welcome();
+    int resultB = objB.multiply();
+    bool isPositiveB = objB.isPositive();
+    return 0;
+}
+
+
+
