@@ -9,7 +9,7 @@ Class A{
      int a,b,c;
      Private:
      int x,y;
-     matrix m<int>(2,3);
+     int m[2][3];
      
      Public:
      void hello(){
@@ -37,7 +37,7 @@ Class B{
      int d,e,f;
      Private:
      int z;
-     matrix n<int>(3,2);
+     int n[3][2];
      
      Public:
      void welcome(){

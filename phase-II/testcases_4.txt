@@ -1,7 +1,7 @@
 Class MyDataFrame {
     dataframe df = dataframe();
     
-
+    Public:
     void readCSV(string filename) {
         string a[4] ={"","","" ,""};
         df.read(filename,a,4);

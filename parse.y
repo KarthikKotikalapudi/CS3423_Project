@@ -134,7 +134,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 if(var[0] != "" && var[2] != "1")
                 {
                 cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
-                    std::cout << "Error at line: " << __LINE__ << std::endl;
+                    //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
                 } 
@@ -144,7 +144,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(temp[0] !="" && temp[2] != "1")
                     {
                     cout<<"Semantic Error: variable already declared  at line no: "<<yylineno<<"\n";
-                        std::cout << "Error at line: " << __LINE__ << std::endl;
+                        //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
                     }
@@ -155,7 +155,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
                             cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
-                                std::cout << "Error at line: " << __LINE__ << std::endl;
+                                //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                             exit(1);
                         }
@@ -169,7 +169,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 if(var)
                 {
                 cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
-                    std::cout << "Error at line: " << __LINE__ << std::endl;
+                    //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
                 } 
@@ -178,7 +178,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(search_symtab(var_list[i].name,scope,func,1))
                     {
                     cout<<"Semantic Error: variable already declared  at line no: "<<yylineno<<"\n";
-                        std::cout << "Error at line: " << __LINE__ << std::endl;
+                        //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
                     }
@@ -189,7 +189,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
                             cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
-                                std::cout << "Error at line: " << __LINE__ << std::endl;
+                                //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                             exit(1);
                         }
@@ -213,7 +213,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(temp[0] !="" && temp[2] != "1")
                     {
                     cout<<"Semantic Error: variable already declared  at line no: "<<yylineno<<"\n";
-                        std::cout << "Error at line: " << __LINE__ << std::endl;
+                        //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
                     }
@@ -224,7 +224,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
                             cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
-                                std::cout << "Error at line: " << __LINE__ << std::endl;
+                                //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                             exit(1);
                         }
@@ -238,7 +238,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(search_symtab(var_list[i].name,scope,func,1))
                     {
                     cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
-                        std::cout << "Error at line: " << __LINE__ << std::endl;
+                        //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
                     }
@@ -249,7 +249,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
                             cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
-                                std::cout << "Error at line: " << __LINE__ << std::endl;
+                                //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                             exit(1);
                         }
@@ -266,13 +266,13 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 if(var[0] != "" && var[2] != "1")
                 {
                 cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
-                    std::cout << "Error at line: " << __LINE__ << std::endl;
+                    //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
                 }
                 if(!coersible($1,$4)){
                     cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
-                        std::cout << "Error at line: " << __LINE__ << std::endl;
+                        //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
                 } 
@@ -282,7 +282,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(temp[0] !="" && temp[2] != "1")
                     {
                     cout<<"Semantic Error: variable already declared  at line no: "<<yylineno<<"\n";
-                        std::cout << "Error at line: " << __LINE__ << std::endl;
+                        //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
                     }
@@ -293,7 +293,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
                             cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
-                                std::cout << "Error at line: " << __LINE__ << std::endl;
+                                //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                             exit(1);
                         }
@@ -307,14 +307,14 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 if(var)
                 {
                 cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
-                    std::cout << "Error at line: " << __LINE__ << std::endl;
+                    //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
                 }
                 // cout<<$1<<$4<<endl;
                 if(!coersible($1,$4)){
                     cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
-                        std::cout << "Error at line: " << __LINE__ << std::endl;
+                        //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
                 } 
@@ -323,7 +323,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(search_symtab(var_list[i].name,scope,func,1))
                     {
                     cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
-                        std::cout << "Error at line: " << __LINE__ << std::endl;
+                        //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
                     }
@@ -334,7 +334,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
                             cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
-                                std::cout << "Error at line: " << __LINE__ << std::endl;
+                                //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                             exit(1);
                         }
@@ -352,7 +352,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
             s2.type = $5.type;
             if($3!=$5.len){
                 cout<<"Semantic Error: Diminsions on LHS and RHS are not same  at line no: "<<yylineno<<"\n";
-                    std::cout << "Error at line: " << __LINE__ << std::endl;
+                    //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
             }
@@ -367,7 +367,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(temp[0] !="" && temp[2] != "1")
                     {
                     cout<<"Semantic Error: variable already declared  at line no: "<<yylineno<<"\n";
-                        std::cout << "Error at line: " << __LINE__ << std::endl;
+                        //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
                     }
@@ -378,7 +378,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
                             cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
-                                std::cout << "Error at line: " << __LINE__ << std::endl;
+                                //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                             exit(1);
                         }
@@ -392,7 +392,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(search_symtab(var_list[i].name,scope,func,1))
                     {
                     cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
-                        std::cout << "Error at line: " << __LINE__ << std::endl;
+                        //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                     exit(1);
                     }
@@ -403,7 +403,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                     if(var_list[i].type!=""){
                         if(!coersible(s,var_list[i].type)){
                             cout<<"Semantic Error: Type Mismatch at line no: "<<yylineno<<"\n";
-                                std::cout << "Error at line: " << __LINE__ << std::endl;
+                                //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                             exit(1);
                         }
@@ -443,7 +443,7 @@ Multideclstmt : COMMA ID Multideclstmt {
         s2.type = $5.type;
         if($3!=$5.len){
             cout<<"Semantic Error: Diminsions on LHS and RHS are not same  at line no: "<<yylineno<<"\n";
-                std::cout << "Error at line: " << __LINE__ << std::endl;
+                //std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
         }
@@ -466,15 +466,15 @@ numbers : NUM {
      }
      ;
 
-constL : numbers COMMA constL { $$.len =   $3.len + 1; if(strcmp($3.type,"int")){cout<<"Semantic error:constants are not of same type at line no: "<<yylineno<<"\n";    std::cout << "Error at line: " << __LINE__ << std::endl;
+constL : numbers COMMA constL { $$.len =   $3.len + 1; if(strcmp($3.type,"int")){cout<<"Semantic error:constants are not of same type at line no: "<<yylineno<<"\n";    //std::cout << "Error at line: " << __LINE__ << std::endl;
  exit(1);}  $$.type = strdup("int"); }
-    | FLOAT COMMA constL {  $$.len = $3.len +1 ;if(strcmp($3.type,"float")){cout<<"Semantic error:constants are not of same type at line no: "<<yylineno<<"\n";     std::cout << "Error at line: " << __LINE__ << std::endl;
+    | FLOAT COMMA constL {  $$.len = $3.len +1 ;if(strcmp($3.type,"float")){cout<<"Semantic error:constants are not of same type at line no: "<<yylineno<<"\n";     //std::cout << "Error at line: " << __LINE__ << std::endl;
 exit(1);}  $$.type = strdup("float");}
-    | STRING COMMA constL { $$.len = $3.len +1; if(strcmp($3.type,"string")){cout<<"Semantic error:constants are not of same type at line no: "<<yylineno<<"\n";    std::cout << "Error at line: " << __LINE__ << std::endl;
+    | STRING COMMA constL { $$.len = $3.len +1; if(strcmp($3.type,"string")){cout<<"Semantic error:constants are not of same type at line no: "<<yylineno<<"\n";    //std::cout << "Error at line: " << __LINE__ << std::endl;
  exit(1);}  $$.type = strdup("string");}
-    | CHAR COMMA constL { $$.len = $3.len +1 ;if(strcmp($3.type,"char")){cout<<"Semantic error:constants are not of same type at line no: "<<yylineno<<"\n";     std::cout << "Error at line: " << __LINE__ << std::endl;
+    | CHAR COMMA constL { $$.len = $3.len +1 ;if(strcmp($3.type,"char")){cout<<"Semantic error:constants are not of same type at line no: "<<yylineno<<"\n";     //std::cout << "Error at line: " << __LINE__ << std::endl;
 exit(1);}  $$.type = strdup("char");}
-    | BOOL COMMA constL { $$.len = $3.len +1 ;if(strcmp($3.type,"bool")){cout<<"Semantic error:constants are not of same type at line no: "<<yylineno<<"\n";    std::cout << "Error at line: " << __LINE__ << std::endl;
+    | BOOL COMMA constL { $$.len = $3.len +1 ;if(strcmp($3.type,"bool")){cout<<"Semantic error:constants are not of same type at line no: "<<yylineno<<"\n";    //std::cout << "Error at line: " << __LINE__ << std::endl;
  exit(1);}  $$.type = strdup("bool");}
     | numbers {$$.len = 1; $$.type = strdup("int");}
     | FLOAT { $$.len = 1; $$.type = strdup("float");}
@@ -491,7 +491,7 @@ MultiDimL : OBRACE MultiDimL CBRACE {
     | MultiDimL COMMA MultiDimL{
             if(strcmp($1.type,$3.type)!=0 || $1.len != $3.len){
                 cout<<"Semantic Error: All lists in the RHS should have same characteristics at line no: "<<yylineno<<"\n";
-                    std::cout << "Error at line: " << __LINE__ << std::endl;
+                    //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
             }
@@ -510,7 +510,7 @@ MatrixDecl :
            if(var)
            {
             cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
-                std::cout << "Error at line: " << __LINE__ << std::endl;
+                //std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
            } 
@@ -528,7 +528,7 @@ MatrixDecl :
         }
          else{
              cout<<"Semantic Error: Matrix can only have int or float at line no: "<<yylineno<<"\n";
-                 std::cout << "Error at line: " << __LINE__ << std::endl;
+                 //std::cout << "Error at line: " << __LINE__ << std::endl;
 
          }
     
@@ -539,7 +539,7 @@ MatrixDecl :
            if(var)
            {
             cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
-                std::cout << "Error at line: " << __LINE__ << std::endl;
+                //std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
            } 
@@ -553,7 +553,7 @@ MatrixDecl :
          }
          else{
              cout<<"Semantic Error: Matrix can only have int or float at line no: "<<yylineno<<"\n";
-                 std::cout << "Error at line: " << __LINE__ << std::endl;
+                 //std::cout << "Error at line: " << __LINE__ << std::endl;
 
          }
 
@@ -563,7 +563,7 @@ MatrixDecl :
            if(var)
            {
             cout<<"Semantic Error: variable already declared at line no: "<<yylineno<<"\n";
-                std::cout << "Error at line: " << __LINE__ << std::endl;
+                //std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
            } 
@@ -582,7 +582,7 @@ MatrixDecl :
          }
          else{
              cout<<"Semantic Error: Matrix can only have int or float at line no: "<<yylineno<<"\n";
-                 std::cout << "Error at line: " << __LINE__ << std::endl;
+                 //std::cout << "Error at line: " << __LINE__ << std::endl;
 
          }      
 
@@ -634,7 +634,7 @@ FuncHead_dup :FuncHead  OBRAK params CBRAK
             if(search_functab($1.name,params))
         {
             cout<<"Semantic Error: function already declared at line no: "<<yylineno<<"\n";
-                std::cout << "Error at line: " << __LINE__ << std::endl;
+                //std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
         }
@@ -649,7 +649,7 @@ FuncHead_dup :FuncHead  OBRAK params CBRAK
             if(f && !f->override)
             {
                 cout<<"Semantic Error: function already declared in the class with same signature at line no: "<<yylineno<<"\n";
-                        std::cout << "Error at line: " << __LINE__ << std::endl;
+                        //std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
             }
@@ -695,7 +695,7 @@ FuncHead : DATATYPE ID
     | ID ID { if(!search_classtab($1.name))
                {
                 cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist at line no: "<<yylineno<<"\n";
-                    std::cout << "Error at line: " << __LINE__ << std::endl;
+                    //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
                }
@@ -718,7 +718,7 @@ parameter : DATATYPE ID
     if(par)
                 {
                 cout<<"Semantic Error: two parameters cannot have same name at line no: "<<yylineno<<"\n Parameter name "<<$2.name<<" is already used at line no: "<<yylineno<<"\n";
-                    std::cout << "Error at line: " << __LINE__ << std::endl;
+                    //std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
             } 
@@ -730,7 +730,7 @@ parameter : DATATYPE ID
             if(par)
             {
             cout<<"Semantic Error: two parameters cannot have same name at line no: "<<yylineno<<"\n Parameter name "<<$2.name<<" is already used at line no: "<<yylineno<<"\n";
-                std::cout << "Error at line: " << __LINE__ << std::endl;
+                //std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
             }  
@@ -746,7 +746,7 @@ parameter : DATATYPE ID
         if(par)
             {
             cout<<"Semantic Error: two parameters cannot have same name at line no: "<<yylineno<<"\n Parameter name "<<$2.name<<" is already used at line no: "<<yylineno<<"\n";
-                std::cout << "Error at line: " << __LINE__ << std::endl;
+                //std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
             } 
@@ -757,7 +757,7 @@ parameter : DATATYPE ID
             if(!search_classtab($1.name))
                {
                 cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist at line no: "<<yylineno<<"\n";
-                    std::cout << "Error at line: " << __LINE__ << std::endl;
+                    //std::cout << "Error at line: " << __LINE__ << std::endl;
 
                 exit(1);
                }
@@ -766,7 +766,7 @@ parameter : DATATYPE ID
             if(par)
             {
             cout<<"Semantic Error: two parameters cannot have same name at line no: "<<yylineno<<"\n Parameter name "<<$2.name<<" is already used at line no: "<<yylineno<<"\n";
-                std::cout << "Error at line: " << __LINE__ << std::endl;
+                //std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
             } 
@@ -798,7 +798,7 @@ parameter : DATATYPE ID
             if(par)
             {
                 cout<<"Semantic Error: two parameters cannot have same name at line no: "<<yylineno<<"\n Parameter name "<<$2.name<<" is already used at line no: "<<yylineno<<"\n";
-                std::cout << "Error at line: " << __LINE__ << std::endl;
+                //std::cout << "Error at line: " << __LINE__ << std::endl;
 
             exit(1);
             }

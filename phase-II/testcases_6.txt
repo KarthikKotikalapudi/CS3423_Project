@@ -18,7 +18,7 @@ Class stack{
 Class Graph {
 Private:
     int numVertices;
-    matrix adjList <int>(3,4);
+    int adjList[3][4];
   
 
 Public:

@@ -2,11 +2,11 @@ Class BankersAlgorithm {
 Private:
     int numProcesses;
     int numResources;
-    matrix m<int>(4,5);
-    matrix allocation<int>(6,7);
+    int m[4][5];
+    int allocation[6][7];
      int available[10];
      int finish[10];
-    matrix need<int>(8,9); 
+    int need[8][9]; 
 
 
 Public:
@@ -52,7 +52,7 @@ Public:
 };
 
  main{
-    int x;
+    int x = 5;
     print(x);
 }
 
