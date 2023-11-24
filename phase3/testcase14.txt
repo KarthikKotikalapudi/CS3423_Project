@@ -1,0 +1,39 @@
+int min(int a,int b){
+    if(a<b){
+        return a;
+    }
+    return b;
+}
+
+int min(int a,int b,int c){
+    return min(a,min(b,c));
+}
+
+int min(int a,int b,int c, int d){
+    return min(min(a,b),min(c,d));
+}
+
+main{
+    int a,b,c,d;
+    input(a);
+    input(b);
+    input(c);
+    input(d);
+    int min1 = min(a,b,c,d);
+    int min2 = min(min(a,b,c),d);
+    int min3 = min(min(a,b),min(d));
+    ##int min3 = min(min(a,b),min(c,d));
+    
+    print(min1," ",min2," ",min3,"\n");
+
+    matrix m1<int> = {{1,2},{2,3}}, m3<int> = {{2,4},{0,2}};
+    matrix m2<int> = m3.inverse();
+    m1 =m1 + m3*m3[0][0];
+    int det = m1.determinant();
+    print("determinant(m1): ",det,"\n");
+    for(int i=0;i<m1.getRowCount();i++){
+        for(int j=0;j<m1.getColumnCount();j++){
+            print(m1[i][j]," ");
+        }
+        print("\n");
+    }}
