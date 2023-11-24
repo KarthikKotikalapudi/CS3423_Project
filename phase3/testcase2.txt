@@ -1,0 +1,52 @@
+int max(int a, int b){
+    if(a>b) {
+        return a;
+    }
+    return b;
+}
+
+int min(int a, int b){
+    if(a<b) {
+        return a;
+    }
+    return b;
+}
+
+main{
+    int x; float y;
+    input(x);
+    input(y);
+    print("The values given are: ",x,", ",y,"\n");
+    int sum = x+y;
+    float sum2 = x+y;
+    int diff;
+    float diff2;
+    if(x>y){
+        diff = x-y;
+        diff2 = x-y;
+        }
+    else{
+        diff = y-x;
+        diff2 = y-x;
+    }
+    int product = x*y;
+    float product2 = x*y;
+    int div = x/y;
+    float div2 = x/y;
+    print("Integral operations\n");
+    print("Sum: ",sum,"\tDifference: ",diff,"\n");
+    print("Poduct: ",product,"\tRatio: ",div,"\n");
+    print("Rational operations\n");
+    print("Sum: ",sum2,"\tDifference: ",diff2,"\n");
+    print("Poduct: ",product2,"\tRatio: ",div2,"\n");
+    float expr;
+    int a= x+y;
+    int b = x-y;
+    if(a+b*a>2*max(a , 2*a - b)){
+        expr = a*a +max(a,b)*min(a,b)+ b*b;
+    }
+    else{
+        expr =5*max(a,b)/min(a,b);
+    }
+    print("Expr: ",expr,"\n");
+}

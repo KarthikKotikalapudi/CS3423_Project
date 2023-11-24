@@ -6,7 +6,8 @@ class MyDataFrame {
     }
 
     void readCSV(string filename) {
-        df.read(filename);
+        string a[4] ={"","","" ,""}
+        df.read(filename,a);
     }
 
     int getValueAsInt(int row, int col) {

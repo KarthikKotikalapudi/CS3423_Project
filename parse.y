@@ -801,7 +801,7 @@ FuncHead_dup :FuncHead  OBRAK params CBRAK
                 cout<<"Semantic Error: function already declared in the class with same signature at line no: "<<yylineno<<"\n";
                 exit(1);
             }
-            insert_classfunc(active_class_ptr->name, $1.ret_type, access_spec, {}, active_class_ptr,0);
+            insert_classfunc($1.name, $1.ret_type, access_spec, {}, active_class_ptr,0);
         }
         }
     ;
@@ -1089,7 +1089,8 @@ class_arg:
             exit(1);
         }
         params.clear();
-        $$ =strdup(x->type.c_str());
+        if(M.first->return_type != "int")   $$ =strdup(x->type.c_str());
+        else    $$ =strdup(M.first->return_type.c_str());
     }
     ;
 
@@ -1116,7 +1117,7 @@ pred : pred LOG pred
     | pred COMP pred 
     {
         if(!coersible($1,$3)){
-            cout<<"Semantic Error: Both sides of the Comparator operation must be same"<<endl;
+            cout<<"Semantic Error: Both sides of the Comparator operation must be same at line no: "<<yylineno<<endl;
             exit(1);
         }
         string s = $1,s1=$3;
@@ -1138,7 +1139,7 @@ pred : pred LOG pred
             exit(1);
         }
         if(!coersible($1,$3)){
-            cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible"<<endl;
+            cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible at line no: "<<yylineno<<endl;
             exit(1);
         }
         $$ = $1;
@@ -1151,7 +1152,7 @@ pred : pred LOG pred
             exit(1);
         }
         if(strcmp($1,$3)){
-            cout<<"Semantic Error: Both sides of the Bitwise operation must be same"<<endl;
+            cout<<"Semantic Error: Both sides of the Bitwise operation must be same at line no: "<<yylineno<<endl;
             exit(1);
         }
         $$ = $1;
@@ -1168,7 +1169,7 @@ pred : pred LOG pred
             exit(1);
         }
         if(!coersible($1,$3)){
-            cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible"<<endl;
+            cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible at line no: "<<yylineno<<endl;
             exit(1);
         }
       //  $$ = dominate($1,$3).c_str();
@@ -1186,7 +1187,7 @@ pred : pred LOG pred
             exit(1);
         }
         if(!coersible($1,$3)){
-            cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible"<<endl;
+            cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible at line no: "<<yylineno<<endl;
             exit(1);
         }
         $$= strdup(dominate($1,$3).c_str()); // $$ = dominate($1,$3).c_str();
@@ -2140,12 +2141,16 @@ int main(int argc,char** argv)
         pair<string,string> temp;
         insert_classtab("matrix<int>",temp);
         classtab MI= search_classtab("matrix<int>"); 
+        insert_classfunc("getRowCount","int","public",{},MI,false);
+        insert_classfunc("getColumnCount","int","public",{},MI,false);
         insert_classfunc("transpose","matrix<int>","public",{},MI,false);
         insert_classfunc("determinant","int","public",{},MI,false);
         insert_classfunc("inverse","matrix<int>","public",{},MI,false);
 
         insert_classtab("matrix<float>",temp);
         classtab MF= search_classtab("matrix<float>"); 
+        insert_classfunc("getRowCount","int","public",{},MF,false);
+        insert_classfunc("getColumnCount","int","public",{},MF,false);
         insert_classfunc("transpose","matrix<float>","public",{},MF,false);
         insert_classfunc("determinant","float","public",{},MF,false);
         insert_classfunc("inverse","matrix<float>","public",{},MF,false);
