@@ -818,7 +818,7 @@ FuncBody : stmt
          ; 
 
 varL: rhs {params.push_back($1);}
-    | rhs COMMA varL {params.push_back($1);}
+    | varL COMMA rhs {params.push_back($3);}
     ;
 
 function_call:ID OBRAK varL CBRAK  {
@@ -950,14 +950,12 @@ class_arg:
         $$ =strdup(x->type.c_str());
     }
     | ID DOT class_function_call{ 
-        reverse(params.begin(),params.end());
         symtab x = search_symtab($1.name,scope,func,0);
         if(!x){
             cout<<"Semantic Error: Variable is not declared in this scope at line no: "<<yylineno<<"\n";
             exit(1);
         }
         string class_name = x->type;
-        
         if(class_name == "<int>")   class_name = "matrix<int>";
         if(class_name == "<float>")   class_name = "matrix<float>";
         if(!search_classtab(class_name)){
@@ -965,7 +963,6 @@ class_arg:
               exit(1);
         } 
         pair <functab,string> M = search_classfunc($3,params,class_name);
-        // cout<<M.first->return_type<<" kjbfjgjf"<<endl;
         if(M.first==NULL){
               cout<<"Semantic Error: Method is not declared in the class at line no: "<<yylineno<<"\n";
               exit(1);
@@ -991,7 +988,7 @@ class_arg:
         else   
          $$ =strdup(M.first->return_type.c_str());
 
-        cout<<x->type<<M.first->return_type<<endl;
+        // cout<<M.first->return_type<<endl;
     }
     ;
 
@@ -1285,6 +1282,7 @@ expr : ID ASSGN rhs
         }
     | ID ARTHASSGN rhs 
         {   symtab var;
+            cout<<$3<<endl;
             if((var=search_symtab($1.name,scope,func,0))){
 
                 if(strcmp($3,"int") && strcmp($3,"float") && strcmp($3,"dataframe")){

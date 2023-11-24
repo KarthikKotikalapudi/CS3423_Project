@@ -1,39 +1,21 @@
-#Testcase: sort, polymorphism
-
-#Custom testcase
-
-Class A{
-    Public: int x[9];
-    int fun(int y,int a){
-        return y;
+void fun(){
+    dataframe df = dataframe();
+    string a[] = {"","",""};
+    df.read("hello.csv",a,3);
+    for(int i=0;i<2;i++){
+        for(int j=0;j<2;j++){
+            print(df.get_as_int(i,j)," ");
+        }
+        print("\n");
     }
-};
-
-Class B Inherits Public A{
-    Public:
-    string x;
-    string fun(string y,int a){
-        return y;
-    }
-};
-
-matrix<int> func(matrix df<int>, matrix df2<float>, int x, matrix df5<int>){
-    B obj;
-    bool arr[5];
-    matrix m<int>(3,4);
-    return m;
+    return;
 }
 
-int func(string df[]){
-    int i = 5*4;
-    B obj;
-    int arr[2] = {1,2};
-    return arr[1];
-}
+
 
 main{
-    B obj;
-    string s = "string";
-    print(obj.fun(s,2),"\n");
-    print(obj.fun(5,2),"\n");
+   fun();
+   dataframe df = dataframe();
+   dataframe df2 = dataframe();
+   fun();
 }
