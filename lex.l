@@ -101,6 +101,7 @@ sort {fprintf(out,"%s",yytext); return SORT;}
         if(bscope <= 1)  fprintf(out,"<<");
         else    fprintf(out,",");
     }
+    else if(mat && bscope)  fprintf(out,"%s",yytext);
     else if(!mat)   fprintf(out,"%s",yytext);
     else if(mat_scope != 0){
         fprintf(out,"%s",yytext);
@@ -170,7 +171,7 @@ Inherits {fprintf(out," : "); return INHERITS;}
 \n      { yylineno++; fprintf(out,"\n"); }
 .   {
     /*Error*/
-    printf("Error at line %d: invalid token: %s\n", yylineno, yytext);
+    printf("Lexical error at line %d: invalid token: %s\n", yylineno, yytext);
     exit(1);
 }
 %%
