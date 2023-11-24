@@ -23,7 +23,7 @@ public:
  std::string get(int row,int col)
  {
     if((row>=0 && row<nrows)&&(col>=0 && col <ncols))
-     return data[row-1][col-1];
+     return data[row][col];
     else 
     {
       std::cout<<"Index or Column out of bounds";
@@ -55,8 +55,7 @@ dataframe& operator=(const dataframe& other) {
   }
 
   //write a data frame to csv file
-  void write(std::string filename,std::vector<std::string>cols,char delim);
-
+  void write(std::string filename,char delim);
 
   //drop columns
   void drop(std::vector<std::string>cols);
@@ -79,21 +78,13 @@ dataframe::~dataframe()
 {
 }
 
-void dataframe::write(std::string filename,std::vector<std::string>cols,char delim){
+void dataframe::write(std::string filename,char delim){
     std::ofstream out(filename);
     if(!out.is_open()){
         std::cout<<"Error opening file"<<std::endl;
         return;
     }
-    //write column names
-    if(cols.size()){
-       for(int i=0;i<cols.size();i++){
-        out<<cols[i];
-        if(i!=cols.size()-1)
-            out<<delim;
-        }
-        out<<std::endl;
-    }
+
     //write data
     for(int i=0;i<data.size();i++){
         for(int j=0;j<data[0].size();j++){
@@ -131,7 +122,7 @@ void dataframe::drop(std::vector<std::string>cols){
 void dataframe::drop(std::vector<int>cols){
     std::sort(cols.begin(),cols.end());
     for(int i=0;i<cols.size();i++){
-        col_names.erase(col_names.begin()+cols[i]-i);
+     if(col_names.size()>0)   col_names.erase(col_names.begin()+cols[i]-i);
         col_types.erase(col_types.begin()+cols[i]-i);
         for(int j=0;j<data.size();j++){
             data[j].erase(data[j].begin()+cols[i]-i);
@@ -283,7 +274,7 @@ dataframe dataframe::select(std::string pred)
               {
                 if(get_as_int(j,i)<v) 
                 {
-                    row = data[j];
+                    row = data[j]; 
                     n.data.push_back(row); row.clear(); n.nrows++;
                 }
               }
@@ -335,9 +326,9 @@ dataframe dataframe::select(std::string pred)
             }
             return n;
     }
-    else if(pred.substr(0,3)=="float")
+    else if(pred.substr(0,5)=="float")
     {
-                    std::string ind = extractSubstring(pred);
+            std::string ind = extractSubstring(pred);
             if(ind.size()==0)
             {
                 std::cout<<"dataframe::select error:The predicate is ill-formed\n";
@@ -417,7 +408,7 @@ dataframe dataframe::select(std::string pred)
             }
             return n;
     }
-    else if(pred.substr(0,3)=="string")
+    else if(pred.substr(0,6)=="string")
     {
             std::string ind = extractSubstring(pred);
             if(ind.size()==0)
@@ -540,49 +531,49 @@ dataframe dataframe::delete_rows(std::string pred)
             // searching rows   
             for(int j=0;j<nrows;j++)
             {
-              if(!(comp=="<"))  
+              if(comp=="<")  
               {
-                if(get_as_int(j,i)<v) 
+                if(!(get_as_int(j,i)<v)) 
                 {
                     row = data[j];
                     n.data.push_back(row); row.clear(); n.nrows++;
                 }
               }
-              else if(!(comp==">"))  
+              else if(comp==">")  
               {
-                if(get_as_int(j,i)>v) 
+                if(!(get_as_int(j,i)>v)) 
                 {
                     row = data[j];
                     n.data.push_back(row); row.clear(); n.nrows++;
                 }
               }
-               else if(!(comp=="<="))  
+               else if(comp=="<=")  
               {
-                if(get_as_int(j,i)<=v) 
+                if(!(get_as_int(j,i)<=v)) 
                 {
                     row = data[j];
                     n.data.push_back(row); row.clear(); n.nrows++;
                 }
               }
-               else if(!(comp==">="))  
+               else if(comp==">=")  
               {
-                if(get_as_int(j,i)>=v) 
+                if(!(get_as_int(j,i)>=v)) 
                 {
                     row = data[j];
                     n.data.push_back(row); row.clear(); n.nrows++;
                 }
               }
-               else if(!(comp=="=="))  
+               else if(comp=="==")  
               {
-                if(get_as_int(j,i)==v) 
+                if(!(get_as_int(j,i)==v)) 
                 {
                     row = data[j];
                     n.data.push_back(row); row.clear(); n.nrows++;
                 }
               }
-               else if(!(comp=="!="))  
+               else if(comp=="!=")  
               {
-                if(get_as_int(j,i)!=v) 
+                if(!(get_as_int(j,i)!=v)) 
                 {
                     row = data[j];
                     n.data.push_back(row); row.clear(); n.nrows++;
@@ -596,7 +587,7 @@ dataframe dataframe::delete_rows(std::string pred)
             }
             return n;
     }
-    else if(pred.substr(0,3)=="float")
+    else if(pred.substr(0,5)=="float")
     {
                     std::string ind = extractSubstring(pred);
             if(ind.size()==0)
@@ -622,49 +613,49 @@ dataframe dataframe::delete_rows(std::string pred)
             // searching rows   
             for(int j=0;j<nrows;j++)
             {
-              if(!(comp=="<"))  
+              if(comp=="<")  
               {
-                if(get_as_float(j,i)<v) 
+                if(!(get_as_float(j,i)<v)) 
                 {
                     row = data[j];
                     n.data.push_back(row); row.clear(); n.nrows++;
                 }
               }
-              else if(!(comp==">"))  
+              else if(comp==">")  
               {
-                if(get_as_float(j,i)>v) 
+                if(!(get_as_float(j,i)>v)) 
                 {
                     row = data[j];
                     n.data.push_back(row); row.clear(); n.nrows++;
                 }
               }
-              else if(!(comp=="<="))  
+              else if(comp=="<=")  
               {
-                if(get_as_float(j,i)<=v) 
+                if(!(get_as_float(j,i)<=v)) 
                 {
                     row = data[j];
                     n.data.push_back(row); row.clear(); n.nrows++;
                 }
               }
-              else if(!(comp==">="))  
+              else if(comp==">=")  
               {
-                if(get_as_float(j,i)>v) 
+                if(!(get_as_float(j,i)>v)) 
                 {
                     row = data[j];
                     n.data.push_back(row); row.clear(); n.nrows++;
                 }
               }
-              else if(!(comp=="=="))  
+              else if(comp=="==")  
               {
-                if(get_as_float(j,i)==v) 
+                if(!(get_as_float(j,i)==v)) 
                 {
                     row = data[j];
                     n.data.push_back(row); row.clear(); n.nrows++;
                 }
               }
-              else if(!(comp=="!="))  
+              else if(comp=="!=")  
               {
-                if(get_as_float(j,i)!=v) 
+                if(!(get_as_float(j,i)!=v)) 
                 {
                     row = data[j];
                     n.data.push_back(row); row.clear(); n.nrows++;
@@ -678,7 +669,7 @@ dataframe dataframe::delete_rows(std::string pred)
             }
             return n;
     }
-    else if(pred.substr(0,3)=="string")
+    else if(pred.substr(0,6)=="string")
     {
             std::string ind = extractSubstring(pred);
             if(ind.size()==0)
@@ -712,41 +703,41 @@ dataframe dataframe::delete_rows(std::string pred)
                     n.data.push_back(row); row.clear(); n.nrows++;
                 }
               }
-              else if(!(comp==">"))  
+              else if(comp==">")  
               {
-                if(data[j][i]>val) 
+                if(!(data[j][i]>val)) 
                 {
                     row = data[j];
                     n.data.push_back(row); row.clear(); n.nrows++;
                 }
               }
-              else if(!(comp=="<="))  
+              else if(comp=="<=")  
               {
-                if(data[j][i]<=val) 
+                if(!(data[j][i]<=val)) 
                 {
                     row = data[j];
                     n.data.push_back(row); row.clear(); n.nrows++;
                 }
               }
-              else if(!(comp==">="))  
+              else if(comp==">=")  
               {
-                if(data[j][i]>=val) 
+                if(!(data[j][i]>=val)) 
                 {
                     row = data[j];
                     n.data.push_back(row); row.clear(); n.nrows++;
                 }
               }
-              else if(!(comp=="=="))  
+              else if(comp=="==")  
               {
-                if(data[j][i]==val) 
+                if(!(data[j][i]==val)) 
                 {
                     row = data[j];
                     n.data.push_back(row); row.clear(); n.nrows++;
                 }
               }
-              else if(!(comp=="!="))  
+              else if(comp=="!=")  
               {
-                if(data[j][i]!=val) 
+                if(!(data[j][i]!=val)) 
                 {
                     row = data[j];
                     n.data.push_back(row); row.clear(); n.nrows++;
