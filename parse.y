@@ -93,8 +93,10 @@ open_marker :  {scope++; func = false;}
     ;
 
 closing_marker : {
+    
     delete_symtab_level(scope);
-    scope--; func=true;}
+    scope--;
+    func=false;}
     ;
 
 GlobalDecl : declstmt
