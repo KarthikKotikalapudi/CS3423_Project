@@ -31,7 +31,7 @@ unordered_map<std::string,classtab> class_table_list;
 %}
 %token FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST VOID
 %token COMMA CHAR ASSGN ARTHASSGN  FOR WHILE PRINT INPUT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
-%token BOOL NUL SORT SELECT UPDATE DELETE
+%token BOOL NUL SORT 
 %left NEG LOG ARTH BIT_OP SHIFT COMP COMMA MINUS
 %union{
      struct D{
@@ -706,7 +706,7 @@ FuncHead : DATATYPE ID
     | VOID ID {$$.name = $2.name; $$.ret_type = strdup("void");}
     ;
 
-params : parameter COMMA params {params.push_back($1);}
+params : params COMMA parameter {params.push_back($3);}
     | parameter {params.push_back($1);}
     ;
 
@@ -818,7 +818,7 @@ FuncBody : stmt
          ; 
 
 varL: rhs {params.push_back($1);}
-    | rhs COMMA varL {params.push_back($1);}
+    | varL COMMA rhs {params.push_back($3);}
     ;
 
 function_call:ID OBRAK varL CBRAK  {
@@ -868,9 +868,6 @@ function_call:ID OBRAK varL CBRAK  {
             $$.name = $1.name; $$.ret_type =strdup((fun->return_type).c_str());
         }    
     }
-    | DF_UPDATECOL { $$.name = strdup("update"); $$.ret_type = strdup("dataframe[][]");}
-    | DF_SELECT {$$.name = strdup("select");$$.ret_type = strdup("dataframe[][]");}
-    | DF_DELETEROW {$$.name = strdup("delete");$$.ret_type = strdup("dataframe[][]");;}
     ;
 call_expression: function_call {
     $$=strdup(($1.ret_type));
@@ -956,9 +953,6 @@ class_arg:
             exit(1);
         }
         string class_name = x->type;
-        if(class_name == "dataframe[][]"){
-            reverse(params.begin(),params.end());
-        }
         if(class_name == "<int>")   class_name = "matrix<int>";
         if(class_name == "<float>")   class_name = "matrix<float>";
         if(!search_classtab(class_name)){
@@ -1030,7 +1024,7 @@ pred : pred LOG pred
     }
     | pred SHIFT pred 
     {
-        if($1=="string" || $1=="char"||$3=="string" || $3=="char"||$1=="bool" || $3=="bool"){
+        if(!(strcmp($1,"string") && strcmp($1,"char") && strcmp($3,"string") && strcmp($3,"char") && strcmp($1,"bool") && strcmp($3,"bool"))){
             cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
             exit(1);
         }
@@ -1060,7 +1054,7 @@ pred : pred LOG pred
     }
     | pred ARTH pred 
     {   
-        if($1=="string" || $1=="char"||$3=="string" || $3=="char"){
+        if(!(strcmp($1,"string") && strcmp($1,"char") && strcmp($3,"string") && strcmp($3,"char"))){
             cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
             exit(1);
         }
@@ -1097,7 +1091,7 @@ pred : pred LOG pred
     }
     | pred MINUS pred 
     {   
-        if($1=="string" || $1=="char"||$3=="string" || $3=="char"||$1=="bool" || $3=="bool"){
+        if(!(strcmp($1,"string") && strcmp($1,"char") && strcmp($3,"string") && strcmp($3,"char") && strcmp($1,"bool") && strcmp($3,"bool"))){
             cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
             exit(1);
         }
@@ -1288,7 +1282,7 @@ expr : ID ASSGN rhs
             cout<<$3<<endl;
             if((var=search_symtab($1.name,scope,func,0))){
 
-                if(!(!strcmp($3,"int") || !strcmp($3,"float") || !strcmp($3,"dataframe)"))){
+                if(strcmp($3,"int") && strcmp($3,"float") && strcmp($3,"dataframe")){
                     cout<<"Semantic Error: Invalid RHS type expected int or float at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
@@ -1340,7 +1334,7 @@ expr : ID ASSGN rhs
                     cout<<"Semantic Error: dimensions do not match at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
-                if(!($4=="int" || $4=="float" || $4=="dataframe")){
+                if(strcmp($4,"int") && strcmp($4,"float") && strcmp($4,"dataframe")){
                     cout<<"Semantic Error: Invalid RHS type expected int or float at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
@@ -1420,7 +1414,7 @@ expr : ID ASSGN rhs
                 cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
                 exit(1);
             }
-            if(!($5=="int" || $5=="float" || $5=="dataframe")){
+            if(strcmp($5,"int") && strcmp($5,"float") && strcmp($5,"dataframe")){
                 cout<<"Semantic Error: Invalid RHS type expected int or float at line no: "<<yylineno<<"\n";
                 exit(1);
             }
@@ -1457,7 +1451,7 @@ expr : ID ASSGN rhs
                 cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
                 exit(1);
             }
-            if(!($6=="int" || $6=="float"|| $6=="dataframe")){
+            if(strcmp($6,"int") && strcmp($6,"float") && strcmp($6,"dataframe")){
                 cout<<"Semantic Error: Invalid RHS type expected int or float at line no: "<<yylineno<<"\n";
                 exit(1);
             }
@@ -2005,63 +1999,6 @@ DF_DECL: DF ID ASSGN DF OBRAK CBRAK SEMICOL { if(search_symtab($2.name,scope,fun
  }
         ;
 
-DF_DELETEROW : DELETE OBRAK ID COMMA pred1 CBRAK {   symtab var = search_symtab($3.name,scope,func,0);
-  if(!var )
-  {
-    cout<<"Semantic Eroor: The variable has to be declared before use at line no: "<<yylineno<<"\n";
-    exit(1);
-  }
-  if( var->type != "dataframe[][]" )
-  {
-    cout<<"Semantic Eroor: The variable is not of type datarame at line no: "<<yylineno<<"\n";
-    exit(1);
-  }
-}
-             ;
-            
-DF_UPDATECOL : UPDATE OBRAK ID COMMA ID COMMA pred1 COMMA rhs CBRAK {   symtab var = search_symtab($3.name,scope,func,0);
-                    if(!var )
-                    {
-                        cout<<"Semantic Eroor: The variable has to be declared before use at line no: "<<yylineno<<"\n";
-                        exit(1);
-                    }
-                    if( var->type != "dataframe[][]" )
-                    {
-                        cout<<"Semantic Eroor: The variable is not of type datarame at line no: "<<yylineno<<"\n";
-                        exit(1);
-                    }
-                    }
-             | UPDATE OBRAK ID COMMA ID COMMA NUL COMMA rhs CBRAK {   symtab var = search_symtab($3.name,scope,func,0);
-                    if(!var )
-                    {
-                        cout<<"Semantic Eroor: The variable has to be declared before use at line no: "<<yylineno<<"\n";
-                        exit(1);
-                    }
-                    if( var->type != "dataframe[][]" )
-                    {
-                        cout<<"Semantic Eroor: The variable is not of type datarame at line no: "<<yylineno<<"\n";
-                        exit(1);
-                    }
-                    }
-             ;
-
-DF_SELECT   : SELECT OBRAK ID COMMA  pred1 CBRAK{   symtab var = search_symtab($3.name,scope,func,0);
-                if(!var )
-                {
-                    cout<<"Semantic Eroor: The variable has to be declared before use at line no: "<<yylineno<<"\n";
-                    exit(1);
-                }
-                if( var->type != "dataframe[][]" )
-                {
-                    cout<<"Semantic Eroor: The variable is not of type datarame at line no: "<<yylineno<<"\n";
-                    exit(1);
-                }
-                // check what second ID is for, if doesn't have special semantics, just copy above block
-                }
-            ;
-
-pred1 : STRING
-    ;
 
 %%
 int main(int argc,char** argv)
@@ -2094,9 +2031,9 @@ int main(int argc,char** argv)
        // inserting functions
        insert_classfunc("read","void","public",{"string","string[]","int"},D,0);
        insert_classfunc("read","void","public",{"string","string[]","int","char"},D,0);
-       insert_classfunc("union","dataframe","public",{"dataframe[][]"},D,0);
+       insert_classfunc("union_dfs","dataframe","public",{"dataframe[][]"},D,0);
        insert_classfunc("select","dataframe","public",{"string"},D,0);
-       insert_classfunc("delete","dataframe","public",{"string"},D,0);
+       insert_classfunc("delete_rows","dataframe","public",{"string"},D,0);
        insert_classfunc("drop","void","public",{"string"},D,0);
        insert_classfunc("get_as_int","int","public",{"int","int"},D,0);
        insert_classfunc("get_as_float","float","public",{"int","int"},D,0);

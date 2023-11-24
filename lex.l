@@ -32,9 +32,6 @@ matrix                          {fprintf(out,"%s",yytext); mat = 1; return MATRI
 dataframe                       {fprintf(out,"%s",yytext); return DF;}
 void                            {fprintf(out,"%s",yytext); return VOID;}
 
-select {fprintf(out,"%s",yytext); return SELECT;}
-delete {fprintf(out,"%s",yytext); return DELETE;}
-update {fprintf(out,"%s",yytext); return UPDATE;}
 
 if {fprintf(out,"%s",yytext); return IF;}
 elif {fprintf(out,"else if"); return ELIF;}
