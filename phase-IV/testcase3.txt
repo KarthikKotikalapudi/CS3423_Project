@@ -1,7 +1,7 @@
 void fun(){
     dataframe df = dataframe();
-    string a[] = {"","",""};
-    df.read("hello.csv",a,3);
+    string a[] = {"","","",""};
+    df.read("username.csv",a,4);
     for(int i=0;i<2;i++){
         for(int j=0;j<2;j++){
             print(df.get_as_int(i,j)," ");

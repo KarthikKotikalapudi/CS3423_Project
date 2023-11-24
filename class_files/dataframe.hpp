@@ -203,7 +203,7 @@ int dataframe::get_as_int(int i, int j)
 {
    if(col_types[j]!="int" )
    {
-      std::cout<<"Warning, coltype declared to a type and requesting as another type\n";
+      //std::cout<<"Warning, coltype declared to a type and requesting as another type\n";
    }
 
    if((i>=0 && i<nrows)&&(j>=0 && j <ncols))
@@ -219,7 +219,7 @@ int dataframe::get_as_float(int i, int j)
 {
    if(col_types[j]!="float" )
    {
-      std::cout<<"Warning, coltype declared to a type and requesting as another type\n";
+      //std::cout<<"Warning, coltype declared to a type and requesting as another type\n";
    }
    if((i>=0 && i<nrows)&&(j>=0 && j <ncols))
      return std::stof(data[i][j]);
