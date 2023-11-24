@@ -4,7 +4,8 @@ Class MyDataFrame {
 
     void readCSV(string filename) {
         string a[4] ={"","","" ,""};
-        df.read(filename,a);
+        df.read(filename,a,4);
+        return;
     }
 
     int getValueAsInt(int row, int col) {
@@ -13,19 +14,20 @@ Class MyDataFrame {
 
     void printValue(int row, int col) {
         print(df.get_as_int(row, col), "\n");
+        return;
     }
 
     int sumColumn(int col) {
         int sum = 0;
-        for (int i = 0; i < df.num_rows(); i++) {
-            sum += df.get_as_int(i, col);
+        for (int i = 0; i < 4; i++) {
+            sum += df.get_as_int(i,col);
         }
         return sum;
     }
 
     int maxColumn(int col) {
-        int maxVal = INT_MIN;
-        for (int i = 0; i < df.num_rows(); i++) {
+        int maxVal = 0;
+        for (int i = 0; i < 5; i++) {
             int val = df.get_as_int(i, col);
             if (val > maxVal) {
                 maxVal = val;
@@ -33,10 +35,10 @@ Class MyDataFrame {
         }
         return maxVal;
     }
-}
+};
 
 main {
-    MyDataFrame myDF = MyDataFrame();
+    MyDataFrame myDF ;
     myDF.readCSV("test.csv");
     myDF.printValue(1, 1);
 
