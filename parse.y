@@ -1064,7 +1064,8 @@ class_arg:
         }
         $$ =strdup(x->type.c_str());
     }
-    | ID DOT class_function_call{
+    | ID DOT class_function_call{ 
+        reverse(params.begin(),params.end());
         symtab x = search_symtab($1.name,scope,func,0);
         if(!x){
             cout<<"Semantic Error: Variable is not declared in this scope at line no: "<<yylineno<<"\n";
@@ -1077,7 +1078,7 @@ class_arg:
         if(!search_classtab(class_name)){
               cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
               exit(1);
-        }
+        } 
         pair <functab,string> M = search_classfunc($3,params,class_name); 
         if(M.first==NULL){
               cout<<"Semantic Error: Method is not declared in the class at line no: "<<yylineno<<"\n";
@@ -2185,11 +2186,12 @@ int main(int argc,char** argv)
 
 
        //anyone add dataframe class in symbol table too
-       insert_classtab("dataframe",temp);
-       classtab D = search_classtab("dataframe");
+       insert_classtab("dataframe[][]",temp);
+       classtab D = search_classtab("dataframe[][]");
        // inserting variables
 
        // inserting functions
+       insert_classfunc("read","void","public",{"string","string[]"},D,0);
        insert_classfunc("select","dataframe","public",{"string"},D,0);
        insert_classfunc("delete","dataframe","public",{"string"},D,0);
        insert_classfunc("drop","void","public",{"string"},D,0);

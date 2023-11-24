@@ -12,13 +12,17 @@ public:
 public:
     dataframe(/* args */);
     ~dataframe();
- void read(std::string s,std::vector<std::string>dtypes)
+ void read(std::string s,std::string dtypes[],int sz)
  {
-    real_read(s,dtypes,',');
+       vector<string> types;
+       for(int i=0;i<sz;i++) types.push_back(dtypes[i]);
+       real_read(s,types,',');
  }
- void read(std::string s,std::vector<std::string>dtypes,char delim)
+ void read(std::string s,std::string dtypes[],char delim,int sz)
  {
-         real_read(s,dtypes,delim);
+       vector<string> types;
+       for(int i=0;i<sz;i++) types.push_back(dtypes[i]);
+         real_read(s,types,delim);
  }
  std::string get_row(int row,int col)
  {
@@ -34,9 +38,9 @@ public:
  int get_as_int(int i, int j) ;
  int get_as_float(int i, int j) ;
  std::vector<std::string> columns();
- void add_row(std::vector<std::string>row);
- dataframe get(std::vector<std::string>cols);
- dataframe get(std::vector<int>cols);
+ void add_row(string ro[],int sz);
+ dataframe get(string col[],int sz);
+ dataframe get(int col[],int sz);
 
 dataframe& operator=(const dataframe& other) {
     if (this != &other) { // Avoid self-assignment
@@ -58,8 +62,8 @@ dataframe& operator=(const dataframe& other) {
   void write(std::string filename,char delim);
 
   //drop columns
-  void drop(std::vector<std::string>cols);
-  void drop(std::vector<int>cols);
+  void drop(string col[], int sz);
+  void drop(int col[],int sz);
   // functions involving predicates
   dataframe select(std::string pred);
   dataframe delete_rows(std::string pred);
@@ -97,7 +101,9 @@ void dataframe::write(std::string filename,char delim){
     out.close();
 }
 
-void dataframe::drop(std::vector<std::string>cols){
+void dataframe::drop(string col[], int sz){
+       vector<string> cols;
+       for(int i=0;i<sz;i++) cols.push_back(col[i]);
     std::vector<int>indices;
     for(int i=0;i<cols.size();i++){
         for(int j=0;j<col_names.size();j++){
@@ -119,7 +125,11 @@ void dataframe::drop(std::vector<std::string>cols){
 }
 
 
-void dataframe::drop(std::vector<int>cols){
+void dataframe::drop(int col[],int sz){
+   
+       vector<int> cols;
+       for(int i=0;i<sz;i++) cols.push_back(col[i]);
+
     std::sort(cols.begin(),cols.end());
     for(int i=0;i<cols.size();i++){
      if(col_names.size()>0)   col_names.erase(col_names.begin()+cols[i]-i);
@@ -214,8 +224,10 @@ std::vector<std::string> dataframe::columns()
     return col_names;
 }
 
-void dataframe::add_row(std::vector<std::string>row)
+void dataframe::add_row(string ro[],int sz)
 {
+    vector<string> row;
+    for(int i=0;i<sz;i++) row.push_back(ro[i]);
     if(row.size()!= col_types.size())
     {
         std::cout<<"Number of fields given to add a row are less than number of columns\n";
@@ -224,8 +236,10 @@ void dataframe::add_row(std::vector<std::string>row)
     data.push_back(row);
 }
 
-dataframe dataframe::get(std::vector<int>cols)
+dataframe dataframe::get( int col[],int sz)
 {
+    vector<int> cols;
+       for(int i=0;i<sz;i++) cols.push_back(col[i]);
     dataframe n;
     n.nrows = nrows;
     n.ncols = ncols - cols.size();
