@@ -1622,8 +1622,8 @@ continue:
 returnstmt : RETURN pred SEMICOL 
     {
         if(!cond) ret = true;
-        cout<<$2<<rettype<<endl;
-        cout<<infun<<endl;
+        // cout<<$2<<rettype<<endl;
+        // cout<<infun<<endl;
         if(infun==true){
             if(!coersible($2,rettype)){
                 cout<<"Semantic Error: Return type mismatch at line no: "<<yylineno<<"\n";
