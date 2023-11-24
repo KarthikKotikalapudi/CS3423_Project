@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "parse.tab.hpp"
+#include "parse.tab.h"
 bool mat = 0;
 int inout = 0;
 char* mat_id = NULL;
