@@ -1,3 +1,5 @@
+#Testcase for user input, output checking, Class Inheritance, access specifier checking
+
 Class MinMaxFinder{
     Protected: int biggest(int a, int b){
         if(a > b){
