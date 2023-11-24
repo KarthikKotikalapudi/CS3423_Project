@@ -2035,7 +2035,7 @@ DF_UPDATECOL : UPDATE OBRAK ID COMMA ID COMMA pred1 COMMA rhs CBRAK {   symtab v
                     }
              ;
 
-DF_SELECT   : SELECT OBRAK ID COMMA ID COMMA pred1 CBRAK{   symtab var = search_symtab($3.name,scope,func,0);
+DF_SELECT   : SELECT OBRAK ID COMMA  pred1 CBRAK{   symtab var = search_symtab($3.name,scope,func,0);
                 if(!var )
                 {
                     cout<<"Semantic Eroor: The variable has to be declared before use at line no: "<<yylineno<<"\n";
@@ -2082,16 +2082,19 @@ int main(int argc,char** argv)
        // inserting variables
 
        // inserting functions
-       insert_classfunc("read","void","public",{"string","string[]"},D,0);
+       insert_classfunc("read","void","public",{"string","string[]","int"},D,0);
+       insert_classfunc("read","void","public",{"string","string[]","int","char"},D,0);
+       insert_classfunc("union","dataframe","public",{"dataframe[][]"},D,0);
        insert_classfunc("select","dataframe","public",{"string"},D,0);
        insert_classfunc("delete","dataframe","public",{"string"},D,0);
        insert_classfunc("drop","void","public",{"string"},D,0);
        insert_classfunc("get_as_int","int","public",{"int","int"},D,0);
        insert_classfunc("get_as_float","float","public",{"int","int"},D,0);
        insert_classfunc("get_row","string","public",{"float","float"},D,0);
-       insert_classfunc("write","void","public",{},D,0);
-       insert_classfunc("add_row","void","public",{"string[]"},D,0);
-       insert_classfunc("get","dataframe","public",{"int[]"},D,0);
+       insert_classfunc("write","void","public",{"string"},D,0);
+       insert_classfunc("write","void","public",{"string","char"},D,0);
+       insert_classfunc("add_row","void","public",{"string[]","int"},D,0);
+       insert_classfunc("get","dataframe","public",{"int[]","int"},D,0);
     
     if(argc!= 2)
     {
