@@ -25,14 +25,7 @@ int func(string df[]){
     return arr[5];
 }
 
-matrix<int> func(matrix df<int>, matrix df2<float>, int x, matrix df5<int>){
-    int i = 5*4;
-    B obj;
-    bool arr[5];
-    matrix m1<int> = {{1,3},{1,5}};
-    matrix m<int>(3,4);
-    return m;
-}
+
 
 main{
     int y;

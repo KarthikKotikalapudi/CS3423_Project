@@ -63,6 +63,7 @@ class matrix{
         // check if both matrix have same order (use above get_order function)
         if(get_order()!=m.get_order()){
             cout<<"Matrix order not same, cannot perform addition"<<endl;
+            exit(1);
             return *this;
         }
 
@@ -81,6 +82,7 @@ class matrix{
         // check if both matrix have same order (use above get_order function)
         if(get_order()!=m.get_order()){
             cout<<"Matrix order not same, cannot perform substraction"<<endl;
+            exit(1);
             return *this;
         }
 
@@ -98,6 +100,7 @@ class matrix{
         //check if not intilized use get_order function
         if(get_order()!=m.get_order()){
             cout<<"Matrix order not same, cannot assign"<<endl;
+            exit(1);
             return *this;
         }
         M=m.M;
@@ -109,6 +112,7 @@ class matrix{
              //check if both are multiplication compatible (use get_order function)
              if(get_order()[1]!=m.get_order()[0]){
                 cout<<"Matrix order not same, cannot be multiplied"<<endl;
+                exit(1);
                 return *this;
              }
         matrix<T>temp(M.size(),m.M[0].size());
@@ -186,7 +190,8 @@ class matrix{
         matrix<T>temp(M.size(),M.size());
         T det=determinant();
         if(det==0){
-            cout<<"Inverse not possible"<<endl;
+            cout<<"Inverse not possible"<<endl;\
+            exit(1);
             return *this;
         }
         if(M.size()==1){
@@ -230,7 +235,7 @@ class matrix{
         //access to matrix element M(i,j)
         T& operator[](int j){
             if(j>=row.size()){
-                cout<<"Index out of bounds"<<endl;
+                cout<<"Index out of bounds"<<endl;exit(1);
                 return row[0];
             }
             return row[j];
@@ -242,7 +247,7 @@ class matrix{
 
         // this returns row
         if(i>=M.size()){
-            cout<<"Index out of bounds"<<endl;
+            cout<<"Index out of bounds"<<endl;exit(1);
             return M[0];
         }
         return matrix_row(M[i]);
