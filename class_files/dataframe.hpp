@@ -20,7 +20,7 @@ public:
  {
          real_read(s,dtypes,delim);
  }
- std::string get(int row,int col)
+ std::string get_row(int row,int col)
  {
     if((row>=0 && row<nrows)&&(col>=0 && col <ncols))
      return data[row][col];

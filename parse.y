@@ -2137,8 +2137,20 @@ int main(int argc,char** argv)
 
 
        //anyone add dataframe class in symbol table too
-       
- 
+       insert_classtab("dataframe",temp);
+       classtab D = search_classtab("dataframe");
+       // inserting variables
+
+       // inserting functions
+       insert_classfunc("select","dataframe","public",{"string"},D,0);
+       insert_classfunc("delete","dataframe","public",{"string"},D,0);
+       insert_classfunc("drop","void","public",{"string"},D,0);
+       insert_classfunc("get_as_int","int","public",{"int","int"},D,0);
+       insert_classfunc("get_as_float","float","public",{"int","int"},D,0);
+       insert_classfunc("get_row","string","public",{"float","float"},D,0);
+       insert_classfunc("write","void","public",{},D,0);
+       insert_classfunc("add_row","void","public",{"string[]"},D,0);
+       insert_classfunc("get","dataframe","public",{"int[]"},D,0);
     
     if(argc!= 2)
     {
