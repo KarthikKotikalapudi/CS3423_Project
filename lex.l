@@ -51,14 +51,17 @@ sort {fprintf(out,"%s",yytext); return SORT;}
 
 \(	{/*printf("%s",yytext);*/
     bscope++;
-    if(!inout) fprintf(out,"%s",yytext);
+    if(!inout || bscope > 1) fprintf(out,"%s",yytext);
     else if(inout == 1) fprintf(out,">>");
     else    fprintf(out,"<<");
     if(mat) mat_scope++;
     return OBRAK;}
 \)	{/*printf("%s",yytext);*/
     bscope--;
-    if(!inout) fprintf(out,"%s",yytext);
+    if(inout){
+        if(bscope > 0)  fprintf(out,")");
+    }
+    else    fprintf(out,"%s",yytext);
     if(mat) mat_scope--;
     if(mat_scope < 0){
         mat = 0;
@@ -90,7 +93,10 @@ sort {fprintf(out,"%s",yytext); return SORT;}
         return SEMICOL;
     }
 "," {
-    if(inout)   fprintf(out,"<<");
+    if(inout){
+        if(bscope <= 1)  fprintf(out,"<<");
+        else    fprintf(out,",");
+    }
     else if(bscope > 0 || !(mat && mat_scope == 0))    fprintf(out,"%s",yytext);
     else{
         if(mat_id != NULL)  fprintf(out,"%s",mat_id);

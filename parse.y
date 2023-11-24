@@ -502,7 +502,7 @@ MultiDimL : OBRACE MultiDimL CBRACE {
     ;
 
 MatrixDecl : 
-        ID MATRIX_TYPE ASSGN ID{
+        ID MATRIX_TYPE ASSGN rhs{
             symtab var = search_symtab($1.name,scope,func,1); //check this,can string be char * 
            if(var)
            {
@@ -518,27 +518,11 @@ MatrixDecl :
               //add matrix with type int or float
               //find dimension of $3 and insert the dimesion for $2
                insert_symtab($1.name,$2,{},scope);
-            
-               symtab var = search_symtab($4.name,scope,func,0); //check this,can string be char * 
-              if(var)
-               {
-                //compare the rhs matrix type
-                if(!strcmp(var->type.c_str(),$2)){
-                    //do nothing
-                }
-                else{
-                    cout<<"Semantic Error: Martices are of different types at line no: "<<yylineno<<"\n";
-                        std::cout << "Error at line: " << __LINE__ << std::endl;
-
-                }
-               } 
-               else{
-                cout<<"Semantic Error: variable not declared at line no: "<<yylineno<<"\n";
-                    std::cout << "Error at line: " << __LINE__ << std::endl;
-
+            if(strcmp($2,$4)){
+                cout<<"Semantic Error: Both sides of assignment operator must be of same type at line no: "<<yylineno<<"\n";
                 exit(1);
-               }
-         }
+            }       
+        }
          else{
              cout<<"Semantic Error: Matrix can only have int or float at line no: "<<yylineno<<"\n";
                  std::cout << "Error at line: " << __LINE__ << std::endl;
@@ -952,24 +936,53 @@ varL: rhs {params.push_back($1);}
     | rhs COMMA varL {params.push_back($1);}
     ;
 
-function_call:ID OBRAK varL CBRAK  { functab fun = search_functab($1.name,params);
+function_call:ID OBRAK varL CBRAK  {
+        if(!active_class_ptr){
+            functab fun = search_functab($1.name,params);
                if(!fun)
                {
                 cout<<"Semantic Error: This function doesn't exist at line no: "<<yylineno<<"\n";
                 exit(1);
                }
                $$.name = $1.name; $$.ret_type =strdup((fun->return_type).c_str());
-               params.clear();               
+               params.clear();    
+        }   
+        else{
+            pair<functab,string> temp;
+            temp = search_classfunc($1.name, params, active_class_ptr->name);
+            functab fun = temp.first;
+            if(!temp.first)
+               {
+                cout<<"Semantic Error: This function doesn't exist at line no: "<<yylineno<<"\n";
+                exit(1);
                }
+            $$.name = $1.name; $$.ret_type =strdup((fun->return_type).c_str());
+            params.clear();    
+        }        
+    }
     | ID OBRAK CBRAK {
-          functab fun = search_functab($1.name,{});
+        if(!active_class_ptr){
+            functab fun = search_functab($1.name,{});
                if(!fun)
                {
                 cout<<"Semantic Error: This function doesn't exist at line no: "<<yylineno<<"\n";
                 exit(1);
                }
-        $$.name = $1.name ; $$.ret_type =  strdup((fun->return_type).c_str());
-        }
+               $$.name = $1.name; $$.ret_type =strdup((fun->return_type).c_str());
+               params.clear();    
+        }   
+        else{
+            pair<functab,string> temp;
+            temp = search_classfunc($1.name, {}, active_class_ptr->name);
+            functab fun = temp.first;
+            if(!temp.first)
+               {
+                cout<<"Semantic Error: This function doesn't exist at line no: "<<yylineno<<"\n";
+                exit(1);
+               }
+            $$.name = $1.name; $$.ret_type =strdup((fun->return_type).c_str());
+        }    
+    }
     | DF_UPDATECOL { $$.name = strdup("update"); $$.ret_type = strdup("dataframe[][]");}
     | DF_SELECT {$$.name = strdup("select");$$.ret_type = strdup("dataframe[][]");}
     | DF_DELETEROW {$$.name = strdup("delete");$$.ret_type = strdup("dataframe[][]");;}
@@ -1600,10 +1613,12 @@ elif_list : /* empty */
     ;
             
 // loop statements
-loop : FOR OBRAK declstmt  pred SEMICOL expr CBRAK OBRACE open_marker cond_open stmt cond_close closing_marker CBRACE 
-    | FOR OBRAK declstmt  pred SEMICOL  CBRAK  OBRACE open_marker cond_open stmt cond_close closing_marker CBRACE 
-    | FOR OBRAK   SEMICOL pred SEMICOL expr CBRAK  OBRACE open_marker cond_open stmt cond_close closing_marker CBRACE 
-    | FOR OBRAK   SEMICOL pred SEMICOL  CBRAK  OBRACE open_marker cond_open stmt cond_close closing_marker CBRACE 
+loop : FOR OBRAK open_marker declstmt  pred SEMICOL expr CBRAK OBRACE cond_open stmt cond_close closing_marker CBRACE 
+    | FOR OBRAK open_marker declstmt  pred SEMICOL  CBRAK  OBRACE cond_open stmt cond_close closing_marker CBRACE 
+    | FOR OBRAK open_marker exprstmt  pred SEMICOL expr CBRAK  OBRACE cond_open stmt cond_close closing_marker CBRACE 
+    | FOR OBRAK open_marker exprstmt  pred SEMICOL  CBRAK  OBRACE cond_open stmt cond_close closing_marker CBRACE 
+    | FOR OBRAK open_marker   SEMICOL pred SEMICOL expr CBRAK  OBRACE cond_open stmt cond_close closing_marker CBRACE 
+    | FOR OBRAK open_marker   SEMICOL pred SEMICOL  CBRAK  OBRACE cond_open stmt cond_close closing_marker CBRACE 
     | WHILE OBRAK pred CBRAK  OBRACE open_marker cond_open stmt cond_close closing_marker CBRACE 
     ;
 cond_open : {cond = true;}
@@ -2185,6 +2200,6 @@ int main(int argc,char** argv)
 
 void yyerror(const char* s)
 {
-    printf("Error: %s at line %d at line no: ",s,yylineno);
+    printf("Error: %s at line %d\n",s,yylineno);
     //fprintf(fp," : invalid statement");
 }

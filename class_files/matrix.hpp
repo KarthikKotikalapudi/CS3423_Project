@@ -50,6 +50,14 @@ class matrix{
         return temp;
     }
 
+    vector<int> getRowCount(){
+        return M.size();
+    }
+
+    vector<int> getColumnCount(){
+        return M[0].size();
+    }
+
     //addition of matrix
     matrix operator+(matrix<T> m){
         // check if both matrix have same order (use above get_order function)
