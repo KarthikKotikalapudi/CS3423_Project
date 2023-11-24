@@ -1,3 +1,5 @@
+#Custom testcase
+
 Class A{
     Public: int x[9];
     int fun(int y,int a){
@@ -8,6 +10,9 @@ Class A{
 Class B Inherits Public A{
     Private: int y;
     string x;
+    string fun(string y,int a){
+        return x;
+    }
 };
 
 matrix<int> func(matrix df<int>, matrix df2<float>, int x, matrix df5<int>){
@@ -24,8 +29,6 @@ int func(string df[]){
     int arr[5];
     return arr[5];
 }
-
-
 
 main{
     int y;

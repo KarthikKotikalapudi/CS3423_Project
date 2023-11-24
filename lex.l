@@ -9,6 +9,7 @@ char* mat_id = NULL;
 int mat_scope = 0;
 int bscope = 0;
 bool oldmat = 0;
+bool func_p = 0;
 FILE * out; //output file
 %}
 digit [0-9]
@@ -69,7 +70,15 @@ sort {fprintf(out,"%s",yytext); return SORT;}
     return CBRAK;}
 \[  {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return OSQA;}
 \]  {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return CSQA;}
-\{  {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); 
+\{  {/*printf("%s",yytext);*/  
+    if(func_p){
+        func_p = 0;
+        mat = 0;
+        oldmat = 0;
+        mat_scope = 0;
+        mat_id = NULL;
+    }
+    fprintf(out,"%s",yytext); 
     if(oldmat) mat_scope++;
     return OBRACE;}
 \}  {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext);
@@ -101,8 +110,14 @@ sort {fprintf(out,"%s",yytext); return SORT;}
         if(bscope <= 1)  fprintf(out,"<<");
         else    fprintf(out,",");
     }
+    else if(func_p){
+        mat = 0;
+        fprintf(out,"%s",yytext);
+    }
     else if(mat && bscope)  fprintf(out,"%s",yytext);
-    else if(!mat)   fprintf(out,"%s",yytext);
+    else if(!mat){
+        fprintf(out,"%s",yytext);
+    }
     else if(mat_scope != 0){
         fprintf(out,"%s",yytext);
     }
@@ -129,6 +144,7 @@ sort {fprintf(out,"%s",yytext); return SORT;}
     if(mat_id)  fprintf(out,"%s%s",yytext,mat_id);
     else{
         fprintf(out,"%s",yytext);
+        func_p = 1;
         mat = 0;
         mat_scope = 0;
     }
