@@ -1,21 +1,24 @@
-class A {
-public:
+Class A {
+Public:
     int x[9];
     int fun(int y, int a) {
         return x[0];
     }
 };
 
-class B : public A {
-private:
+Class B Inherits Public A {
+Private:
     int y;
-    string x;
+    Public:
+    char x[10];
 };
 
-int main() {
+main {
     B b;
-    b.x[0] = 10;
+    b.x[0] = '1';
     int result = b.fun(5, 10);
+    # below line should give lex error
+    B @C; 
     cout << "Result: " << result << endl;
     return 0;
 }
