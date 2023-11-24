@@ -1,0 +1,30 @@
+int a,b;
+
+
+void func(){
+    print("Hello","string",1);
+}
+
+
+void foo(){
+    int x = 10;
+    int y = 20;
+    int sum = x + y;
+    print("The sum is: ", sum);
+}
+
+void bar(){
+    int x = 5;
+    int y = 3;
+    int product = x * y;
+    print("The product is: ", product);
+}
+
+
+main{
+    int a,b,c;
+    int z = c;
+    matrix<int>w = {{1,2},{3,4}};
+    matrix<int>m= w.inverse();
+}
+

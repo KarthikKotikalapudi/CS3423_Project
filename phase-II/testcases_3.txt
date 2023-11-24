@@ -1,0 +1,23 @@
+class A {
+public:
+    int x[9];
+    int fun(int y, int a) {
+        return x[0];
+    }
+};
+
+class B : public A {
+private:
+    int y;
+    string x;
+};
+
+int main() {
+    B b;
+    b.x[0] = 10;
+    int result = b.fun(5, 10);
+    cout << "Result: " << result << endl;
+    return 0;
+}
+
+
