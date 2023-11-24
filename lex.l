@@ -8,6 +8,7 @@ int inout = 0;
 char* mat_id = NULL;
 int mat_scope = 0;
 int bscope = 0;
+bool oldmat = 0;
 FILE * out; //output file
 %}
 digit [0-9]
@@ -54,7 +55,6 @@ sort {fprintf(out,"%s",yytext); return SORT;}
     if(!inout || bscope > 1) fprintf(out,"%s",yytext);
     else if(inout == 1) fprintf(out,">>");
     else    fprintf(out,"<<");
-    if(mat) mat_scope++;
     return OBRAK;}
 \)	{/*printf("%s",yytext);*/
     bscope--;
@@ -62,7 +62,6 @@ sort {fprintf(out,"%s",yytext); return SORT;}
         if(bscope > 0)  fprintf(out,")");
     }
     else    fprintf(out,"%s",yytext);
-    if(mat) mat_scope--;
     if(mat_scope < 0){
         mat = 0;
         mat_scope = 0;
@@ -71,10 +70,10 @@ sort {fprintf(out,"%s",yytext); return SORT;}
 \[  {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return OSQA;}
 \]  {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return CSQA;}
 \{  {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); 
-    if(mat) mat_scope++;
+    if(oldmat) mat_scope++;
     return OBRACE;}
 \}  {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext);
-    if(mat) mat_scope--;
+    if(oldmat) mat_scope--;
     return CBRACE;}
 
 \.	{/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return DOT;}
@@ -90,14 +89,22 @@ sort {fprintf(out,"%s",yytext); return SORT;}
         fprintf(out,"%s",yytext);
         mat = 0; inout = 0;
         mat_scope = 0;
+        oldmat = 0;
         return SEMICOL;
     }
 "," {
+    if(mat_scope == 0 && oldmat){
+        mat = 1;
+        oldmat = 0;
+    }
     if(inout){
         if(bscope <= 1)  fprintf(out,"<<");
         else    fprintf(out,",");
     }
-    else if(bscope > 0 || !(mat && mat_scope == 0))    fprintf(out,"%s",yytext);
+    else if(!mat)   fprintf(out,"%s",yytext);
+    else if(mat_scope != 0){
+        fprintf(out,"%s",yytext);
+    }
     else{
         if(mat_id != NULL)  fprintf(out,"%s",mat_id);
         fprintf(out,"; matrix");
@@ -137,6 +144,10 @@ sort {fprintf(out,"%s",yytext); return SORT;}
 "AND"	{/*printf("%s",yytext);*/  fprintf(out,"&&"); return LOG;}
 "OR"	{/*printf("%s",yytext);*/  fprintf(out,"||"); return LOG;}
 "=" {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext);
+    if(mat){
+        oldmat = 1;
+        mat = 0;
+    }
     return ASSGN;}
 "+="|"*="|"-="|"/="|"%="	{/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return ARTHASSGN;}
 "^"|"&"|"|"  {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return BIT_OP;}

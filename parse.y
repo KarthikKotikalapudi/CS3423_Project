@@ -1004,7 +1004,6 @@ class_arg:
             exit(1);
         }
         string class_name = x->type;
-        
         if(class_name == "<int>")   class_name = "matrix<int>";
         if(class_name == "<float>")   class_name = "matrix<float>";
         if(!search_classtab(class_name)){
@@ -1020,7 +1019,7 @@ class_arg:
             cout<<"Semantic Error: Variable cannot be access witout a public method of the same class at line no: "<<yylineno<<"\n";
             exit(1);
         }
-        $$ =strdup( M[0].c_str());
+        $$ =strdup(x->type.c_str());
 
      }
     | ID DOT ID access 
@@ -1063,7 +1062,7 @@ class_arg:
             }
             M[0] = M[0].substr(0, M[0].size() - 2*$4);
         }
-        $$ =strdup( M[0].c_str());
+        $$ =strdup(x->type.c_str());
     }
     | ID DOT class_function_call{
         symtab x = search_symtab($1.name,scope,func,0);
@@ -1089,7 +1088,7 @@ class_arg:
             exit(1);
         }
         params.clear();
-        $$ =strdup( M.first->return_type.c_str());
+        $$ =strdup(x->type.c_str());
     }
     ;
 
