@@ -66,7 +66,7 @@ unordered_map<std::string,classtab> class_table_list;
 }
 
 %token <type> DATATYPE MATRIX_TYPE 
-%token <name> STRING
+%token <name> STRING ARTH
 %token <val> NUM
 %type <type> parameter access_specifier class_arg call_expression start_end_pos class_function_call
 %type <dim_len> access access2 access_assgn 
@@ -975,9 +975,23 @@ class_arg:
             exit(1);
         }
         params.clear();
-        // if(M.first->return_type != "int")   $$ =strdup(x->type.c_str());
-        // else   
+        if(M.first->return_type[0] == 'm') {
+            string t = M.first->return_type;
+            if(t[t.size()-3]=='a'){
+                $$ = strdup("<float>");
+            }
+            else if(t[t.size()-3]=='n'){
+                $$ = strdup("<int>");
+            }
+            else{
+                cout<<"Semantic Error: Invalid Matrix return type, at line no.: "<<yylineno<<"\n";
+                exit(1);
+            }
+        }
+        else   
          $$ =strdup(M.first->return_type.c_str());
+
+        cout<<x->type<<M.first->return_type<<endl;
     }
     ;
 
@@ -1057,19 +1071,22 @@ pred : pred LOG pred
         }
         bool flg= true;
         //cout<<s<<s1<<endl;
-        if(s[0]=='<'){
-            if(!(s1=="int" || s1 == "float")){
-                
+        //cout<<$2[0]<<endl;
+        if($2[0]=='*'){
+            if(s[0]=='<'){
+                if(!(s1=="int" || s1 == "float")){
+                    
+                }
+                else 
+                flg = false;
             }
-            else 
-            flg = false;
-        }
-        else if(s1[0]=='<'){
-            if(!(s=="int" || s== "float")){
-                
+            else if(s1[0]=='<'){
+                if(!(s=="int" || s== "float")){
+                    
+                }
+                else
+                flg =false;
             }
-            else
-            flg =false;
         }
         if(flg && !coersible($1,$3)){
             cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible at line no: "<<yylineno<<endl;
@@ -1089,20 +1106,7 @@ pred : pred LOG pred
             cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
             exit(1);
         }
-        bool flg= true;
-        if(s[0]=='<'){
-            if(!(s1=="int" || s1 == "float")){
-                
-            }
-            flg = false;
-        }
-        else if(s1[0]=='<'){
-            if(!(s=="int" || s== "float")){
-                
-            }
-            flg =false;
-        }
-        if(flg && !coersible($1,$3)){
+        if(!coersible($1,$3)){
             cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible at line no: "<<yylineno<<endl;
             exit(1);
         }

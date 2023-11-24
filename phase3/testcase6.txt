@@ -40,7 +40,7 @@ main{
     print("Sum: ",sum2,"\tDifference: ",diff2,"\n");
     print("Poduct: ",product2,"\tRatio: ",div2,"\n");
     float expr;
-    int a= x+y;
+    ##int a= x+y;
     int b = x-y;
     if(a+b*a>2*max(a , 2*a - b)){
         expr = a*a +max(a,b)*min(a,b)+ b*b;

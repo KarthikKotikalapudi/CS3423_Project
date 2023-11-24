@@ -139,7 +139,7 @@ sort {fprintf(out,"%s",yytext); return SORT;}
 "NULL"  {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return NUL;}
 "++"|"--"	{/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return POST;}
 "<<"|">>"	{/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return SHIFT;}
-"**"|"%"|"*"|"/"|"+"	{/*printf("%s\n",yytext);*/  fprintf(out,"%s",yytext); return ARTH;}
+"**"|"%"|"*"|"/"|"+"	{yylval.name = strdup(yytext);  fprintf(out,"%s",yytext); return ARTH;}
 "-" {/*printf("%s\n",yytext);*/  fprintf(out,"%s",yytext); return MINUS;}
 "<="|">="|"=="|"<"|">"	{/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return COMP;}
 "AND"	{/*printf("%s",yytext);*/  fprintf(out,"&&"); return LOG;}
