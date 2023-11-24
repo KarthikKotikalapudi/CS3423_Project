@@ -1279,7 +1279,7 @@ expr : ID ASSGN rhs
         }
     | ID ARTHASSGN rhs 
         {   symtab var;
-            cout<<$3<<endl;
+            // cout<<$3<<endl;
             if((var=search_symtab($1.name,scope,func,0))){
 
                 if(strcmp($3,"int") && strcmp($3,"float") && strcmp($3,"dataframe")){
