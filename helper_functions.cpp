@@ -87,6 +87,8 @@ bool coersible(string a, string b){
 
 string dominate(string a, string b){
        if (a==b) return a;
+       if(a[0]=='<' && (b=="int" || b=="float")) return a;
+       if(b[0]=='<' && (a=="int" || a=="float")) return b;
        if(a=="dataframe") return b;
        if(b=="dataframe") return a;
        else if(a=="float" || b=="float"){

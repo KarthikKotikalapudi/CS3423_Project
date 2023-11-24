@@ -1167,7 +1167,23 @@ pred : pred LOG pred
             cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
             exit(1);
         }
-        if(!coersible($1,$3)){
+        bool flg= true;
+        //cout<<s<<s1<<endl;
+        if(s[0]=='<'){
+            if(!(s1=="int" || s1 == "float")){
+                
+            }
+            else 
+            flg = false;
+        }
+        else if(s1[0]=='<'){
+            if(!(s=="int" || s== "float")){
+                
+            }
+            else
+            flg =false;
+        }
+        if(flg && !coersible($1,$3)){
             cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible at line no: "<<yylineno<<endl;
             exit(1);
         }
@@ -1185,7 +1201,20 @@ pred : pred LOG pred
             cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
             exit(1);
         }
-        if(!coersible($1,$3)){
+        bool flg= true;
+        if(s[0]=='<'){
+            if(!(s1=="int" || s1 == "float")){
+                
+            }
+            flg = false;
+        }
+        else if(s1[0]=='<'){
+            if(!(s=="int" || s== "float")){
+                
+            }
+            flg =false;
+        }
+        if(flg && !coersible($1,$3)){
             cout<<"Semantic Error: Both sides of the Arthimatic operation must be coersible at line no: "<<yylineno<<endl;
             exit(1);
         }
