@@ -1,12 +1,9 @@
-class MyDataFrame {
-    dataframe df;
-
-    MyDataFrame() {
-        df = dataframe();
-    }
+Class MyDataFrame {
+    dataframe df = dataframe();
+    
 
     void readCSV(string filename) {
-        string a[4] ={"","","" ,""}
+        string a[4] ={"","","" ,""};
         df.read(filename,a);
     }
 
