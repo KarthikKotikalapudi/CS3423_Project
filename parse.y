@@ -1030,7 +1030,7 @@ pred : pred LOG pred
     }
     | pred SHIFT pred 
     {
-        if($1=="string" || $1=="char"||$3=="string" || $3=="char"||$1=="bool" || $3=="bool"){
+        if(!(strcmp($1,"string") && strcmp($1,"char") && strcmp($3,"string") && strcmp($3,"char") && strcmp($1,"bool") && strcmp($3,"bool"))){
             cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
             exit(1);
         }
@@ -1060,7 +1060,7 @@ pred : pred LOG pred
     }
     | pred ARTH pred 
     {   
-        if($1=="string" || $1=="char"||$3=="string" || $3=="char"){
+        if(!(strcmp($1,"string") && strcmp($1,"char") && strcmp($3,"string") && strcmp($3,"char"))){
             cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
             exit(1);
         }
@@ -1097,7 +1097,7 @@ pred : pred LOG pred
     }
     | pred MINUS pred 
     {   
-        if($1=="string" || $1=="char"||$3=="string" || $3=="char"||$1=="bool" || $3=="bool"){
+        if(!(strcmp($1,"string") && strcmp($1,"char") && strcmp($3,"string") && strcmp($3,"char") && strcmp($1,"bool") && strcmp($3,"bool"))){
             cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
             exit(1);
         }
@@ -1287,7 +1287,7 @@ expr : ID ASSGN rhs
         {   symtab var;
             if((var=search_symtab($1.name,scope,func,0))){
 
-                if(!($3=="int" || $3=="float"|| $3=="dataframe")){
+                if(strcmp($3,"int") && strcmp($3,"float") && strcmp($3,"dataframe")){
                     cout<<"Semantic Error: Invalid RHS type expected int or float at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
@@ -1339,7 +1339,7 @@ expr : ID ASSGN rhs
                     cout<<"Semantic Error: dimensions do not match at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
-                if(!($4=="int" || $4=="float" || $4=="dataframe")){
+                if(strcmp($4,"int") && strcmp($4,"float") && strcmp($4,"dataframe")){
                     cout<<"Semantic Error: Invalid RHS type expected int or float at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
@@ -1419,7 +1419,7 @@ expr : ID ASSGN rhs
                 cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
                 exit(1);
             }
-            if(!($5=="int" || $5=="float" || $5=="dataframe")){
+            if(strcmp($5,"int") && strcmp($5,"float") && strcmp($5,"dataframe")){
                 cout<<"Semantic Error: Invalid RHS type expected int or float at line no: "<<yylineno<<"\n";
                 exit(1);
             }
@@ -1456,7 +1456,7 @@ expr : ID ASSGN rhs
                 cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
                 exit(1);
             }
-            if(!($6=="int" || $6=="float"|| $6=="dataframe")){
+            if(strcmp($6,"int") && strcmp($6,"float") && strcmp($6,"dataframe")){
                 cout<<"Semantic Error: Invalid RHS type expected int or float at line no: "<<yylineno<<"\n";
                 exit(1);
             }
