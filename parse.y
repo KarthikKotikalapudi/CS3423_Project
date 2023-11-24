@@ -12,6 +12,7 @@
 //global variables
 
 int scope = 0;
+bool infun = false;
 bool ret=false, cond=false;
 string rettype="int";
 vector<string> params; 
@@ -22,6 +23,11 @@ vector<struct symbol_table> var_list;
 vector<std::unordered_map<std::string,symtab>> sym_table_list;
 unordered_map<std::string,vector<functab>> func_table_list;
 unordered_map<std::string,classtab> class_table_list;
+
+
+
+
+
 %}
 %token FLOAT  MATRIX DF IF ELIF ELSE RETURN BREAK CONT  OBRAK CBRAK OSQA CSQA OBRACE CBRACE  DOT NEG COL SEMICOL  POST VOID
 %token COMMA CHAR ASSGN ARTHASSGN  FOR WHILE PRINT INPUT MAIN CLASS PRIVATE PROTECTED PUBLIC INHERITS
@@ -63,7 +69,7 @@ unordered_map<std::string,classtab> class_table_list;
 %token <name> STRING
 %token <val> NUM
 %type <type> parameter access_specifier class_arg call_expression start_end_pos class_function_call
-%type <dim_len> access access2 access_assgn access_retn
+%type <dim_len> access access2 access_assgn 
 %type <type> uni arg rhs pred
 %type <number> numbers
 %type <funcattr> function_call
@@ -752,9 +758,11 @@ MatrixL : OBRACE open_marker constL closing_marker CBRACE  COMMA MatrixL {
     ;
 
 //function declaration
-FuncDecl : FuncHead_dup OBRACE open_marker FuncBody closing_marker CBRACE{
+FuncDecl : FuncHead_dup OBRACE open_marker open_func FuncBody close_func closing_marker CBRACE{
     rettype = "int";
 }
+open_func: {infun = true;};
+close_func: {infun = false;};
 FuncHead_dup :FuncHead  OBRAK params CBRAK 
     {
         //search if this function already exists
@@ -826,22 +834,6 @@ FuncHead : DATATYPE ID {$$.name = $2.name; $$.ret_type = $1;}
              }
     | MATRIX MATRIX_TYPE ID {string s = $2; $$.ret_type = strdup(s.c_str()); $$.name = $3.name; }
     | DF ID {$$.name = $2.name; $$.ret_type =$$.name = strdup("dataframe[][]");}
-    | DATATYPE access_retn ID {string s = $1; 
-              for(int i=0;i<$2;i++) s = s + "[]";  
-              $$.name = $3.name; $$.ret_type =strdup(s.c_str());      
-              }
-    | ID access_retn ID {
-        if(!search_classtab($1.name))
-               {
-                cout<<"Semantic Error: The datatype "<<$1.name<<" doesn't exist at line no: "<<yylineno<<"\n";
-                    std::cout << "Error at line: " << __LINE__ << std::endl;
-
-                exit(1);
-               }
-              string s = $1.name; 
-              for(int i=0;i<$2;i++) s = s + "[]";  
-              $$.name = $3.name; $$.ret_type =strdup(s.c_str());
-                }
     | VOID ID {$$.name = $2.name; $$.ret_type = strdup("void");}
     ;
 
@@ -999,7 +991,9 @@ class_arg:
             exit(1);
         }
         string class_name = x->type;
-        if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+        
+        if(class_name == "<int>")   class_name = "matrix<int>";
+        if(class_name == "<float>")   class_name = "matrix<float>";
         if(!search_classtab(class_name)){
               cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
               exit(1);
@@ -1023,7 +1017,9 @@ class_arg:
             exit(1);
         }
         string class_name = x->type;
-        if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+        
+        if(class_name == "<int>")   class_name = "matrix<int>";
+        if(class_name == "<float>")   class_name = "matrix<float>";
         if(!search_classtab(class_name)){
               cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
               exit(1);
@@ -1063,7 +1059,9 @@ class_arg:
             exit(1);
         }
         string class_name = x->type;
-        if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+        
+        if(class_name == "<int>")   class_name = "matrix<int>";
+        if(class_name == "<float>")   class_name = "matrix<float>";
         if(!search_classtab(class_name)){
               cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
               exit(1);
@@ -1287,11 +1285,7 @@ access_assgn :
 access2 : access {$$ = $1;}
         | access_assgn {$$ =$1;}
         ;
-
-access_retn : OSQA CSQA access_retn{ $$ = $3+1;}
-        | OSQA CSQA {$$ = 1;}
-       ;
-       
+               
 uni : ID POST {
       symtab s;
        if((s=search_symtab($1.name,scope,func,0))){
@@ -1441,7 +1435,9 @@ expr : ID ASSGN rhs
                 exit(1);
             }
             string class_name = var->type;
-            if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+            
+        if(class_name == "<int>")   class_name = "matrix<int>";
+        if(class_name == "<float>")   class_name = "matrix<float>";
             if(!search_classtab(class_name)){
                 cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
                 exit(1);
@@ -1472,7 +1468,9 @@ expr : ID ASSGN rhs
                 exit(1);
             }
             string class_name = var->type;
-            if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+            
+        if(class_name == "<int>")   class_name = "matrix<int>";
+        if(class_name == "<float>")   class_name = "matrix<float>";
             if(!search_classtab(class_name)){
                 cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
                 exit(1);
@@ -1507,7 +1505,9 @@ expr : ID ASSGN rhs
                 exit(1);
             }
             string class_name = var->type;
-            if(class_name == "<int>" || class_name == "<float>")    class_name = "matrix";
+            
+        if(class_name == "<int>")   class_name = "matrix<int>";
+        if(class_name == "<float>")   class_name = "matrix<float>";
             if(!search_classtab(class_name)){
                 cout<<"Semantic Error: Variable is not of class type at line no: "<<yylineno<<"\n";
                 exit(1);
@@ -1622,8 +1622,9 @@ continue:
 returnstmt : RETURN pred SEMICOL 
     {
         if(!cond) ret = true;
-        //cout<<$2<<rettype<<endl;
-        if(func==false){
+        // cout<<$2<<rettype<<endl;
+        // cout<<infun<<endl;
+        if(infun==true){
             if(!coersible($2,rettype)){
                 cout<<"Semantic Error: Return type mismatch at line no: "<<yylineno<<"\n";
                 exit(1);
@@ -1647,11 +1648,13 @@ returnstmt : RETURN pred SEMICOL
     ;
 
 // print statement
-printstmt : PRINT OBRAK STRING CBRAK SEMICOL
-    {
-        
-    }
+printstmt : PRINT OBRAK multirhs CBRAK SEMICOL
     ;
+
+multirhs : rhs
+         | multirhs COMMA rhs
+         | 
+         ;
 
 inputstmt : INPUT OBRAK ID CBRAK SEMICOL
     {
@@ -2117,6 +2120,24 @@ pred1 : STRING
 %%
 int main(int argc,char** argv)
 {
+
+        // add matrix classes
+        pair<string,string> temp;
+        insert_classtab("matrix<int>",temp);
+        classtab MI= search_classtab("matrix<int>"); 
+        insert_classfunc("transpose","matrix<int>","public",{},MI,false);
+        insert_classfunc("determinant","int","public",{},MI,false);
+        insert_classfunc("inverse","matrix<int>","public",{},MI,false);
+
+        insert_classtab("matrix<float>",temp);
+        classtab MF= search_classtab("matrix<float>"); 
+        insert_classfunc("transpose","matrix<float>","public",{},MF,false);
+        insert_classfunc("determinant","float","public",{},MF,false);
+        insert_classfunc("inverse","matrix<float>","public",{},MF,false);
+
+
+       //anyone add dataframe class in symbol table too
+       
  
     
     if(argc!= 2)

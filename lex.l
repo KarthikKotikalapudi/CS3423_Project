@@ -7,6 +7,7 @@ bool mat = 0;
 int inout = 0;
 char* mat_id = NULL;
 int mat_scope = 0;
+int bscope = 0;
 FILE * out; //output file
 %}
 digit [0-9]
@@ -41,7 +42,7 @@ break {fprintf(out,"%s",yytext); return BREAK;}
 continue {fprintf(out,"%s",yytext); return CONT;}
 for {fprintf(out,"%s",yytext); return FOR;}
 while {fprintf(out,"%s",yytext); return WHILE;}
-print {fprintf(out,"%s",yytext); inout = 2; return PRINT;}
+print {fprintf(out,"cout"); inout = 2; return PRINT;}
 input {fprintf(out,"cin"); inout = 1; return INPUT;}
 main {fprintf(out,"int main()"); return MAIN;}
 sort {fprintf(out,"%s",yytext); return SORT;}
@@ -49,14 +50,20 @@ sort {fprintf(out,"%s",yytext); return SORT;}
 
 
 \(	{/*printf("%s",yytext);*/
+    bscope++;
     if(!inout) fprintf(out,"%s",yytext);
     else if(inout == 1) fprintf(out,">>");
     else    fprintf(out,"<<");
     if(mat) mat_scope++;
     return OBRAK;}
 \)	{/*printf("%s",yytext);*/
+    bscope--;
     if(!inout) fprintf(out,"%s",yytext);
     if(mat) mat_scope--;
+    if(mat_scope < 0){
+        mat = 0;
+        mat_scope = 0;
+    }
     return CBRAK;}
 \[  {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return OSQA;}
 \]  {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return CSQA;}
@@ -79,11 +86,12 @@ sort {fprintf(out,"%s",yytext); return SORT;}
         }
         fprintf(out,"%s",yytext);
         mat = 0; inout = 0;
+        mat_scope = 0;
         return SEMICOL;
     }
 "," {
     if(inout)   fprintf(out,"<<");
-    else if(!(mat && mat_scope == 0))    fprintf(out,"%s",yytext);
+    else if(bscope > 0 || !(mat && mat_scope == 0))    fprintf(out,"%s",yytext);
     else{
         if(mat_id != NULL)  fprintf(out,"%s",mat_id);
         fprintf(out,"; matrix");
@@ -103,7 +111,16 @@ sort {fprintf(out,"%s",yytext); return SORT;}
 }
 
 
-"<int>"|"<float>" {yylval.type =strdup( yytext); fprintf(out,"%s%s",yytext,mat_id); mat_id = NULL; return MATRIX_TYPE;}
+"<int>"|"<float>" {yylval.type =strdup( yytext);
+    if(mat_id)  fprintf(out,"%s%s",yytext,mat_id);
+    else{
+        fprintf(out,"%s",yytext);
+        mat = 0;
+        mat_scope = 0;
+    }
+    mat_id = NULL;
+    return MATRIX_TYPE;
+    }
 "true"|"false"  {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return BOOL;}
 "NULL"  {/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return NUL;}
 "++"|"--"	{/*printf("%s",yytext);*/  fprintf(out,"%s",yytext); return POST;}
