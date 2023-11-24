@@ -50,11 +50,11 @@ class matrix{
         return temp;
     }
 
-    vector<int> getRowCount(){
+    int getRowCount(){
         return M.size();
     }
 
-    vector<int> getColumnCount(){
+    int getColumnCount(){
         return M[0].size();
     }
 
