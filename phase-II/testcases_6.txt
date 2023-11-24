@@ -45,10 +45,10 @@ Public:
     }
 
     void bfs(int startVertex) {
-        bool visited[numVertices];
+        bool visited1[numVertices];
         queue q;
 
-        visited[startVertex] = true;
+        visited1[startVertex] = true;
         q.push(startVertex);
 
         while (!q.empty()) {
@@ -58,8 +58,8 @@ Public:
             print( currentVertex , " ");
 
             for (int neighbor = adjList[currentVertex][0];q;startVertex++) {
-                if (!visited[neighbor]) {
-                    visited[neighbor] = true;
+                if (!visited1[neighbor]) {
+                    visited1[neighbor] = true;
                     q.push(neighbor);
                 }
             }
@@ -77,9 +77,7 @@ Public:
         while (!s.empty()) {
             int currentVertex = s.top();
             s.pop();
-
             print( currentVertex , " ");
-
             for (int neighbor : adjList[currentVertex]) {
                 if (!visited[neighbor]) {
                     visited[neighbor] = true;
