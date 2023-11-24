@@ -1,0 +1,45 @@
+#Testcase for user input, output checking, Class Inheritance, access specifier checking
+
+Class MinMaxFinder{
+    Protected: int biggest(int a, int b){
+        if(a > b){
+            return a;
+        }
+        return b;
+    }
+    int smallest(int a, int b){
+        if(a < b){
+            return a;
+        }
+        return b;
+    }
+};
+
+Class Arth Inherits Public MinMaxFinder{
+    Public: int add(int a, int b){
+        return a+b;
+    }
+    int diff(int a, int b){
+        return biggest(a,b)-smallest(a,b);
+    }
+    int mult(int a, int b){
+        return a*b;
+    }
+    int div(int a, int b){
+        return a/b;
+    }
+};
+
+main{
+    Arth obj;
+    int x,y;
+    input(x);
+    input(y);
+    print("The values given are: ",x,", ",y,"\n");
+    print("Their sum: ",obj.add(x,y),"\n")
+    print("Their difference: ",obj.diff(x,y),"\n");
+    print("Their product: ",obj.mult(x,y),"\n");
+    print("Quotient of x/y: ",obj.div(x,y),"\n");
+    #Below line will produce an error if not commented
+    #print(obj.biggest(x,y));
+}
