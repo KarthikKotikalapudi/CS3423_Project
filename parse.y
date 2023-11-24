@@ -127,7 +127,7 @@ stmtD : declstmt
 // declaration statment      
 declstmt : DATATYPE ID Multideclstmt SEMICOL
         {   
-            if(active_class_ptr){
+            if(active_class_ptr && scope == 1){
                 vector<string> var = search_classvar($2.name,active_class_ptr->name); 
                 if(var[0] != "" && var[2] != "1")
                 {
@@ -259,7 +259,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
         }
     | DATATYPE ID ASSGN rhs Multideclstmt SEMICOL 
         {   
-            if(active_class_ptr){
+            if(active_class_ptr && scope == 1){
                 vector<string> var = search_classvar($2.name,active_class_ptr->name); //check this,can string be char * 
                 if(var[0] != "" && var[2] != "1")
                 {
@@ -359,7 +359,7 @@ declstmt : DATATYPE ID Multideclstmt SEMICOL
                 s2.type+="[]";
             }
             var_list.push_back(s2);
-            if(active_class_ptr){
+            if(active_class_ptr && scope == 1){
                 for(int i=var_list.size()-1;i>=0;i--){
                     vector<string> temp = search_classvar(var_list[i].name,active_class_ptr->name);
                     if(temp[0] !="" && temp[2] != "1")

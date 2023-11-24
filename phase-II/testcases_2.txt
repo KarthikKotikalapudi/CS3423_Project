@@ -1,3 +1,10 @@
+#different types of ids
+int _23 = 5;
+int _x = 3;
+int x92 = 4;
+int x_4 = 5;
+
+
 Class A{
      int a,b,c;
      Private:
