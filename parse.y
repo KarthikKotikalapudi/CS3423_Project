@@ -818,7 +818,7 @@ FuncBody : stmt
          ; 
 
 varL: rhs {params.push_back($1);}
-    | varL COMMA rhs {params.push_back($3);}
+    | rhs COMMA varL {params.push_back($1);}
     ;
 
 function_call:ID OBRAK varL CBRAK  {
@@ -956,6 +956,9 @@ class_arg:
             exit(1);
         }
         string class_name = x->type;
+        if(class_name == "dataframe[][]"){
+            reverse(params.begin(),params.end());
+        }
         if(class_name == "<int>")   class_name = "matrix<int>";
         if(class_name == "<float>")   class_name = "matrix<float>";
         if(!search_classtab(class_name)){
@@ -1027,7 +1030,7 @@ pred : pred LOG pred
     }
     | pred SHIFT pred 
     {
-        if(!(strcmp($1,"string") && strcmp($1,"char") && strcmp($3,"string") && strcmp($3,"char") && strcmp($1,"bool") && strcmp($3,"bool"))){
+        if($1=="string" || $1=="char"||$3=="string" || $3=="char"||$1=="bool" || $3=="bool"){
             cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
             exit(1);
         }
@@ -1057,7 +1060,7 @@ pred : pred LOG pred
     }
     | pred ARTH pred 
     {   
-        if(!(strcmp($1,"string") && strcmp($1,"char") && strcmp($3,"string") && strcmp($3,"char"))){
+        if($1=="string" || $1=="char"||$3=="string" || $3=="char"){
             cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
             exit(1);
         }
@@ -1094,7 +1097,7 @@ pred : pred LOG pred
     }
     | pred MINUS pred 
     {   
-        if(!(strcmp($1,"string") && strcmp($1,"char") && strcmp($3,"string") && strcmp($3,"char") && strcmp($1,"bool") && strcmp($3,"bool"))){
+        if($1=="string" || $1=="char"||$3=="string" || $3=="char"||$1=="bool" || $3=="bool"){
             cout<<"Semantic Error: Invalid input for Arthimatic operation"<<endl;
             exit(1);
         }
@@ -1285,7 +1288,7 @@ expr : ID ASSGN rhs
             cout<<$3<<endl;
             if((var=search_symtab($1.name,scope,func,0))){
 
-                if(strcmp($3,"int") && strcmp($3,"float") && strcmp($3,"dataframe")){
+                if(!(!strcmp($3,"int") || !strcmp($3,"float") || !strcmp($3,"dataframe)"))){
                     cout<<"Semantic Error: Invalid RHS type expected int or float at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
@@ -1337,7 +1340,7 @@ expr : ID ASSGN rhs
                     cout<<"Semantic Error: dimensions do not match at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
-                if(strcmp($4,"int") && strcmp($4,"float") && strcmp($4,"dataframe")){
+                if(!($4=="int" || $4=="float" || $4=="dataframe")){
                     cout<<"Semantic Error: Invalid RHS type expected int or float at line no: "<<yylineno<<"\n";
                     exit(1);
                 }
@@ -1417,7 +1420,7 @@ expr : ID ASSGN rhs
                 cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
                 exit(1);
             }
-            if(strcmp($5,"int") && strcmp($5,"float") && strcmp($5,"dataframe")){
+            if(!($5=="int" || $5=="float" || $5=="dataframe")){
                 cout<<"Semantic Error: Invalid RHS type expected int or float at line no: "<<yylineno<<"\n";
                 exit(1);
             }
@@ -1454,7 +1457,7 @@ expr : ID ASSGN rhs
                 cout<<"Semantic Error: A variable must be declared before use at line no: "<<yylineno<<"\n";
                 exit(1);
             }
-            if(strcmp($6,"int") && strcmp($6,"float") && strcmp($6,"dataframe")){
+            if(!($6=="int" || $6=="float"|| $6=="dataframe")){
                 cout<<"Semantic Error: Invalid RHS type expected int or float at line no: "<<yylineno<<"\n";
                 exit(1);
             }
