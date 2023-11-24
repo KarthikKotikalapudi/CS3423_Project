@@ -1,0 +1,50 @@
+Class MyDataFrame {
+    dataframe df = dataframe();
+    
+
+    void readCSV(string filename) {
+        string a[4] ={"","","" ,""};
+        df.read(filename,a,4);
+        return;
+    }
+
+    int getValueAsInt(int row, int col) {
+        return df.get_as_int(row, col);
+    }
+
+    void printValue(int row, int col) {
+        print(df.get_as_int(row, col), "\n");
+        return;
+    }
+
+    int sumColumn(int col) {
+        int sum = 0;
+        for (int i = 0; i < 4; i++) {
+            sum += 5;
+        }
+        return sum;
+    }
+
+    int maxColumn(int col) {
+        int maxVal = 0;
+        for (int i = 0; i < 5; i++) {
+            int val = df.get_as_int(i, col);
+            if (val > maxVal) {
+                maxVal = val;
+            }
+        }
+        return maxVal;
+    }
+};
+
+main {
+    MyDataFrame myDF ;
+    myDF.readCSV("test.csv");
+    myDF.printValue(1, 1);
+
+    int sum = myDF.sumColumn(2);
+    print("Sum of column 2: ", sum, "\n");
+
+    int max = myDF.maxColumn(3);
+    print("Max value in column 3: ", max, "\n");
+}
